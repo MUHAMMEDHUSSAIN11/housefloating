@@ -6,10 +6,6 @@ export default function Home() {
   return (
     <>
   <Background/>
-  <div className='flex flex-row'>
-    <h3>Scenic Routes</h3>
-    <h3>200+ houseboats</h3>
-  </div>
     </>
   )
 }
