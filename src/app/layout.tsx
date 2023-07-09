@@ -8,6 +8,7 @@ import ToasterProvider from './providers/ToasterProvider'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import SessionProvider from './SessionProvider'
+import RentModal from './components/Modals/RentModal'
 
 
 
@@ -35,6 +36,7 @@ export default async function RootLayout({
        <ToasterProvider />
         <LoginModal />
         <RegisterModal />
+        <RentModal/>
         <Navbar />
         {children}
       </body>

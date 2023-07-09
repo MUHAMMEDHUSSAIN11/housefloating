@@ -12,7 +12,7 @@ import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
 
 import Modal from "./Modal";
-import Input from "../Misc/Input";
+import Input from "../Inputs/Input";
 import Heading from "../Misc/Heading";
 import Button from "../Misc/Button";
 import { useSignInWithEmailAndPassword, useSignInWithFacebook, useSignInWithGoogle } from "react-firebase-hooks/auth";

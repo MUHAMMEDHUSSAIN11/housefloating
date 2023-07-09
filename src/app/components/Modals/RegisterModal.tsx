@@ -10,7 +10,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useLoginModal from "@/app/hooks/useLoginModal";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
 import Modal from "./Modal";
-import Input from "../Misc/Input";
+import Input from "../Inputs/Input";
 import Heading from "../Misc/Heading";
 import Button from "../Misc/Button";
 import { FIREBASE_ERRORS } from "@/app/firebase/errors";
@@ -34,81 +34,81 @@ const RegisterModal = () => {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
-    if(userError){
-     const userError = null;
+    if (userError) {
+      const userError = null;
     }
-  
+
     const { email, password, confirmPassword } = data;
-  
+
     if (password.length < 6) {
       toast.error("Password should be at least 6 characters long");
       setIsLoading(false);
       return;
     }
-  
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       setIsLoading(false);
       return;
     }
-    const result =  await createUserWithEmailAndPassword(email, password);
-       setIsLoading(false);
-       if(result){
-        registerModal.onClose();
-        toast.success("User Created Succesfully");
-       }
-  }
-
-  const handleGoogleSign =  async () => {
-   const isGooglesignSuccess =  await signInWithGoogle()
-   if(isGooglesignSuccess){
-    registerModal.onClose();
-    toast.success("Logged in")
-   }
-  }
-  const handleFbSign =  async () => {
-    const isFBsignSuccess =  await SignInWithFacebook()
-    if(isFBsignSuccess){
-     registerModal.onClose();
-     toast.success("Logged in")
+    const result = await createUserWithEmailAndPassword(email, password);
+    setIsLoading(false);
+    if (result) {
+      registerModal.onClose();
+      toast.success("User Created Succesfully");
     }
-   }
-  
-// Create UserDocument in Database
-const createUserDocument = async (user:User) =>{
-  await addDoc(collection(firestore,"Users"),JSON.parse(JSON.stringify(user)))
-  setIsLoading(false);
-  registerModal.onClose();
-}
-useEffect(()=>{
-  if(userCred){
-      createUserDocument(userCred?.user)
   }
-},[userCred])
+
+  const handleGoogleSign = async () => {
+    const isGooglesignSuccess = await signInWithGoogle()
+    if (isGooglesignSuccess) {
+      registerModal.onClose();
+      toast.success("Logged in")
+    }
+  }
+  const handleFbSign = async () => {
+    const isFBsignSuccess = await SignInWithFacebook()
+    if (isFBsignSuccess) {
+      registerModal.onClose();
+      toast.success("Logged in")
+    }
+  }
+
+  // Create UserDocument in Database
+  const createUserDocument = async (user: User) => {
+    await addDoc(collection(firestore, "Users"), JSON.parse(JSON.stringify(user)))
+    setIsLoading(false);
+    registerModal.onClose();
+  }
+  useEffect(() => {
+    if (userCred) {
+      createUserDocument(userCred?.user)
+    }
+  }, [userCred])
 
 
 
-const createGoogleUserDocument = async (user:User) =>{
-  const userDocRef = doc(firestore,'Users',user.uid)
-  await setDoc(userDocRef,JSON.parse(JSON.stringify(user)))
-}
-useEffect(()=>{
-  if(googleUserCred){
-    createGoogleUserDocument(googleUserCred?.user)
-}
-},[googleUserCred])
+  const createGoogleUserDocument = async (user: User) => {
+    const userDocRef = doc(firestore, 'Users', user.uid)
+    await setDoc(userDocRef, JSON.parse(JSON.stringify(user)))
+  }
+  useEffect(() => {
+    if (googleUserCred) {
+      createGoogleUserDocument(googleUserCred?.user)
+    }
+  }, [googleUserCred])
 
 
 
-const createFbUserDocument = async (user:User) =>{
-  const userDocRef = doc(firestore,'Users',user.uid)
-  await setDoc(userDocRef,JSON.parse(JSON.stringify(user)))
-}
-useEffect(()=>{
-  if(fbUserCred){
-    createFbUserDocument(fbUserCred?.user)
-}
-},[fbUserCred])
+  const createFbUserDocument = async (user: User) => {
+    const userDocRef = doc(firestore, 'Users', user.uid)
+    await setDoc(userDocRef, JSON.parse(JSON.stringify(user)))
+  }
+  useEffect(() => {
+    if (fbUserCred) {
+      createFbUserDocument(fbUserCred?.user)
+    }
+  }, [fbUserCred])
 
 
   const onToggle = useCallback(() => {
@@ -122,10 +122,10 @@ useEffect(()=>{
       <Input id="email" label="Email" type="email" disabled={isLoading} register={register} errors={errors} required />
       <Input id="password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required />
       <Input id="confirmPassword" label="Confirm Password" type="password" disabled={isLoading} register={register} errors={errors} required />
-      { ( userError || googleerror || fberror ) && (<p className="text-center text-red-500 text-xs">{FIREBASE_ERRORS['Firebase: Error (auth/email-already-in-use).']}</p>)}
+      {(userError || googleerror || fberror) && (<p className="text-center text-red-500 text-xs">{FIREBASE_ERRORS['Firebase: Error (auth/email-already-in-use).']}</p>)}
     </div>
   );
-  
+
   const footerContent = (
     <div className="flex flex-col gap-3 mt-1">
       <hr />

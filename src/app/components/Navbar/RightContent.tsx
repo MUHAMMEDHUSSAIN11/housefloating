@@ -10,6 +10,7 @@ import UserMenuItem from './UserMenuItem';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/clientApp';
 import { signOut } from 'firebase/auth';
+import useRentModal from '@/app/hooks/useRentModal';
 
 
 
@@ -18,6 +19,7 @@ import { signOut } from 'firebase/auth';
 const RightContent = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
+    const rentModal = useRentModal();
     const [isOpen, setIsOpen] = useState(false);
     const [user, loading, error] = useAuthState(auth);
 
@@ -34,14 +36,16 @@ const RightContent = () => {
         setIsOpen(false);
     }, []);
 
+    const onRent = useCallback(()=>{
+        //open rent modal
+        rentModal.onOpen();
+    },[rentModal])
+
     return (
         <div className="relative">
             <div className="flex flex-row items-center gap-4 ">
                 <div className="p-2 cursor-pointer hover:shadow-md transition rounded-full">
                     <GiSailboat size={33} />
-                </div>
-                <div className=" hidden md:block p-2 cursor-pointer hover:shadow-md transition rounded-full">
-                    <BsFillTelephoneFill size={22} />
                 </div>
                 <div onClick={toggleOpen} className="p-3 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition">
                     <AiOutlineMenu />
@@ -50,13 +54,12 @@ const RightContent = () => {
                     </div>
                 </div>
             </div>
-
             {isOpen &&
                 <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
                     <div className="flex flex-col cursor-pointer">
-                        {/* <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition"> Deluxe HouseBoats </div>
+                         <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition"> Deluxe HouseBoats </div>
                         <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition"> Premium HouseBoats</div>
-                        <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition">Luxury Houseboats</div> */}
+                        <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition">Luxury Houseboats</div> 
                         <hr />
                         {user && (
                             <>
@@ -70,6 +73,11 @@ const RightContent = () => {
                             <UserMenuItem onClick={loginModal.onOpen} label="Login" />
                             <UserMenuItem onClick={registerModal.onOpen} label="Sign Up" />
                             <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition ">Contact Us</div>
+                            </>
+                        )}
+                        {user?.uid == 'BTYYete0GSRapIiCv2Z262Hy8RT2' && (
+                            <>
+                             <UserMenuItem onClick={onRent} label="Add Listing" />
                             </>
                         )}
                     </div>
