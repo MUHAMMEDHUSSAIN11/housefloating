@@ -16,7 +16,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, value }) => {
     const file = e.target.files?.[0];
     if (!file) return;
   
-    const storageRef = ref(storage, 'Images/' + file.name);
+    const storageRef = ref(storage, 'Images' + file.name);
     const uploadTask = uploadBytesResumable(storageRef, file);
   
     uploadTask.on(
@@ -66,7 +66,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onChange, value }) => {
               absolute inset-0 w-full h-full">
                 <Image
                   fill 
-                  style={{ objectFit: 'cover' }} 
+                  style={{objectFit: 'cover'}} 
                   src={value} 
                   alt="House Boat" 
                 />
