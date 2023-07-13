@@ -1,12 +1,12 @@
-import Image from 'next/image'
 import Background from './components/Hero/Background'
-import MiddleContent from './components/Navbar/MiddleContent'
-import { GiSailboat } from 'react-icons/gi'
+import Link from 'next/link';
 
-export default function Home() {
+
+export default async function Home() {
   return (
     <>
-  <Background/>
+      <Background />
+      <Link href="/boats">Boats</Link>
     </>
-  )
+  );
 }

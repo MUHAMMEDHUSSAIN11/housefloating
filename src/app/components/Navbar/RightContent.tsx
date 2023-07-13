@@ -2,14 +2,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { AiOutlineMenu } from "react-icons/ai";
 import { GiSailboat } from 'react-icons/gi';
-import { BsFillTelephoneFill } from 'react-icons/bs'
 import Avatar from '../Avatar/Avatar';
 import useLoginModal from '@/app/hooks/useLoginModal';
 import useRegisterModal from '@/app/hooks/useRegisterModal';
 import UserMenuItem from './UserMenuItem';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import {  useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/clientApp';
-import { signOut } from 'firebase/auth';
+import { useSignOut } from 'react-firebase-hooks/auth';
 import useRentModal from '@/app/hooks/useRentModal';
 
 
@@ -22,10 +21,11 @@ const RightContent = () => {
     const rentModal = useRentModal();
     const [isOpen, setIsOpen] = useState(false);
     const [user, loading, error] = useAuthState(auth);
-
+    const [signOut, signOutloading, Signerror] = useSignOut(auth);
+    
 
     const handleLogout = () => {
-        signOut(auth)
+        signOut()
     };
 
     const toggleOpen = useCallback(() => {

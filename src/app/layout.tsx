@@ -5,10 +5,11 @@ import Navbar from './components/Navbar/Navbar'
 import './globals.css'
 import { Inter} from 'next/font/google'
 import ToasterProvider from './providers/ToasterProvider'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/pages/api/auth/[...nextauth]'
-import SessionProvider from './SessionProvider'
 import RentModal from './components/Modals/RentModal'
+import getCurrentSession from './actions/getCurrentSession'
+import ClientOnly from './components/ClientOnly'
+
+
 
 
 
@@ -24,12 +25,9 @@ export const metadata = {
   description: 'Book your Houseboat now',
 }
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
- 
+export default async function RootLayout({children,}: {children: React.ReactNode}) {
+
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -37,7 +35,7 @@ export default async function RootLayout({
         <LoginModal />
         <RegisterModal />
         <RentModal/>
-        <Navbar />
+        <Navbar/>
         {children}
       </body>
     </html>

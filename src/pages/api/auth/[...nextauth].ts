@@ -13,16 +13,15 @@ export const authOptions = {
     GoogleProvider({
         clientId:"process.env.Google_Provider_Client_id",
         clientSecret:"process.env.Google_Provider_client_Secret",
-
       }),
   ],
-  // adapter: FirestoreAdapter({
-  //   credential: cert({
-  //     projectId: process.env.project_id,
-  //     clientEmail:process.env.client_email,
-  //     privateKey:process.env.private_key.replace(/\\n/g, '\n'),
-  //   }),
-  // }) as Adapter
+  adapter: FirestoreAdapter({
+    credential: cert({
+      projectId: process.env.FIREBASE_project_id,
+      clientEmail:process.env.FIREBASE_client_email,
+      privateKey:process.env.FIREBASE_private_key!.replace(/\\n/g, '\n'),
+    }),
+  }) as Adapter
 }
 
 export default NextAuth(authOptions);

@@ -53,6 +53,7 @@ const LoginModal = () => {
         }
         setIsLoading(false);
       };
+  
 
       const handleGoogleSign =  async () => {
         const isGooglesignSuccess =  await signInWithGoogle()
@@ -100,7 +101,7 @@ const createGoogleUserDocument = async (user:User) =>{
     const bodyContent = (
         <div className="flex flex-col gap-4">
             <Heading title="Welcome back" subtitle="Login to your account!"/>
-            <Input id="Email" label="Email" disabled={isLoading} register={register} errors={errors} required/>
+            <Input id="Email" label="Email" type="email" disabled={isLoading} register={register} errors={errors} required/>
             <Input id="Password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required/>
             {error&& <p className="text-center text-red-500 text-xs">{FIREBASE_ERRORS['Firebase:Error (auth/user-not-found).']}</p>}
         </div>

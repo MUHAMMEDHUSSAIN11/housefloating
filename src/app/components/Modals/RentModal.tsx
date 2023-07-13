@@ -13,7 +13,7 @@ import { collection } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import ImageUpload from '../Inputs/ImageUpload';
 
-
+//This component is used to create listings.
 
 enum STEPS {
     CATEGORY = 0,
@@ -76,9 +76,8 @@ const RentModal = () => {
                 await addDoc(collection(firestore, "Boats"), JSON.parse(JSON.stringify(data)));
                 setIsLoading(false);
                 rentModal.onClose();
-                toast.success("Boat successfully created")
+                toast.success("Boat successfully added")
             } catch (error) {
-                // Handle any errors that occur during document creation
                 console.log(error);
                 toast.error("something went wrong!")
                 setIsLoading(false);
@@ -86,6 +85,7 @@ const RentModal = () => {
         };
         createBoatDocument();
     };
+  
 
 
 
@@ -151,8 +151,7 @@ const RentModal = () => {
                 <Heading title="Add a photo of your place" subtitle="Show guests what your place looks like!" />
                 <ImageUpload
                     onChange={(value) => setCustomValue('imageSrc', value)}
-                    value={imageSrc}
-                />
+                    value={imageSrc}/>
             </div>
 
         )

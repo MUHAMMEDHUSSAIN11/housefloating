@@ -4,8 +4,8 @@ import Container from '../Misc/Container';
 import Logo from './Logo';
 import RightContent from './RightContent';
 import MiddleContent from './MiddleContent';
-
-
+import { Session } from 'next-auth';
+import { AuthStateHook } from 'react-firebase-hooks/auth';
 
 
 
@@ -18,9 +18,9 @@ const Navbar = () => {
           <div className="flex flex-row items-center justify-between gap-3 md:gap-0">
             <Logo />
              <div className="hidden sm:block">
-              <MiddleContent />
+              <MiddleContent/>
             </div> 
-           <RightContent/>
+           <RightContent />
           </div>
         </Container>
       </div>

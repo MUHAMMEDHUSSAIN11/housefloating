@@ -74,7 +74,7 @@ const RegisterModal = () => {
     }
   }
 
-  // Create UserDocument in Database
+  // Create UserDocument in Database if user is created
   const createUserDocument = async (user: User) => {
     await addDoc(collection(firestore, "Users"), JSON.parse(JSON.stringify(user)))
     setIsLoading(false);
@@ -87,7 +87,7 @@ const RegisterModal = () => {
   }, [userCred])
 
 
-
+//create user document when the google is used for login
   const createGoogleUserDocument = async (user: User) => {
     const userDocRef = doc(firestore, 'Users', user.uid)
     await setDoc(userDocRef, JSON.parse(JSON.stringify(user)))
