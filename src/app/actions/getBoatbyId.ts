@@ -10,13 +10,8 @@ export default async function getBoatbyId( params: Iparams) {
     try{
         const{listingid} = params;
         const boatRef = doc(collection(firestore,'Boats'),listingid)
-        const boatindividual = await getDoc(boatRef);
-
-        if(!boatindividual){
-            return null;
-        }else{
-            return boatindividual;
-        }
+        const getboat = await getDoc(boatRef);
+        return getboat;
     }catch(error:any){
         throw new error(error);
     }

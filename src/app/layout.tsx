@@ -31,11 +31,13 @@ export default async function RootLayout({children,}: {children: React.ReactNode
   return (
     <html lang="en">
       <body className={inter.className}>
+        <ClientOnly>
        <ToasterProvider />
         <LoginModal />
         <RegisterModal />
         <RentModal/>
         <Navbar/>
+        </ClientOnly>
         {children}
       </body>
     </html>

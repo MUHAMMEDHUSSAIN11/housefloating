@@ -1,18 +1,24 @@
 import getListings from "../actions/getListings";
+import ClientOnly from "../components/ClientOnly";
 import ListingCard from "../components/ListingCard/ListingCard";
 import Container from "../components/Misc/Container"
 import EmptyState from "../components/Misc/EmptyState";
 
 
 export default async function Boat(){
+
+  try{
     const listings = await getListings();
 
-    if(listings.length === 0){
+    if(listings == null){
       return (
-            <EmptyState showReset/>
+        <ClientOnly>
+        <EmptyState showReset />
+      </ClientOnly>
       )
     }
     return(
+      <ClientOnly>
         <Container>
           <div className="pb-20 pt-28">
         <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-8">
@@ -24,6 +30,12 @@ export default async function Boat(){
         </div>
         </div>
       </Container>
+      </ClientOnly>
     )
+
+  }catch(error:any){
+    console.log(error);
+    
+  }
 
 }

@@ -1,10 +1,11 @@
 'use client'
-import { User } from 'firebase/auth'
+
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import Button from '../Misc/Button'
 
+// this component is used to display items in boats page
 
 interface FirestoreListing {
   id: string
@@ -24,12 +25,13 @@ interface ListingCardProps {
   disabled?: boolean;
   actionLabel?: string;
   actionId?: string;
-  currentUser?: User | null
+
 }
 
 
-const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, actionId = "", actionLabel, currentUser }) => {
+const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, actionId = "", actionLabel}) => {
   const router = useRouter();
+
 
   const handleCancel = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -13,7 +13,8 @@ export default async function getListings() {
     }));
     return listings;
   } catch (error:any) {
-    throw new Error(error);
+    console.log(error)
+    return null;
   }
 }
 
