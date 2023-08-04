@@ -9,7 +9,7 @@ export default async function Boat(){
 
   try{
     const listings = await getListings();
-
+    
     if(listings == null){
       return (
         <ClientOnly>
@@ -17,6 +17,7 @@ export default async function Boat(){
       </ClientOnly>
       )
     }
+
     return(
       <ClientOnly>
         <Container>

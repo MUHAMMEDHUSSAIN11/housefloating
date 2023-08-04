@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import React, { useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import Button from '../Misc/Button'
+import { Timestamp } from 'firebase/firestore'
 
 // this component is used to display items in boats page
 
@@ -17,6 +18,7 @@ interface FirestoreListing {
   roomCount: number
   title: string
   price: number
+  reservations:Timestamp[]
 }
 
 interface ListingCardProps {
@@ -25,18 +27,16 @@ interface ListingCardProps {
   disabled?: boolean;
   actionLabel?: string;
   actionId?: string;
-
 }
 
 
 const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, actionId = "", actionLabel}) => {
   const router = useRouter();
 
-
   const handleCancel = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
-      
+
       if (disabled) {
         return;
       }

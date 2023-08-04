@@ -7,6 +7,7 @@ import React from 'react'
 import ListingClient from '../ListingClient';
 
 
+
 interface Iparams {
   listingid?: string;
 }
@@ -21,11 +22,11 @@ const Listingpage = async ({ params }: { params: Iparams }) => {
         </ClientOnly>
       )
     }
-      return (
-            <ClientOnly>
-              <ListingClient listing={boat} />
-          </ClientOnly>
-      );
+    return (
+      <ClientOnly>
+        <ListingClient listing={boat} />
+      </ClientOnly>
+    );
   } catch (error) {
     console.log(error);
   }

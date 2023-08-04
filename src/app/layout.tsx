@@ -8,6 +8,7 @@ import ToasterProvider from './providers/ToasterProvider'
 import RentModal from './components/Modals/RentModal'
 import getCurrentSession from './actions/getCurrentSession'
 import ClientOnly from './components/ClientOnly'
+import ConfirmModal from './components/Modals/ConfirmModal'
 
 
 
@@ -33,10 +34,11 @@ export default async function RootLayout({children,}: {children: React.ReactNode
       <body className={inter.className}>
         <ClientOnly>
        <ToasterProvider />
+        <Navbar/>
         <LoginModal />
         <RegisterModal />
+        <ConfirmModal/>
         <RentModal/>
-        <Navbar/>
         </ClientOnly>
         {children}
       </body>

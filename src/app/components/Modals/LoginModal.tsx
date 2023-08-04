@@ -41,7 +41,6 @@ const LoginModal = () => {
         if(error){
             const error = null;
         }
-        
         try {
             const result = await signInWithEmailAndPassword(Email, Password);
             if(result){

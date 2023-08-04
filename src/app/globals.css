@@ -10,7 +10,11 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+.rdrMonth {
+  width : 100% !important
+}
 
-
-
-
+.rdrCalendarWrapper {
+  width: 100% !important;
+  font-size: 16px !important;
+}

@@ -13,7 +13,7 @@ const Cart = () => {
       </div>
     )
   }
-
+  
   return(
     <div className='pt-28'> Please login to see your cart</div>
   )
