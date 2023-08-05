@@ -2,6 +2,9 @@
 
 import React from 'react'
 
+
+//This component is used for displating individual items..
+
 interface ListingInfoProps {
     category : string,
     roomCount : number,

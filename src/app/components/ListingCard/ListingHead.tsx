@@ -4,7 +4,7 @@ import React from 'react'
 import Heading from '../Misc/Heading';
 import Image from 'next/image';
 
-
+//This component is used for displating individual items..
 
 interface ListingHeadProps {
     id: string,

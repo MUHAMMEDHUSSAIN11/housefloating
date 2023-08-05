@@ -1,15 +1,15 @@
 'use client';
 
-import Calendar from "../Inputs/Calendar";
+import Dayselector from "../Inputs/DaySelector";
 import Button from "../Misc/Button";
-import { Range } from "react-date-range";
 
 
 
+//This component is used for displating individual items..
 
 interface ListingReservationProps {
   price: number;
-  dateRange: Range,
+  date: Date,
   totalPrice: number;
   onChangeDate: (value:any) => void;
   onSubmit: () => void;
@@ -18,7 +18,9 @@ interface ListingReservationProps {
 }
 
 
-const ListingReservation: React.FC<ListingReservationProps> = ({price,totalPrice,dateRange,onChangeDate,onSubmit,disabled,disabledDates}) => {
+const ListingReservation: React.FC<ListingReservationProps> = ({price,totalPrice,date,onChangeDate,onSubmit,disabled,disabledDates}) => {
+
+  console.log(disabledDates);
   return ( 
     <div className=" bg-white  rounded-xl  border-[1px] border-neutral-200  overflow-hidden">
       <div className="flex flex-row items-center gap-1 p-4">
@@ -26,9 +28,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({price,totalPrice
         <div className="font-light text-neutral-600"> night</div>
       </div>
       <hr />
-      <Calendar value={dateRange} 
+      {/*<Calendar value={dateRange} 
       disabledDates={disabledDates}
-      onChange={(value) => onChangeDate(value.selection)} />
+      onChange={(value) => onChangeDate(value.selection)} /> */}
+      <Dayselector value ={date} disabledDates={disabledDates} onChange={(value) => onChangeDate(value)}/>
       <hr />
       <div className="p-4">
         <Button disabled={disabled} label="Reserve" onClick={onSubmit}/>

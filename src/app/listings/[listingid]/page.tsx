@@ -7,15 +7,14 @@ import React from 'react'
 import ListingClient from '../ListingClient';
 
 
-
 interface Iparams {
   listingid?: string;
 }
 
 const Listingpage = async ({ params }: { params: Iparams }) => {
   try {
-    const boat = await getBoatbyId(params);
-    if (!boat) {
+    const Boat = await getBoatbyId(params);
+    if (!Boat) {
       return (
         <ClientOnly>
           <EmptyState />
@@ -24,7 +23,7 @@ const Listingpage = async ({ params }: { params: Iparams }) => {
     }
     return (
       <ClientOnly>
-        <ListingClient listing={boat} />
+        <ListingClient listing={Boat} />
       </ClientOnly>
     );
   } catch (error) {
