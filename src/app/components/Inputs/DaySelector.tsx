@@ -7,11 +7,12 @@ import { DayPicker } from 'react-day-picker';
 
 interface DaySelectorProps {
   value: Date,
-  onChange: (value: any) => void,
+  onChange: (value:any) => void,
   disabledDates: Date[],
 }
 
 const Dayselector: React.FC<DaySelectorProps> = ({ value, onChange, disabledDates }) => {
+
   return (
     <DayPicker
       fromDate={new Date()}

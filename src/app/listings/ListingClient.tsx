@@ -35,13 +35,12 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   const onCreateReservation = useCallback(() => {
 
     if (user) {
-      console.log(bookingDate);
       return bookingConfirmModal.onOpen();
     } else {
       return loginModal.onOpen();
     }
 
-  }, [user])
+  }, [user,bookingDate])
 
 
   return (
