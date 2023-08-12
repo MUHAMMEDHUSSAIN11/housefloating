@@ -15,9 +15,8 @@ export default async function getListings() {
       }));
       return {
         id: doc.id,
-        ...data, // This includes all other fields from Firestore data
+        ...data, 
         reservations,
-        // someOtherTimestampField, // Include other converted timestamp fields if needed
       };
     });
     return listings;

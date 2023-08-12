@@ -11,13 +11,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase/clientApp';
 import useBookingConfirmModal from '../hooks/useBookingConfirmModal';
 import ListingReservation from '../components/ListingCard/ListingReservation';
+import useBookingDateStore from '../hooks/useBookingDate';
 
 
 interface ListingClientProps {
-  // listing: DocumentSnapshot<DocumentData>,
-  // Reservations : Date[]
   listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
-
 }
 
 
@@ -30,17 +28,18 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listing.getboat.data()?.price);
-  const [bookingDate, setBookingdate] = useState<Date>(new Date);
+  // const [bookingDate, setBookingdate] = useState<Date>(new Date);
+  const date = useBookingDateStore();
+
 
   const onCreateReservation = useCallback(() => {
-
     if (user) {
       return bookingConfirmModal.onOpen();
     } else {
       return loginModal.onOpen();
     }
 
-  }, [user,bookingDate])
+  }, [user, bookingConfirmModal, loginModal, date.bookingDate])
 
 
   return (
@@ -64,11 +63,11 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               <ListingReservation
                 price={listing.getboat.data()?.price}
                 totalPrice={totalPrice}
-                onChangeDate={(value) => setBookingdate(value)}
+                onChangeDate={(value) => date.setBookingDate(value)}
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 disabledDates={listing.reservedDates}
-                date={bookingDate}
+                date={date.bookingDate}
               />
             </div>
           </div>

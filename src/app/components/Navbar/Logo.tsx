@@ -12,7 +12,7 @@ const Logo: React.FC<LogoProps> = () => {
   const router = useRouter();
   return (
     <div onClick={() => router.push('/')}>
-        <Image src="/images/HF-logo.png" alt="logo" className="block cursor-pointer" height={100} width={200}/>
+        <Image src= "/images/hf.jpg" alt="logo" className="block cursor-pointer" height={100} width={200}/>
         </div>
   );
 };

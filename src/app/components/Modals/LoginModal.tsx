@@ -68,7 +68,8 @@ const LoginModal = () => {
           toast.success("Logged in")
          }
         }
-    
+
+//creates User Document of users logged in through direct gmail
 const createGoogleUserDocument = async (user:User) =>{
     const userDocRef = doc(firestore,'Users',user.uid)
     await setDoc(userDocRef,JSON.parse(JSON.stringify(user)))
@@ -80,7 +81,8 @@ const createGoogleUserDocument = async (user:User) =>{
   },[googleUserCred])
   
   
-  
+  //creates User Document of users logged in through direct fb
+
   const createFbUserDocument = async (user:User) =>{
     const userDocRef = doc(firestore,'Users',user.uid)
     await setDoc(userDocRef,JSON.parse(JSON.stringify(user)))

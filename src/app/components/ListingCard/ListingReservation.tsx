@@ -28,9 +28,6 @@ const ListingReservation: React.FC<ListingReservationProps> = ({price,totalPrice
         <div className="font-light text-neutral-600"> night</div>
       </div>
       <hr />
-      {/*<Calendar value={dateRange} 
-      disabledDates={disabledDates}
-      onChange={(value) => onChangeDate(value.selection)} /> */}
       <Dayselector value ={date} disabledDates={disabledDates} onChange={(value) => onChangeDate(value)}/>
       <hr />
       <div className="p-4">

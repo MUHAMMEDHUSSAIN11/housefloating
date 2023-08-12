@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import React from 'react'
 
 
@@ -13,6 +14,11 @@ interface ListingInfoProps {
     bathroomCount : number,
 }
 
+const Map = dynamic(() => import('../Misc/Map'), { 
+  ssr: false 
+});
+
+const coordinates = [9.4981, 76.3388]
 const ListingInfo:React.FC<ListingInfoProps> = ({category,bathroomCount,description,guestCount,roomCount}) => {
   return (
     <div className='col-span-4 flex flex-col gap-8'>
@@ -23,6 +29,8 @@ const ListingInfo:React.FC<ListingInfoProps> = ({category,bathroomCount,descript
             <div>{bathroomCount} Bathrooms</div>
           </div>
         </div>
+        <hr />
+        <Map center={coordinates}/>
     </div>
   )
 }
