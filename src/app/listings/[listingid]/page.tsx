@@ -1,38 +1,64 @@
 'use client';
-import getBoatbyId from '@/app/actions/getBoatbyId';
+
+
+import React, { useEffect, useState } from 'react';
 import ClientOnly from '@/app/components/ClientOnly';
 import EmptyState from '@/app/components/Misc/EmptyState';
-import React from 'react'
 import ListingClient from '../ListingClient';
 import ConfirmModal from '@/app/components/Modals/ConfirmModal';
-
+import getBoatbyId from '@/app/actions/getBoatbyId'; 
+import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 
 
 interface Iparams {
   listingid?: string;
 }
 
+interface IBoatData {
+  reservedDates: Date[];
+  getboat: DocumentSnapshot<DocumentData>;
+}
 
-const Listingpage = async  ({ params }: { params: Iparams }) => {
 
-   //This call increase firestore usage..need to call firestore directly here 
-  const Boat = await getBoatbyId(params);
+const Listingpage = ({ params }: { params: Iparams }) => {
+  const [boatData, setBoatData] = useState<IBoatData | null>(null);
 
-    if (!Boat) {
-      return (
-        <ClientOnly>
-          <EmptyState />
-        </ClientOnly>
-      )
-    }
-    
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBoatData = async () => {
+      try {
+        if (params.listingid) {
+          const fetchedBoatData = await getBoatbyId(params);
+          setBoatData(fetchedBoatData);
+        }
+      } catch (error) {
+        console.error('Error fetching boat data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBoatData();
+  }, [params]);
+
+  if (loading) {
+    // You can show a loading spinner here
+    return <div>Loading...</div>;
+  }
+
+  if (!boatData) {
     return (
       <ClientOnly>
-        <ListingClient listing={Boat} />
-        <ConfirmModal listing={Boat}/>
+        <EmptyState />
       </ClientOnly>
     );
+  }
 
+  return (
+    <ClientOnly>
+      <ListingClient listing={boatData} />
+    </ClientOnly>
+  );
 };
 
-export default Listingpage
+export default Listingpage;

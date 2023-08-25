@@ -14,9 +14,6 @@ import { useRouter } from 'next/navigation';
 
 
 
-
-
-
 const RightContent = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
@@ -28,7 +25,7 @@ const RightContent = () => {
     
 
     const handleLogout = () => {
-        signOut()
+        signOut();
     };
 
     const toggleOpen = useCallback(() => {

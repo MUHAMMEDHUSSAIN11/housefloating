@@ -6,8 +6,6 @@ import EmptyState from "../components/Misc/EmptyState";
 
 
 export default async function Boat(){
-
-  try{
     const listings = await getListings();
     
     if(listings == null){
@@ -21,7 +19,7 @@ export default async function Boat(){
     return(
       <ClientOnly>
         <Container>
-          <div className="pb-20 pt-28">
+          <div className="pb-20 pt-16">
         <div className="pt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-8">
          {listings.map((listing:any)=>{
           return(
@@ -33,10 +31,5 @@ export default async function Boat(){
       </Container>
       </ClientOnly>
     )
-
-  }catch(error:any){
-    console.log(error);
-    
-  }
 
 }

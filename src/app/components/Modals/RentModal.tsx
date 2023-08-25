@@ -19,8 +19,11 @@ enum STEPS {
     CATEGORY = 0,
     INFO = 1,
     DESCRIPTION = 2,
-    IMAGES = 3,
-    PRICE = 4,
+    MAINIMAGE = 3,
+    SUBIMAGE = 4,
+    SUBIMAGETWO = 5,
+    SUBIMAGETHREE = 6,
+    PRICE = 7,
 }
 
 const categories = [
@@ -40,21 +43,30 @@ const RentModal = () => {
 
     const [step, setStep] = useState(STEPS.CATEGORY)
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, imageSrc: '', price: 6000, title: '', description: '' } });
+    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000, title: '', description: '' } });
 
 
     const category = watch('category');
     const guestCount = watch('guestCount');
     const roomCount = watch('roomCount');
     const bathroomCount = watch('bathroomCount');
-    const imageSrc = watch('imageSrc');
+    const image = watch('images');
+
     const setCustomValue = (id: string, value: any) => {
-        setValue(id, value, {
-            shouldDirty: true,
-            shouldTouch: true,
-            shouldValidate: true
-        })
-    }
+        if (id === 'images') {
+            setValue('images', [...image, value], {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+            });
+        } else {
+            setValue(id, value, {
+                shouldDirty: true,
+                shouldTouch: true,
+                shouldValidate: true,
+            });
+        }
+    };
 
 
     const onBack = () => {
@@ -85,8 +97,6 @@ const RentModal = () => {
         };
         createBoatDocument();
     };
-  
-
 
 
     const actionLabel = useMemo(() => {
@@ -145,18 +155,55 @@ const RentModal = () => {
         )
     }
 
-    if (step === STEPS.IMAGES) {
+    if (step === STEPS.MAINIMAGE) {
         bodyContent = (
             <div className="flex flex-col gap-8">
-                <Heading title="Add a photo of your place" subtitle="Show guests what your place looks like!" />
+                <Heading title="Add an outer photo of your place" subtitle="Show guests what your place looks like!" />
                 <ImageUpload
-                    onChange={(value) => setCustomValue('imageSrc', value)}
-                    value={imageSrc}/>
+                    onChange={(value) => setCustomValue('images', value)}
+                    value={image}
+                />
             </div>
 
         )
     }
 
+    if (step === STEPS.SUBIMAGE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Add a sub image of your place" subtitle="Show guests what your place looks like!" />
+                <ImageUpload
+                    onChange={(value) => setCustomValue('images', value)}
+                    value={image}
+                />
+            </div>
+
+        )
+    }
+    if (step === STEPS.SUBIMAGETWO) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Add a second sub image of your place" subtitle="Show guests what your place looks like!" />
+                <ImageUpload
+                    onChange={(value) => setCustomValue('images', value)}
+                    value={image}
+                />
+            </div>
+
+        )
+    }
+    if (step === STEPS.SUBIMAGETHREE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Add a third sub image of your place" subtitle="Show guests what your place looks like!" />
+                <ImageUpload
+                    onChange={(value) => setCustomValue('images', value)}
+                    value={image}
+                />
+            </div>
+
+        )
+    }
 
     if (step === STEPS.PRICE) {
         bodyContent = (

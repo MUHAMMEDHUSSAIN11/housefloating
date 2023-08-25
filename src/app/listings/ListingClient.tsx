@@ -12,6 +12,9 @@ import { auth } from '../firebase/clientApp';
 import useBookingConfirmModal from '../hooks/useBookingConfirmModal';
 import ListingReservation from '../components/ListingCard/ListingReservation';
 import useBookingDateStore from '../hooks/useBookingDate';
+import ConfirmModal from '../components/Modals/ConfirmModal';
+import Counter from '../components/Inputs/Counter';
+
 
 
 interface ListingClientProps {
@@ -28,27 +31,32 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listing.getboat.data()?.price);
-  // const [bookingDate, setBookingdate] = useState<Date>(new Date);
-  const date = useBookingDateStore();
+  const [finalGuestCount,setFinalGuestCount] = useState(listing.getboat.data()?.guestCount);
+  const [finalChildCount,setFinalChildCount] = useState(0);
+   const [bookingDate, setBookingdate] = useState<Date>(new Date);
+  // const date = useBookingDateStore();
+
+  
 
 
-  const onCreateReservation = useCallback(() => {
+  const onCreateReservation = useCallback (() => {
     if (user) {
       return bookingConfirmModal.onOpen();
     } else {
       return loginModal.onOpen();
     }
 
-  }, [user, bookingConfirmModal, loginModal, date.bookingDate])
+  }, [user, bookingConfirmModal, loginModal])
 
 
   return (
     <ClientOnly>
-      <div className='max-w-screen-lg mx-auto'>
+      <ConfirmModal listing={listing} finalPrice={totalPrice} finalHeadCount ={finalGuestCount} finalBookingDate ={bookingDate} finalMinorCount= {finalChildCount}/>
+      <div className='max-w-screen-lg mx-auto pt-28'>
         <div className='flex flex-col gap-6'>
           <ListingHead
             title={listing.getboat.data()?.title}
-            imageSrc={listing.getboat.data()?.imageSrc}
+            imageSrc={listing.getboat.data()?.images}
             category={listing.getboat.data()?.category}
             roomCount={listing.getboat.data()?.roomCount}
             id={listing.getboat.id} />
@@ -59,15 +67,15 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               roomCount={listing.getboat.data()?.roomCount}
               guestCount={listing.getboat.data()?.guestCount}
               bathroomCount={listing.getboat.data()?.bathroomCount} />
-            <div className='order-first mb-10 md:order-last md:col-span-3'>
+            <div className=' mb-10 md:order-last md:col-span-3'>
               <ListingReservation
                 price={listing.getboat.data()?.price}
                 totalPrice={totalPrice}
-                onChangeDate={(value) => date.setBookingDate(value)}
+                onChangeDate={(value) => setBookingdate(value)}
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 disabledDates={listing.reservedDates}
-                date={date.bookingDate}
+                date={bookingDate}
               />
             </div>
           </div>

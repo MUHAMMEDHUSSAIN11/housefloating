@@ -25,14 +25,3 @@ export default async function getListings() {
     return null;
   }
 }
-
-
-//this is used before warning convert into plainobjects of seconds,nanoseconds
-// export default async function getListings() {
-//   try {
-//     const listingRef = collection(firestore, "Boats");
-//     const listingsQueryData = await getDocs(listingRef);  
-//     const listings = listingsQueryData.docs.map((doc) => ({
-//       id: doc.id,
-//       ...doc.data(),
-//     }));

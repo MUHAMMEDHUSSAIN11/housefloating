@@ -21,7 +21,7 @@ export const inter = Inter({
 
 
 export const metadata = {
-  title: 'Houseboats-Online Booking',
+  title: 'Alleppey Houseboats-Online Booking',
   description: 'Book your Houseboat now',
 }
 
