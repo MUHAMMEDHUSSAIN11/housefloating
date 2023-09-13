@@ -30,6 +30,7 @@ interface confirmModalProps {
     finalHeadCount : number,
     finalBookingDate : Date,
     finalMinorCount : number,
+    modeOfTravel : string,
 }
 
 

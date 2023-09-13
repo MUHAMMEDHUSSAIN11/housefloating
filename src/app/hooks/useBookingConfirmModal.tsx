@@ -1,4 +1,4 @@
-//this modal is responsible for the confirmation modal while submitting booking request
+//this modal is used for the confirmation modal while submitting booking request.
 
 import { create } from "zustand";
 

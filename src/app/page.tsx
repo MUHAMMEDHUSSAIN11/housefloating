@@ -1,6 +1,9 @@
 import Background from './components/Hero/Background'
 import Link from 'next/link';
-import Wsection from './components/Hero/Wsection';
+import ExperienceSection from './components/Hero/ExperienceSection';
+import HowToBookSection from './components/Hero/HowToBookSection';
+import WhySection from './components/Hero/WhySection';
+
 
 
 
@@ -9,8 +12,9 @@ export default async function Home() {
     <>
       <Background />
       {/* <Link href="/boats">Boats</Link> */}
-      <Wsection/>
-
+      <WhySection/>
+      <ExperienceSection/>
+      <HowToBookSection/>
     </>
   );
 }

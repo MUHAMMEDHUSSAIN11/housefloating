@@ -52,9 +52,15 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
         <div className="font-semibold text-lg">
           {data.title},{data.description}
         </div>
+        <div className='flex flex-row items-center gap-1'>
+          <div className='font-semibold'>{data.roomCount} Bedrooms</div>
+        </div>
         <div className="flex flex-row items-center gap-1">
         <div className="font-light">Starting From</div>
-          <div className="font-semibold">₹ {data.price}</div>
+          <div className="font-semibold">₹ {data.price} /-</div>
+        </div>
+        <div className='flex flex-row items-center gap-1'>
+          <div className='font-semibold'></div>
         </div>
         {onAction && actionLabel && (
           <Button

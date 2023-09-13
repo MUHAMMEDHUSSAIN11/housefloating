@@ -8,27 +8,40 @@ interface CounterProps {
   subtitle: string;
   value: number;
   onChange: (value: number) => void;
+  max?: number,
+  min?: number,
 }
 
-const Counter: React.FC<CounterProps> = ({
-  title,
-  subtitle,
-  value,
-  onChange,
-}) => {
-  const onAdd = useCallback(() => {
-    onChange(value + 1);
-  }, [onChange, value]);
+const Counter: React.FC<CounterProps> = ({ title, subtitle, value, onChange, max, min }) => {
+  // const onAdd = useCallback(() => {
+  //   onChange(value + 1);
+  // }, [onChange, value]);
 
-  const onReduce = useCallback(() => {
-    if (value === 1) {
+  // const onReduce = useCallback(() => {
+  //   if (value === 0) {
+  //     return;
+  //   }
+
+  //   onChange(value - 1);
+  // }, [onChange, value]);
+  const onAdd = useCallback(() => {
+    if (typeof max === 'number' && value >= max) {
       return;
     }
+    onChange(value + 1);
+  }, [onChange, value, max]);
 
+  const onReduce = useCallback(() => {
+    if (typeof min === 'number' && value <= min) {
+      return;
+    }
+    if (value === 0) {
+      return;
+    }
     onChange(value - 1);
-  }, [onChange, value]);
+  }, [onChange, value, min]);
 
-  return ( 
+  return (
     <div className="flex flex-row items-center justify-between">
       <div className="flex flex-col">
         <div className="font-medium">{title}</div>
@@ -37,56 +50,19 @@ const Counter: React.FC<CounterProps> = ({
         </div>
       </div>
       <div className="flex flex-row items-center gap-4">
-        <div
-          onClick={onReduce}
-          className="
-            w-10
-            h-10
-            rounded-full
-            border-[1px]
-            border-neutral-400
-            flex
-            items-center
-            justify-center
-            text-neutral-600
-            cursor-pointer
-            hover:opacity-80
-            transition
-          "
-        >
+        <div onClick={onReduce} className="w-10 h-10 rounded-full border-[1px] border-neutral-400 flex items-center justify-center
+                                           text-neutral-600 cursor-pointer hover:opacity-80 transition">
           <AiOutlineMinus />
         </div>
-        <div 
-          className="
-            font-light 
-            text-xl 
-            text-neutral-600
-          "
-        >
-            {value}
-          </div>
-        <div
-          onClick={onAdd}
-          className="
-            w-10
-            h-10
-            rounded-full
-            border-[1px]
-            border-neutral-400
-            flex
-            items-center
-            justify-center
-            text-neutral-600
-            cursor-pointer
-            hover:opacity-80
-            transition
-          "
-        >
+        <div className="font-light text-xl  text-neutral-600">
+          {value}
+        </div>
+        <div onClick={onAdd} className="w-10 h-10 rounded-full border-[1px] border-neutral-400 flex items-center justify-center text-neutral-600 cursor-pointer hover:opacity-80 transition">
           <AiOutlinePlus />
         </div>
       </div>
     </div>
-   );
+  );
 }
- 
+
 export default Counter;
