@@ -10,10 +10,10 @@ const Background = () => {
       <div className="absolute inset-0 bg-black/20 flex flex-col justify-center items-center">
         <div className="text-center mt-36">
           <h1 className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-5xl xl:text-6xl font-sans font-semibold leading-tight">
-            Book your next houseboat trip online
+         Discover Alleppey's Stunning Houseboats Online
           </h1>
         </div>
-        <div className="mt-5 md:hidden">
+        <div className="mt-5 lg:hidden">
           <MiddleContent />
         </div>
       </div>

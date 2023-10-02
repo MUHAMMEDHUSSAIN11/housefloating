@@ -18,6 +18,8 @@ interface ListingInfoProps {
   adultCount: number,
   childCount: number,
   travelMode: string,
+  dayGuestCountMax : number,
+  nightGuestCountMax : number,
 }
 
 const Map = dynamic(() => import('../Misc/Map'), {
@@ -26,17 +28,17 @@ const Map = dynamic(() => import('../Misc/Map'), {
 
 
 const coordinates = [9.5008, 76.3443]
-const ListingInfo: React.FC<ListingInfoProps> = ({ category, travelMode, bathroomCount, description, guestCount, roomCount, setAdultCount, setChildCount, adultCount, childCount }) => {
+const ListingInfo: React.FC<ListingInfoProps> = ({ dayGuestCountMax,nightGuestCountMax, travelMode, bathroomCount, description, guestCount, roomCount, setAdultCount, setChildCount, adultCount, childCount }) => {
 
   let adultCounterMax = 0;
   if (travelMode === "DayCruise") {
-    adultCounterMax = guestCount * 10;
+    adultCounterMax = dayGuestCountMax;
   } else if (travelMode === "Overnight") {
-    adultCounterMax = guestCount * 3;
+    adultCounterMax = nightGuestCountMax;
   }
 
   return (
-    <div className='col-span-4 flex flex-col gap-8'>
+    <div className='col-span-4 flex flex-col gap-8 px-1'>
       <div className='flex flex-col gap-2'>
         <div className="text-xl flex flex-row items-center gap-2">
           <div>{guestCount} Guests</div>
@@ -46,10 +48,10 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ category, travelMode, bathroo
       </div>
       <hr />
       <div className=''>
-        <Counter onChange={(value) => setAdultCount(value)} min={guestCount} max={adultCounterMax} value={adultCount} title="Number of Adults" subtitle="How many you have?" />
+        <Counter onChange={(value) => setAdultCount(value)} min={guestCount} max={adultCounterMax} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
       </div>
       <div className=''>
-        <Counter onChange={(value) => setChildCount(value)}  value={childCount} title="Number of Childrens" subtitle="How many you have?" />
+        <Counter onChange={(value) => setChildCount(value)} value={childCount} title="Number of Childrens" subtitle="Ages 5 to 11" />
       </div>
       <hr />
       <Map center={coordinates} />

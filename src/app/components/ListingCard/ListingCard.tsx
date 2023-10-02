@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import Image from 'next/image'
 import Button from '../Misc/Button'
 import { Timestamp } from 'firebase/firestore'
@@ -50,10 +50,10 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
           <Image fill className="object-cover h-full w-full group-hover:scale-110 transition" src={data.images[0]} alt="Listing" />
         </div>
         <div className="font-semibold text-lg">
-          {data.title},{data.description}
+          {data.title},{data.roomCount} Bedrooms
         </div>
         <div className='flex flex-row items-center gap-1'>
-          <div className='font-semibold'>{data.roomCount} Bedrooms</div>
+          <div className='font-semibold'>{data.category}</div>
         </div>
         <div className="flex flex-row items-center gap-1">
         <div className="font-light">Starting From</div>

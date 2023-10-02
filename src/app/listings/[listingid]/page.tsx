@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import ClientOnly from '@/app/components/ClientOnly';
 import EmptyState from '@/app/components/Misc/EmptyState';
 import ListingClient from '../ListingClient';
-import ConfirmModal from '@/app/components/Modals/ConfirmModal';
 import getBoatbyId from '@/app/actions/getBoatbyId'; 
 import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 

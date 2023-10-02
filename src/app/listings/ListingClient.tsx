@@ -12,6 +12,15 @@ import useBookingConfirmModal from '../hooks/useBookingConfirmModal';
 import ListingReservation from '../components/ListingCard/ListingReservation';
 import ConfirmModal from '../components/Modals/ConfirmModal';
 import useTravelModeStore from '../hooks/useTravelModeStore';
+import DayCruiseSteps from '../components/Descriptions/DayCruiseSteps';
+import NightSteps from '../components/Descriptions/NightSteps';
+import Occupancy from '../components/Descriptions/Occupancy';
+import Updated from '../components/Hero/Updated';
+import Footer from '../components/Hero/Footer';
+import DeluxeFood from '../components/FoodMenu/DeluxeFood';
+import PremiumFood from '../components/FoodMenu/PremiumFood';
+import LuxuryFood from '../components/FoodMenu/LuxuryFood';
+
 
 
 
@@ -29,9 +38,9 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listing.getboat.data()?.price);
-  const [finalAdultCount,setFinalAdultCount] = useState(listing.getboat.data()?.guestCount);
-  const [finalChildCount,setFinalChildCount] = useState(0);
-  const [bookingDate,setBookingdate] = useState<Date>(new Date);
+  const [finalAdultCount, setFinalAdultCount] = useState(listing.getboat.data()?.guestCount);
+  const [finalChildCount, setFinalChildCount] = useState(0);
+  const [bookingDate, setBookingdate] = useState<Date>(new Date);
   const cruiseType = useTravelModeStore();
   // const date = useBookingDateStore();
 
@@ -59,10 +68,11 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
     });
 
     setTotalPrice(formattedTotalPrice);
-  }, [finalAdultCount, finalChildCount, listing, bookingDate]);
+  }, [finalAdultCount, finalChildCount, bookingDate]);
 
 
   const onCreateReservation = useCallback(() => {
+    //need to check if final guest count should be less than maximum for mode of travel
     if (user) {
       return bookingConfirmModal.onOpen();
     } else {
@@ -96,6 +106,8 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               setChildCount={setFinalChildCount}
               adultCount={finalAdultCount}
               childCount={finalChildCount}
+              dayGuestCountMax={listing.getboat.data()?.maxDayGuest}
+              nightGuestCountMax={listing.getboat.data()?.maxNightGuest}
             />
             <div className=' mb-10 md:order-last md:col-span-3'>
               <ListingReservation
@@ -109,8 +121,50 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               />
             </div>
           </div>
+          {cruiseType.travelMode === "Overnight" ? (
+            <>
+              <Occupancy title={'Overnight Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxNightGuest} Count={listing.getboat.data()?.guestCount} />
+              <hr />
+              <NightSteps />
+            </>
+          ) : (
+            <>
+              <Occupancy title={'Day Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxDayGuest} Count={listing.getboat.data()?.guestCount} />
+              <hr />
+              <DayCruiseSteps />
+            </>
+          )}
+          {
+            (() => {
+              if (listing.getboat.data()?.category === "Deluxe Houseboats") {
+                return (
+                  <>
+                  <hr/>
+                  <DeluxeFood/>
+                  </>
+                )
+              } else if (listing.getboat.data()?.category === "Premium Houseboats") {
+                return (
+                  <>
+                  <hr/>
+                  <PremiumFood/>
+                  </>
+                )
+              } else {
+                return (
+                  <>
+                  <hr/>
+                  <LuxuryFood/>
+                  </>
+                )
+              }
+            })()
+          }
         </div>
       </div>
+      <hr />
+      <Updated />
+      <Footer />
     </ClientOnly>
   )
 }

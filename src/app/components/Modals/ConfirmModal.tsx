@@ -193,7 +193,10 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHea
         bodyContent = (
             <div className='flex flex-col gap-4'>
                 <Heading title='your order summary' />
-                <h2>you have selected {finalBookingDate.toDateString()}</h2>
+                <p className='font-semibold font-sans'>You have selected {listing.getboat.data()?.title} {listing.getboat.data()?.roomCount} Bedroom Houseboat<br/> on {finalBookingDate.toDateString()}
+                <br/> for {finalPrice}
+                </p>
+                <p>Guest Count : {finalHeadCount + finalMinorCount}</p>
             </div>
         )
     }

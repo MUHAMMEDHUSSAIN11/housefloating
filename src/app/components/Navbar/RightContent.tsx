@@ -57,10 +57,6 @@ const RightContent = () => {
             {isOpen &&
                 <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
                     <div className="flex flex-col cursor-pointer">
-                         {/* <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition"> Deluxe HouseBoats </div>
-                        <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition"> Premium HouseBoats</div>
-                        <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition">Luxury Houseboats</div>  */}
-                        {/* <hr /> */}
                         {user && (
                             <>
                             <UserMenuItem onClick={handleLogout} label="Logout" />

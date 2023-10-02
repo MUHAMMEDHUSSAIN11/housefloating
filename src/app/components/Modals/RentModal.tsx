@@ -19,11 +19,12 @@ enum STEPS {
     CATEGORY = 0,
     INFO = 1,
     DESCRIPTION = 2,
-    MAINIMAGE = 3,
-    SUBIMAGE = 4,
-    SUBIMAGETWO = 5,
-    SUBIMAGETHREE = 6,
-    PRICE = 7,
+    MAXGUESTCOUNT = 3,
+    MAINIMAGE = 4,
+    SUBIMAGE = 5,
+    SUBIMAGETWO = 6,
+    SUBIMAGETHREE = 7,
+    PRICE = 8,
 }
 
 const categories = [
@@ -43,7 +44,7 @@ const RentModal = () => {
 
     const [step, setStep] = useState(STEPS.CATEGORY)
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000, title: '', description: '' } });
+    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000, title: '',maxDayGuest:0,maxNightGuest:0 } });
 
 
     const category = watch('category');
@@ -51,6 +52,8 @@ const RentModal = () => {
     const roomCount = watch('roomCount');
     const bathroomCount = watch('bathroomCount');
     const image = watch('images');
+    const maxDayGuest = watch('maxDayGuest');
+    const maxNightGuest = watch('maxNightGuest');
 
     const setCustomValue = (id: string, value: any) => {
         if (id === 'images') {
@@ -58,6 +61,7 @@ const RentModal = () => {
                 shouldDirty: true,
                 shouldTouch: true,
                 shouldValidate: true,
+
             });
         } else {
             setValue(id, value, {
@@ -85,16 +89,29 @@ const RentModal = () => {
 
         const createBoatDocument = async () => {
             try {
-                await addDoc(collection(firestore, "Boats"), JSON.parse(JSON.stringify(data)));
-                setIsLoading(false);
-                rentModal.onClose();
-                toast.success("Boat successfully added")
+              // Parse numeric values
+              const parsedData = {
+                ...data,
+                price: parseFloat(data.price), // Assuming price is a decimal number
+                maxDayGuest: parseInt(data.maxDayGuest), // Assuming maxDayGuest is an integer
+                maxNightGuest: parseInt(data.maxNightGuest), // Assuming maxNightGuest is an integer
+                reservations: [], // Initialize reservations as an empty array
+              };
+          
+              // Add Firestore Timestamps to the reservations array
+              parsedData.reservations = [];
+          
+              await addDoc(collection(firestore, "Boats"), parsedData);
+              setIsLoading(false);
+              rentModal.onClose();
+              toast.success("Boat successfully added");
             } catch (error) {
-                console.log(error);
-                toast.error("something went wrong!")
-                setIsLoading(false);
+              console.error(error);
+              toast.error("Something went wrong!");
+              setIsLoading(false);
             }
-        };
+          };
+          
         createBoatDocument();
     };
 
@@ -149,9 +166,20 @@ const RentModal = () => {
             <div className="flex flex-col gap-8">
                 <Heading title="How would you describe your place?" subtitle="Short and sweet works best!" />
                 <Input id="title" label="Title" disabled={isLoading} register={register} errors={errors} required />
-                <hr />
-                <Input id="description" label="Description" disabled={isLoading} register={register} errors={errors} required />
+                {/* <hr />
+                <Input id="description" label="Description" disabled={isLoading} register={register} errors={errors} required /> */}
             </div>
+        )
+    }
+
+    if(step === STEPS.MAXGUESTCOUNT){
+        bodyContent =(
+            <div className="flex flex-col gap-8">
+            <Heading title="Max number of Guests you'd allow?" subtitle="Gives clarity to the guest!." />
+            <Input id="maxDayGuest" label="MaxDayGuestCount" disabled={isLoading} register={register} errors={errors} required />
+            <hr />
+            <Input id="maxNightGuest" label="MaxNightGuestCount" disabled={isLoading} register={register} errors={errors} required />
+        </div>
         )
     }
 
