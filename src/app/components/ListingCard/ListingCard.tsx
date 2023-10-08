@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar';
 import React, { useCallback } from 'react'
 import Image from 'next/image'
 import Button from '../Misc/Button'

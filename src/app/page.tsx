@@ -9,14 +9,10 @@ import Faq from './components/Hero/Faq';
 
 
 
-
-
-
 export default async function Home() {
   return (
     <>
       <Background />
-      {/* <Link href="/boats">Boats</Link> */}
       <WhySection/>
       <ExperienceSection/>
       <HowToBookSection/>

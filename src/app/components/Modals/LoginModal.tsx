@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { AiFillFacebook } from "react-icons/ai";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next-nprogress-bar';
 
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
