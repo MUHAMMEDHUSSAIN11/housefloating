@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import AdditionalInfo from './AdditionalInfo';
 
+
 const NightSteps = () => {
     // Initialize state to manage visibility--  this was added after Overnightsteps to reduce the screensize
     const [showMore, setShowMore] = useState(false);

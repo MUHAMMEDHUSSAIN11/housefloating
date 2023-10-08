@@ -2,7 +2,6 @@
 
 import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore'
 import React, { useCallback, useEffect, useState } from 'react'
-import ClientOnly from '../components/ClientOnly'
 import ListingHead from '../components/ListingCard/ListingHead'
 import ListingInfo from '../components/ListingCard/ListingInfo';
 import useLoginModal from '../hooks/useLoginModal';
@@ -20,12 +19,13 @@ import Footer from '../components/Hero/Footer';
 import DeluxeFood from '../components/FoodMenu/DeluxeFood';
 import PremiumFood from '../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../components/FoodMenu/LuxuryFood';
+import HouseRules from '../components/Descriptions/HouseRules';
 
 
 
 
 interface ListingClientProps {
-  listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
+  listing : { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
 }
 
 
@@ -34,8 +34,6 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   const [user] = useAuthState(auth);
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
-
-
   const [isLoading, setIsLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState(listing.getboat.data()?.price);
   const [finalAdultCount, setFinalAdultCount] = useState(listing.getboat.data()?.guestCount);
@@ -84,7 +82,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
 
 
   return (
-    <ClientOnly>
+    <>
       <ConfirmModal listing={listing} modeOfTravel={cruiseType.travelMode} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalBookingDate={bookingDate} finalMinorCount={finalChildCount} />
       <div className='max-w-screen-lg mx-auto pt-28'>
         <div className='flex flex-col gap-6'>
@@ -139,33 +137,35 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               if (listing.getboat.data()?.category === "Deluxe Houseboats") {
                 return (
                   <>
-                  <hr/>
-                  <DeluxeFood/>
+                    <hr />
+                    <DeluxeFood />
                   </>
                 )
               } else if (listing.getboat.data()?.category === "Premium Houseboats") {
                 return (
                   <>
-                  <hr/>
-                  <PremiumFood/>
+                    <hr />
+                    <PremiumFood />
                   </>
                 )
               } else {
                 return (
                   <>
-                  <hr/>
-                  <LuxuryFood/>
+                    <hr />
+                    <LuxuryFood />
                   </>
                 )
               }
             })()
           }
+          <hr />
+          <HouseRules />
         </div>
       </div>
       <hr />
       <Updated />
       <Footer />
-    </ClientOnly>
+      </>
   )
 }
 

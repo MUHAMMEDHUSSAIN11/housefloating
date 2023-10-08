@@ -6,10 +6,6 @@ export default function handler(req:any,res:any){
     }
     const { phoneNumber } = req.body;
     const {code} = req.body;
-
-    //remove this after use
-    console.log(code);
-    console.log(phoneNumber);
     
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;

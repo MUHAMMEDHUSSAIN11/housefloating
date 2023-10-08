@@ -10,7 +10,7 @@ import {  useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/clientApp';
 import { useSignOut } from 'react-firebase-hooks/auth';
 import useRentModal from '@/app/hooks/useRentModal';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 
 
 
