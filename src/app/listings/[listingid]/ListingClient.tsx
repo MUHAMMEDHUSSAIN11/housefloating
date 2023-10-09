@@ -2,24 +2,24 @@
 
 import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore'
 import React, { useCallback, useEffect, useState } from 'react'
-import ListingHead from '../components/ListingCard/ListingHead'
-import ListingInfo from '../components/ListingCard/ListingInfo';
-import useLoginModal from '../hooks/useLoginModal';
+import ListingHead from '../../components/ListingCard/ListingHead'
+import ListingInfo from '../../components/ListingCard/ListingInfo';
+import useLoginModal from '../../hooks/useLoginModal';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase/clientApp';
-import useBookingConfirmModal from '../hooks/useBookingConfirmModal';
-import ListingReservation from '../components/ListingCard/ListingReservation';
-import ConfirmModal from '../components/Modals/ConfirmModal';
-import useTravelModeStore from '../hooks/useTravelModeStore';
-import DayCruiseSteps from '../components/Descriptions/DayCruiseSteps';
-import NightSteps from '../components/Descriptions/NightSteps';
-import Occupancy from '../components/Descriptions/Occupancy';
-import Updated from '../components/Hero/Updated';
-import Footer from '../components/Hero/Footer';
-import DeluxeFood from '../components/FoodMenu/DeluxeFood';
-import PremiumFood from '../components/FoodMenu/PremiumFood';
-import LuxuryFood from '../components/FoodMenu/LuxuryFood';
-import HouseRules from '../components/Descriptions/HouseRules';
+import { auth } from '../../firebase/clientApp';
+import useBookingConfirmModal from '../../hooks/useBookingConfirmModal';
+import ListingReservation from '../../components/ListingCard/ListingReservation';
+import ConfirmModal from '../../components/Modals/ConfirmModal';
+import useTravelModeStore from '../../hooks/useTravelModeStore';
+import DayCruiseSteps from '../../components/Descriptions/DayCruiseSteps';
+import NightSteps from '../../components/Descriptions/NightSteps';
+import Occupancy from '../../components/Descriptions/Occupancy';
+import Updated from '../../components/Hero/Updated';
+import Footer from '../../components/Hero/Footer';
+import DeluxeFood from '../../components/FoodMenu/DeluxeFood';
+import PremiumFood from '../../components/FoodMenu/PremiumFood';
+import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
+import HouseRules from '../../components/Descriptions/HouseRules';
 
 
 

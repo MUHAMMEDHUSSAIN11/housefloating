@@ -5,12 +5,11 @@ import Container from '../components/Misc/Container';
 import ListingCard from '../components/ListingCard/ListingCard';
 import EmptyState from '../components/Misc/EmptyState';
 import useSWR from 'swr';
-import getListings from '@/pages/api/firestore/getListings';
-import Footer from '../components/Hero/Footer';
+import getListings from '../actions/getListings';
 
 
 const page = () => {
-    const { data: listings, error, isValidating, isLoading } = useSWR('api/firestore', getListings, {
+    const { data: listings, error, isValidating, isLoading } = useSWR('actions', getListings, {
       refreshInterval: 25 * 60 * 1000, 
     });
 

@@ -2,31 +2,32 @@
 
 import React from 'react';
 import EmptyState from '@/app/components/Misc/EmptyState';
-import ListingClient from '../ListingClient';
-import getBoatbyId from '@/pages/api/firestore/getBoatbyId'; 
-import useSWR from 'swr';
+import ListingClient from './ListingClient';
 
+import useSWR from 'swr';
+import getBoatbyId from '@/app/actions/getBoatbyId';
 
 interface Iparams {
   listingid?: string;
 }
 
-const Listingpage = async ({ params }: { params: Iparams }) => {
+const fetchBoatData = async (listingId: string | undefined) => {
+  const fetchedBoatData = await getBoatbyId({ listingid: listingId });
+  return fetchedBoatData;
+};
 
-  const fetchedBoatData = await getBoatbyId(params);
+const Listingpage = ({ params }: { params: Iparams }) => {
+  const listingId = params.listingid;
+  const { data: fetchedBoatData } = useSWR(listingId, () => fetchBoatData(listingId));
 
   if (!fetchedBoatData) {
     return (
-      
-        <EmptyState showReset />
-     
+      <EmptyState showReset />
     );
   } 
 
   return (
- 
-      <ListingClient listing={fetchedBoatData} />
-   
+    <ListingClient listing={fetchedBoatData} />
   );
 };
 
