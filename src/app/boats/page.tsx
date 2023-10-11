@@ -8,7 +8,7 @@ import useSWR from 'swr';
 import getListings from '../actions/getListings';
 
 
-const page = () => {
+const Page = () => {
     const { data: listings, error, isValidating, isLoading } = useSWR('actions', getListings, {
       refreshInterval: 25 * 60 * 1000, 
     });
@@ -49,4 +49,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
