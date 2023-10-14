@@ -202,7 +202,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHea
                 }
               })
               .then((docRef) => {
-                toast.success('Boat enquiry raised successfully');
+                toast.success('Boat enquiry raised successfully.');
                 BookingConfirmModal.onClose();
                 setStep(STEPS.PHONENUMBER);
               })
