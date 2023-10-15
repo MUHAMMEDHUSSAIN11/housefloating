@@ -1,18 +1,22 @@
 'use client';
 
 import React from 'react';
+import { IoCheckmarkCircle, IoFastFoodSharp, IoTrainSharp } from 'react-icons/io5'
 
 const AdditionalInfo = () => {
-
   return (
-    <div className="bg-white p-4 shadow-md rounded-lg">
-      <h2 className="text-xl font-semibold font-sans mb-4">Additional Information</h2>
-      <ul className='pl-4'>
-          <li className=" mb-2 list-disc">
-          Confirmation will be received within 2 hours of booking, subject to availability
-          </li>
-          <li className=" mb-2 list-disc">Meals Included</li>
-          <li className=" mb-2 list-disc">Near by Public Transport</li>
+    <div className="bg-white p-4 shadow-md rounded-lg font-sans">
+      <h2 className="text-xl font-semibold  mb-4">Additional Information</h2>
+      <ul className="pl-4 text-md">
+        <li className="mb-2 flex items-center">
+          <IoCheckmarkCircle className="mr-2 text-blue-500" size={25}/> Confirmation will be received within 2 hours of booking.
+        </li>
+        <li className="mb-2 flex items-center">
+          <IoFastFoodSharp className="mr-2 text-blue-500" size={20} /> Meals Included.
+        </li>
+        <li className="mb-2 flex items-center">
+          <IoTrainSharp className="mr-2 text-blue-500" size={20} /> Near by Public Transport.
+        </li>
       </ul>
     </div>
   );

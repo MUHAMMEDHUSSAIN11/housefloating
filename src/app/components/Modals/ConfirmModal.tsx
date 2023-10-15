@@ -26,15 +26,15 @@ enum STEPS {
 
 interface confirmModalProps {
     listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> },
-    finalPrice : number,
-    finalHeadCount : number,
-    finalBookingDate : Date,
-    finalMinorCount : number,
-    modeOfTravel : string,
+    finalPrice: number,
+    finalHeadCount: number,
+    finalBookingDate: Date,
+    finalMinorCount: number,
+    modeOfTravel: string,
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHeadCount,finalBookingDate,finalMinorCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
 
@@ -42,7 +42,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHea
     const [isLoading, setIsLoading] = useState(false);
     const [otp, setOtp] = useState('');
 
-    // const requestedDate = useBookingDateStore();
     const [user] = useAuthState(auth);
     const travelMode = useTravelModeStore();
 
@@ -52,13 +51,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHea
     const phonenumber = watch('phonenumber');
     // const otp = watch('otp');
 
-    //enable validation by npm..
-
-    // const phoneValidation = usePhoneValidation(phonenumber);
-    // const isPhoneValid = 
-    // phoneValidation.isValid &&
-    //   phoneValidation.areaCodeMatch &&
-    //   phoneValidation.formatMatch;
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -121,57 +113,45 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHea
             }
         }
 
-        //Validating the OTP
+        // Validating the OTP
         if (step === STEPS.OTP) {
-
-            if (otp.length < 4) {
-                toast.error("OTP must be 4 digits");
-                return;
-            }
             try {
-                validateOTP(cleanedPhoneNumber, otp)
-                .then(response => {
-                    if (response && response.ok) {
-                        response.json()
-                        .then(responseData => {
-                            if (responseData.verification_Check_status === "approved") {
-                                toast.success("OTP verified successfully");
-                                onNext();
-                            } else {
-                                toast.error('OTP verification failed');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error parsing JSON:', error);
-                            toast.error('Error verifying OTP');
-                        });
+                if (otp.length < 4) {
+                    throw new Error("OTP must be 4 digits");
+                }
+                const response = await validateOTP(cleanedPhoneNumber, otp);
+                if (response && response.ok) {
+                    const responseData = await response.json();
+                    if (responseData.verification_Check_status === "approved") {
+                        toast.success("OTP verified successfully");
+                        onNext();
                     } else {
-                        // API call failed
-                        toast.error('Error verifying OTP');
+                        toast.error('OTP verification failed');
                     }
-                })
-                .catch(error => {
-                    console.error('API error:', error);
+                } else {
+                    // API call failed
                     toast.error('Error verifying OTP');
-                });
+                }
             } catch (error) {
+                console.error('Error:', error);
                 toast.error('Error verifying OTP');
             }
         }
+
         //Raising the request for booking
         if (step === STEPS.SUMMARY) {
             const reservationsCollection = collection(firestore, 'Reservations');
             // Create a new reservation document
             const reservationData = {
-                Contactnumber: data,
+                Contactnumber: data.phonenumber,
                 BookingDate: finalBookingDate,
                 HeadCount: finalHeadCount,
                 Price: finalPrice,
                 Email: user?.email,
                 BoatId: listing.getboat.id,
-                BoatName:listing.getboat.data()?.title,
+                BoatName: listing.getboat.data()?.title,
                 MinorCount: finalMinorCount,
-                Mode:travelMode.travelMode,
+                Mode: travelMode.travelMode,
             };
 
             runTransaction(firestore, async (transaction) => {
@@ -180,35 +160,34 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHea
                 // Get the current reservations array
                 const boatDoc = await transaction.get(boatDocRef);
                 const currentReservations = boatDoc.data()?.reservations || [];
-              
+
                 // Convert finalBookingDate to Firestore Timestamp
                 const finalBookingTimestamp = new Timestamp(
-                  Math.floor(finalBookingDate.getTime() / 1000), // Convert milliseconds to seconds
-                  0 // Nanoseconds
+                    Math.floor(finalBookingDate.getTime() / 1000), // Convert milliseconds to seconds
+                    0 // Nanoseconds
                 );
                 // Add the new bookingDate (as Timestamp) to the reservations array
                 currentReservations.push(finalBookingTimestamp);
-              
+
                 try {
-                  // Update the "Reservations" array in the "Boats" collection
-                  transaction.update(boatDocRef, { reservations: currentReservations });
-              
-                  // Add the reservation to the "Reservations" collection
-                  const docRef = await addDoc(reservationsCollection, reservationData);
-              
-                  return docRef;
+                    // Update the "Reservations" array in the "Boats" collection
+                    transaction.update(boatDocRef, { reservations: currentReservations });
+
+                    // Add the reservation to the "Reservations" collection
+                    const docRef = await addDoc(reservationsCollection, reservationData);
+                    return docRef;
                 } catch (error) {
-                  throw error; // Rethrow the error for proper handling in the .catch block
+                    throw error; // Rethrow the error for proper handling in the .catch block
                 }
-              })
-              .then((docRef) => {
-                toast.success('Boat enquiry raised successfully.');
-                BookingConfirmModal.onClose();
-                setStep(STEPS.PHONENUMBER);
-              })
-              .catch((error) => {
-                toast.error('Error adding reservation: ' + error.message);
-              });
+            })
+                .then((docRef) => {
+                    toast.success('Boat enquiry raised successfully.');
+                    BookingConfirmModal.onClose();
+                    setStep(STEPS.PHONENUMBER);
+                })
+                .catch((error) => {
+                    toast.error('Something went wrong in reservation');
+                });
         }
     }
 
@@ -241,9 +220,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing,finalPrice,finalHea
             <div className='flex flex-col gap-4'>
                 <Heading title='your order summary' />
                 <p className='font-semibold font-sans'>You have selected {listing.getboat.data()?.title},
-                 {listing.getboat.data()?.roomCount} Bedroom,{listing.getboat.data()?.category}
-                 <br/> on {finalBookingDate.toDateString()}
-                <br/> for {finalPrice}
+                    {listing.getboat.data()?.roomCount} Bedroom,{listing.getboat.data()?.category}
+                    <br /> on {finalBookingDate.toDateString()}
+                    <br /> for {finalPrice}
                 </p>
                 <p>Guest Count : {finalHeadCount + finalMinorCount}</p>
             </div>

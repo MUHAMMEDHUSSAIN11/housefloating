@@ -84,7 +84,7 @@ const RegisterModal = () => {
     if (userCred) {
       createUserDocument(userCred?.user)
     }
-  }, [userCred,createUserDocument])
+  }, [userCred])
 
 
 //create user document when the google is used for login

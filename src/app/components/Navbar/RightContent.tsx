@@ -71,7 +71,7 @@ const RightContent = () => {
                             <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition ">Contact Us</div>
                             </>
                         )}
-                        {user?.uid == 'BTYYete0GSRapIiCv2Z262Hy8RT2' && (
+                        {user?.uid == 'zX8nYa6x9yRPW8rXbrEkCd7cWXH2' && (
                             <>
                              <UserMenuItem onClick={onRent} label="Add Listing" />
                             </>
