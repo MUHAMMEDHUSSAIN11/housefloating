@@ -15,6 +15,8 @@ import toast from 'react-hot-toast';
 import sendotp from '@/app/actions/getOTP';
 import validateOTP from '@/app/actions/validateOTP';
 import useTravelModeStore from '@/app/hooks/useTravelModeStore';
+import { useRouter } from 'next-nprogress-bar';
+
 
 
 
@@ -44,6 +46,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
 
     const [user] = useAuthState(auth);
     const travelMode = useTravelModeStore();
+    const router = useRouter();
+    
 
     //need to redesign this as inputs are custom react npm's..
     const { register, handleSubmit, setValue, watch, formState: { errors, }, } = useForm<FieldValues>();
@@ -152,6 +156,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 BoatName: listing.getboat.data()?.title,
                 MinorCount: finalMinorCount,
                 Mode: travelMode.travelMode,
+                Payment: false,
+                Category: listing.getboat.data()?.category,
+                Status: "Requested",
             };
 
             runTransaction(firestore, async (transaction) => {
@@ -184,6 +191,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                     toast.success('Boat enquiry raised successfully.');
                     BookingConfirmModal.onClose();
                     setStep(STEPS.PHONENUMBER);
+                    router.push('/cart');
                 })
                 .catch((error) => {
                     toast.error('Something went wrong in reservation');
@@ -217,14 +225,17 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
 
     if (step === STEPS.SUMMARY) {
         bodyContent = (
-            <div className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-4 font-sans'>
                 <Heading title='your order summary' />
-                <p className='font-semibold font-sans'>You have selected {listing.getboat.data()?.title},
+                <p>You have selected {listing.getboat.data()?.title},
                     {listing.getboat.data()?.roomCount} Bedroom,{listing.getboat.data()?.category}
                     <br /> on {finalBookingDate.toDateString()}
                     <br /> for {finalPrice}
                 </p>
                 <p>Guest Count : {finalHeadCount + finalMinorCount}</p>
+                <p>Please note that some boats may be unavailable due to Offline or Spot Bookings,
+                    <br/>
+                so kindly wait for 2 hours to get confirmation</p>
             </div>
         )
     }

@@ -22,12 +22,10 @@ const Page = () => {
     )
   }
 
-  if (listings == null) {
+  if (!listings || !Array.isArray(listings)) {
     return (
-    
-        <EmptyState showReset />
-     
-    )
+      <EmptyState showReset />
+    );
   }
 
   return (

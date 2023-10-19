@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useCallback, useEffect, useState } from 'react'
 import { AiOutlineMenu } from "react-icons/ai";
 import { GiSailboat } from 'react-icons/gi';
@@ -73,6 +74,8 @@ const RightContent = () => {
                         )}
                         {user?.uid == 'zX8nYa6x9yRPW8rXbrEkCd7cWXH2' && (
                             <>
+                             <UserMenuItem onClick={() => router.push('/admin')} label="Reservations" />
+                             <hr/>
                              <UserMenuItem onClick={onRent} label="Add Listing" />
                             </>
                         )}

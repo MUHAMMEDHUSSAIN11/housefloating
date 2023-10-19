@@ -1,41 +1,14 @@
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { firestore } from "../firebase/clientApp";
-import toast from "react-hot-toast";
+import { collection, getDocs } from 'firebase/firestore'; 
+import { firestore } from '../firebase/clientApp';
 
-// Define a type for the reservation
-type Reservation = {
-  BoatId: string;
-  BoatName: string;
-  BookingDate: any;
-  Contactnumber: string;
-  Email: string;
-  HeadCount: number;
-  MinorCount: number;
-  Mode: string;
-  Price: string;
-};
-
-const getReservations = async (email: string | null) => {
-  try {
-    const reservationsRef = collection(firestore, "Reservations");
-
-    // Create a query against the collection.
-    const q = query(reservationsRef, where("Email", "==", email));
-
-    // Fetch the documents that match the query.
-    const querySnapshot = await getDocs(q);
-
-    // Create an array of reservations of the defined type
-    const reservations: Reservation[] = [];
-    querySnapshot.forEach((doc) => {
-      reservations.push(doc.data() as Reservation);
-    });
-
-    return reservations;
-  } catch (error) {
-    console.error("Error fetching reservations:", error);
-    toast.error("Something went wrong while fetching reservations");
-  }
-};
-
-export default getReservations;
+export default async function getReservations() {
+    try {
+        const ReservationRef = collection(firestore, "Reservations");
+        const ReservationData = await getDocs(ReservationRef);
+        return ReservationData;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    
+}

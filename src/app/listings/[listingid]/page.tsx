@@ -18,9 +18,17 @@ const fetchBoatData = async (listingId: string | undefined) => {
 
 const Listingpage = ({ params }: { params: Iparams }) => {
   const listingId = params.listingid;
-  const { data: fetchedBoatData } = useSWR(listingId, () => fetchBoatData(listingId));
+  const { data: fetchedBoatData,error,isLoading } = useSWR(listingId, () => fetchBoatData(listingId));
 
-  if (!fetchedBoatData) {
+  if(isLoading){
+    return(
+      <>
+      <div className='pt-28 text-lg'>Loading</div>
+      </>
+    )
+  }
+
+  if (!fetchedBoatData || error) {
     return (
       <EmptyState showReset />
     );
