@@ -1,4 +1,3 @@
-
 import LoginModal from './components/Modals/LoginModal'
 import RegisterModal from './components/Modals/RegisterModal'
 import Navbar from './components/Navbar/Navbar'
@@ -6,18 +5,12 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import ToasterProvider from './providers/ToasterProvider'
 import RentModal from './components/Modals/RentModal'
-import ProgressProvider from './providers/ProgressProvider'
-
-
-
-
 
 
 export const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
 })
-
 
 
 export const metadata = {
@@ -27,18 +20,15 @@ export const metadata = {
 
 export default async function RootLayout({ children, }: { children: React.ReactNode }) {
 
-
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ProgressProvider>
         <ToasterProvider />
          <Navbar/> 
         <LoginModal />
         <RegisterModal />
         <RentModal />
         {children}
-        </ProgressProvider>
       </body>
     </html>
   )

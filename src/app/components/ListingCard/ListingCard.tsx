@@ -1,10 +1,11 @@
 'use client'
 
-import { useRouter } from 'next-nprogress-bar';
 import React, { useCallback } from 'react'
 import Image from 'next/image'
 import Button from '../Misc/Button'
 import { Timestamp } from 'firebase/firestore'
+import { useRouter } from 'next/navigation'
+
 
 // this component is used to display items in boats page
 
@@ -33,7 +34,7 @@ interface ListingCardProps {
 const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, actionId = "", actionLabel}) => {
   const router = useRouter();
 
-  const handleCancel = useCallback(
+  const handleCancel:any = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
 

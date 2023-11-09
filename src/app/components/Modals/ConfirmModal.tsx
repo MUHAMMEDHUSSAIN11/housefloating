@@ -15,7 +15,8 @@ import toast from 'react-hot-toast';
 import sendotp from '@/app/actions/getOTP';
 import validateOTP from '@/app/actions/validateOTP';
 import useTravelModeStore from '@/app/hooks/useTravelModeStore';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from 'next/navigation'
+import { BookingStatus } from '@/app/enums/enums';
 
 
 
@@ -25,6 +26,7 @@ enum STEPS {
     OTP = 1,
     SUMMARY = 2,
 }
+
 
 interface confirmModalProps {
     listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> },
@@ -158,7 +160,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 Mode: travelMode.travelMode,
                 Payment: false,
                 Category: listing.getboat.data()?.category,
-                Status: "Requested",
+                Status: BookingStatus.Requested,
+                Image: listing.getboat.data()?.images[0]
             };
 
             runTransaction(firestore, async (transaction) => {
@@ -184,6 +187,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                     const docRef = await addDoc(reservationsCollection, reservationData);
                     return docRef;
                 } catch (error) {
+                    toast.error('something went wrong! Please contact our team');
                     throw error; // Rethrow the error for proper handling in the .catch block
                 }
             })

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from 'next/navigation';
 import React from 'react'
 import { BiSearch } from 'react-icons/bi';
 

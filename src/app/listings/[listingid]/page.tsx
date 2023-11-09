@@ -11,32 +11,27 @@ interface Iparams {
   listingid?: string;
 }
 
-const fetchBoatData = async (listingId: string | undefined) => {
+const fetchBoatData = async (listingId: string ) => {
   const fetchedBoatData = await getBoatbyId({ listingid: listingId });
   return fetchedBoatData;
 };
 
 const Listingpage = ({ params }: { params: Iparams }) => {
-  const listingId = params.listingid;
+  const listingId:any = params.listingid;
   const { data: fetchedBoatData,error,isLoading } = useSWR(listingId, () => fetchBoatData(listingId));
 
-  if(isLoading){
-    return(
-      <>
-      <div className='pt-28 text-lg'>Loading</div>
-      </>
-    )
-  }
-
-  if (!fetchedBoatData || error) {
-    return (
-      <EmptyState showReset />
-    );
-  } 
-
   return (
-    <ListingClient listing={fetchedBoatData} />
+    isLoading ? (
+      <div className='pt-28 text-lg'>Loading</div>
+    ) : (
+      !fetchedBoatData || error ? (
+        <EmptyState showReset />
+      ) : (
+        <ListingClient listing={fetchedBoatData} />
+      )
+    )
   );
+
 };
 
 export default Listingpage;

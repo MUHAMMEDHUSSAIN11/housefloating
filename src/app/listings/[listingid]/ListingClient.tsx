@@ -1,6 +1,6 @@
 'use client';
 
-import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore'
+import { DocumentData, DocumentSnapshot } from 'firebase/firestore'
 import React, { useCallback, useEffect, useState } from 'react'
 import ListingHead from '../../components/ListingCard/ListingHead'
 import ListingInfo from '../../components/ListingCard/ListingInfo';

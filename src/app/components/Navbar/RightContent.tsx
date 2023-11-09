@@ -11,7 +11,7 @@ import {  useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/clientApp';
 import { useSignOut } from 'react-firebase-hooks/auth';
 import useRentModal from '@/app/hooks/useRentModal';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -56,7 +56,7 @@ const RightContent = () => {
                 </div>
             </div>
             {isOpen &&
-                <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
+                <div className="absolute rounded-xl shadow-md w-[40vw] md:w-5/6 bg-white overflow-hidden right-0 top-12 text-sm">
                     <div className="flex flex-col cursor-pointer">
                         {user && (
                             <>

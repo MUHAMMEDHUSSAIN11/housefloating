@@ -6,7 +6,7 @@ import { auth } from '../firebase/clientApp';
 import useSWR from 'swr';
 import getReservations from '../actions/getReservations';
 import EmptyState from '../components/Misc/EmptyState';
-import AdminTable from '../components/AdminReservations/AdminTable';
+import AdminTable from './AdminTable';
 
 const Page = () => {
   const [user] = useAuthState(auth);
@@ -16,20 +16,19 @@ const Page = () => {
     refreshInterval: 10 * 60 * 1000,
   });
 
-  if (isLoading) {
+  if (isLoading || isValidating) {
     return <div>Loading</div>;
   }
 
-  if (!isAdmin || !user) {
-    return <div className='pt-28 font-sans font-semibold'>Not Authenticated</div>;
+  if (!isAdmin) {
+    return <EmptyState title='Access Denied' subtitle='Play around other areas!' />;
   }
 
-  if (error || !reservations) {
+  if (error || reservations == null || reservations == undefined) {
     return <EmptyState showReset />;
   }
 
   if (reservations) {
-    const reservationData = reservations.docs.map((doc) => doc.data());
 
     return (
       <div className="pt-28 font-sans p-2">
@@ -51,8 +50,8 @@ const Page = () => {
               </tr>
             </thead>
             <tbody>
-              {reservationData.map((listing) => (
-                <AdminTable key={listing.id} reservation={listing} />
+              {reservations.docs.map((listing) => (
+                <AdminTable key={listing.id} reservation={listing.data()} />
               ))}
             </tbody>
           </table>

@@ -15,13 +15,7 @@ interface ListingHeadProps {
   category: string;
 }
 
-const ListingHead: React.FC<ListingHeadProps> = ({
-  id,
-  imageSrc,
-  title,
-  roomCount,
-  category,
-}) => {
+const ListingHead: React.FC<ListingHeadProps> = ({id,imageSrc,title,roomCount,category,}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const goToSlide = (slideIndex: number) => {

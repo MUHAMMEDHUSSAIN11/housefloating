@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 // Fetching reservations for a particular user.
 type Reservation = {
+  ReservationId: string;
   BoatId: string;
   BoatName: string;
   BookingDate: any;
@@ -16,6 +17,7 @@ type Reservation = {
   Payment: boolean;
   Category: string;
   Status: string;
+  Image : string;
 };
 
 const getReservationById = async (email: string | null) => {
@@ -28,12 +30,13 @@ const getReservationById = async (email: string | null) => {
     // Fetch the documents that match the query.
     const querySnapshot = await getDocs(q);
 
-    // Create an array of reservations of the defined type
-    const reservations: Reservation[] = [];
+    const reservations:Reservation[] = [];
     querySnapshot.forEach((doc) => {
-      reservations.push(doc.data() as Reservation);
+      const reservationData:any = doc.data();
+      const reservationWithId:Reservation = {ReservationId: doc.id, ...reservationData};
+      reservations.push(reservationWithId);
     });
-
+    
     return reservations;
   } catch (error) {
     console.error("Error fetching reservations:", error);
