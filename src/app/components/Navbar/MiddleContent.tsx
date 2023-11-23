@@ -1,13 +1,21 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import * as NProgress from "nprogress";
 import React from 'react'
 import { BiSearch } from 'react-icons/bi';
+import { useRouter } from 'next/navigation';
 
 const MiddleContent = () => {
+
+    const handlePush = () => {
+      router.push("/boats");
+      NProgress.start();
+      NProgress.done();
+    };
+  
     const router = useRouter();
     return (
-        <div onClick={() => router.push('/boats')} className=" font-sans bg-white border-[1px] w-full md:w-auto py-2 rounded-full shadow-sm hover:shadow-md transition cursor-pointer">
+        <div onClick={() =>handlePush()} className=" font-sans bg-white border-[1px] w-full md:w-auto py-2 rounded-full shadow-sm hover:shadow-md transition cursor-pointer">
         <div className="flex flex-row items-center justify-between">
             <div className="hidden sm:block text-md  px-6">Deluxe Houseboats</div>
             <div className="text-md px-6 sm:hidden">Start your search</div>

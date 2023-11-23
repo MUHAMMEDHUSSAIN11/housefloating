@@ -10,8 +10,8 @@ import Input from '../Inputs/Input';
 import { firestore } from '@/app/firebase/clientApp';
 import { addDoc } from '@firebase/firestore';
 import { collection } from 'firebase/firestore';
-import toast from 'react-hot-toast';
 import ImageUpload from '../Inputs/ImageUpload';
+import { toast } from 'sonner';
 
 //This component is used to create listings.
 

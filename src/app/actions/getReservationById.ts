@@ -1,6 +1,7 @@
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
+
 
 // Fetching reservations for a particular user.
 type Reservation = {
@@ -13,7 +14,7 @@ type Reservation = {
   HeadCount: number;
   MinorCount: number;
   Mode: string;
-  Price: string;
+  Price: number;
   Payment: boolean;
   Category: string;
   Status: string;

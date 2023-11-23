@@ -11,13 +11,17 @@ import OtpInput from 'react-otp-input';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, firestore } from '@/app/firebase/clientApp';
 import { DocumentData, DocumentSnapshot, Timestamp, addDoc, collection, doc, runTransaction } from 'firebase/firestore';
-import toast from 'react-hot-toast';
-import sendotp from '@/app/actions/getOTP';
-import validateOTP from '@/app/actions/validateOTP';
+
+
 import useTravelModeStore from '@/app/hooks/useTravelModeStore';
 import { useRouter } from 'next/navigation'
 import { BookingStatus } from '@/app/enums/enums';
-
+import * as NProgress from 'nprogress';
+import { toast } from 'sonner';
+import sendotp from '@/app/actions/getOTP';
+import validateOTP from '@/app/actions/validateOTP';
+import SendTelegram from '@/app/actions/sendTelegram';
+import RequestBooking from '@/app/actions/RaiseBooking';
 
 
 
@@ -26,7 +30,6 @@ enum STEPS {
     OTP = 1,
     SUMMARY = 2,
 }
-
 
 interface confirmModalProps {
     listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> },
@@ -41,22 +44,24 @@ interface confirmModalProps {
 const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
-
     const [step, setStep] = useState(STEPS.PHONENUMBER);
     const [isLoading, setIsLoading] = useState(false);
     const [otp, setOtp] = useState('');
-
     const [user] = useAuthState(auth);
     const travelMode = useTravelModeStore();
     const router = useRouter();
-    
+
+    const handlePush = () => {
+        router.push('/cart');
+        NProgress.start();
+        NProgress.done();
+    };
 
     //need to redesign this as inputs are custom react npm's..
     const { register, handleSubmit, setValue, watch, formState: { errors, }, } = useForm<FieldValues>();
 
     const phonenumber = watch('phonenumber');
     // const otp = watch('otp');
-
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -83,12 +88,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
         return 'Confirm';
     }, [step]);
 
-    // const secondaryActionLabel = useMemo(()=> {
-    //     if(step === STEPS.PHONENUMBER || step === STEPS.OTP){
-    //         return undefined;
-    //     }
-    //     return 'Back';
-    // },[step])
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
         const cleanedPhoneNumber = data.phonenumber.replace(/-/g, ''); // Remove hyphens
@@ -99,13 +98,16 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 return;
             }
             try {
+                setIsLoading(true);
                 sendotp(cleanedPhoneNumber)
                     .then(response => {
+                        setIsLoading(false);
                         if (response && response.ok) {
                             toast.success("OTP on its way!");
                             onNext();
                         } else {
-                            toast.error("Oops! We couldn't send the OTP...");
+                            toast.error("Oops! We couldn't send the OTP..Please try again!");
+                            return;
                         }
                     })
                     .catch(error => {
@@ -117,15 +119,18 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 toast.error("something went wrong!");
                 return;
             }
+            
         }
 
         // Validating the OTP
         if (step === STEPS.OTP) {
             try {
+                setIsLoading(true);
                 if (otp.length < 4) {
                     throw new Error("OTP must be 4 digits");
                 }
                 const response = await validateOTP(cleanedPhoneNumber, otp);
+                setIsLoading(false);
                 if (response && response.ok) {
                     const responseData = await response.json();
                     if (responseData.verification_Check_status === "approved") {
@@ -146,13 +151,13 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
 
         //Raising the request for booking
         if (step === STEPS.SUMMARY) {
-            const reservationsCollection = collection(firestore, 'Reservations');
+            setIsLoading(true);
             // Create a new reservation document
             const reservationData = {
                 Contactnumber: data.phonenumber,
                 BookingDate: finalBookingDate,
                 HeadCount: finalHeadCount,
-                Price: finalPrice,
+                Price: finalPrice as number,
                 Email: user?.email,
                 BoatId: listing.getboat.id,
                 BoatName: listing.getboat.data()?.title,
@@ -164,41 +169,18 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 Image: listing.getboat.data()?.images[0]
             };
 
-            runTransaction(firestore, async (transaction) => {
-                const boatDocRef = doc(firestore, 'Boats', listing.getboat.id);
-
-                // Get the current reservations array
-                const boatDoc = await transaction.get(boatDocRef);
-                const currentReservations = boatDoc.data()?.reservations || [];
-
-                // Convert finalBookingDate to Firestore Timestamp
-                const finalBookingTimestamp = new Timestamp(
-                    Math.floor(finalBookingDate.getTime() / 1000), // Convert milliseconds to seconds
-                    0 // Nanoseconds
-                );
-                // Add the new bookingDate (as Timestamp) to the reservations array
-                currentReservations.push(finalBookingTimestamp);
-
-                try {
-                    // Update the "Reservations" array in the "Boats" collection
-                    transaction.update(boatDocRef, { reservations: currentReservations });
-
-                    // Add the reservation to the "Reservations" collection
-                    const docRef = await addDoc(reservationsCollection, reservationData);
-                    return docRef;
-                } catch (error) {
-                    toast.error('something went wrong! Please contact our team');
-                    throw error; // Rethrow the error for proper handling in the .catch block
-                }
-            })
-                .then((docRef) => {
+            await RequestBooking(reservationData)
+                  .then(() => {
+                    setIsLoading(false);
                     toast.success('Boat enquiry raised successfully.');
                     BookingConfirmModal.onClose();
                     setStep(STEPS.PHONENUMBER);
-                    router.push('/cart');
+                    handlePush();
+                    SendTelegram(finalBookingDate,finalHeadCount,finalMinorCount,finalPrice,data.phonenumber,travelMode.travelMode,
+                        listing.getboat.data()?.title,listing.getboat.data()?.category);
                 })
                 .catch((error) => {
-                    toast.error('Something went wrong in reservation');
+                    toast.error('something went wrong! Please contact our team');
                 });
         }
     }
@@ -206,7 +188,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
     let bodyContent = (
         <div className="flex flex-col gap-4">
             <Heading title="Confirm your order!" subtitle="Verify your Contact number" />
-            <PhoneInput
+            <PhoneInput style={{ width: '100%' }}
                 defaultCountry="in"
                 value={phonenumber}
                 onChange={(value) => setCustomValue('phonenumber', value)}
@@ -218,7 +200,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
         bodyContent = (
             <div className='flex flex-col gap-4'>
                 <Heading title="verify your phonenumber" />
-                <OtpInput value={otp}
+                <OtpInput value={otp} inputStyle={{border: "1px solid transparent",borderRadius: "8px",width: "54px",height: "54px",fontSize: "12px",color: "#000",fontWeight: "400",caretColor: "blue"}}
+                    shouldAutoFocus={true}
                     onChange={setOtp}
                     numInputs={4}
                     renderSeparator={<span>-</span>}
@@ -230,16 +213,18 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
     if (step === STEPS.SUMMARY) {
         bodyContent = (
             <div className='flex flex-col gap-4 font-sans'>
-                <Heading title='your order summary' />
-                <p>You have selected {listing.getboat.data()?.title},
-                    {listing.getboat.data()?.roomCount} Bedroom,{listing.getboat.data()?.category}
-                    <br /> on {finalBookingDate.toDateString()}
-                    <br /> for {finalPrice}
-                </p>
-                <p>Guest Count : {finalHeadCount + finalMinorCount}</p>
-                <p>Please note that some boats may be unavailable due to Offline or Spot Bookings,
-                    <br/>
-                so kindly wait for 2 hours to get confirmation</p>
+                <Heading title='Your Order Summary' />
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                    <p className="text-lg font-semibold">{listing.getboat.data()?.title}</p>
+                    <p className="text-gray-900">{listing.getboat.data()?.roomCount} Bedroom, {listing.getboat.data()?.category}</p>
+                    <p className="text-gray-900">Booking Date: {finalBookingDate.toDateString()}</p>
+                    <p className="text-gray-900">Total Price: {finalPrice}</p>
+                    <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
+                </div>
+                <p className="text-gray-900"> We aim to provide updates within 1 hour. Thank you for your patience!</p>
+                <p className="text-gray-900">Please note that some boats may be unavailable due to Offline or Spot Bookings.</p>
+                <p className="text-gray-900">Look out for a confirmation message on your WhatsApp or Email!</p>
+                <p className="text-gray-900">If the chosen boat is unavailable, we'll quickly provide a list of alternative options for you to consider.</p>
             </div>
         )
     }
@@ -255,6 +240,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
             isOpen={BookingConfirmModal.isOpen}
             title="Confirmation"
             actionLabel={actionLabel}
+            disabled={isLoading}
             onClose={BookingConfirmModal.onClose}
             onSubmit={handleSubmit(onSubmit)}
             body={bodyContent}

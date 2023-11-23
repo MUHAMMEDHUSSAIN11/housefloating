@@ -4,9 +4,10 @@ import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase/clientApp';
 import useSWR from 'swr';
-import getReservations from '../actions/getReservations';
 import EmptyState from '../components/Misc/EmptyState';
 import AdminTable from './AdminTable';
+import Spinner from '../components/Misc/Spinner';
+import getReservations from '../actions/getReservations';
 
 const Page = () => {
   const [user] = useAuthState(auth);
@@ -17,7 +18,9 @@ const Page = () => {
   });
 
   if (isLoading || isValidating) {
-    return <div>Loading</div>;
+    return  <div>
+      <Spinner/>
+    </div>;
   }
 
   if (!isAdmin) {

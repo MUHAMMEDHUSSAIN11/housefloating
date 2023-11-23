@@ -25,7 +25,7 @@ interface Reservation {
   HeadCount: number;
   MinorCount: number;
   Mode: string;
-  Price: string;
+  Price: number;
   Payment: boolean;
   Category: string;
   Status: string;
@@ -38,6 +38,7 @@ interface TripsClientProps {
 
 const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
 
+  
   const router = useRouter();
   const dtoast = useRef(null);
 
@@ -57,8 +58,8 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
       icon: 'pi pi-exclamation-triangle',
       accept: () => onConfirm(reservation),
       reject,
-      acceptClassName: ' p-3 rounded-md', // Apply Tailwind CSS classes
-      rejectClassName: ' p-3 rounded-md', // Apply Tailwind CSS classes
+      acceptClassName: ' p-3 rounded-md', 
+      rejectClassName: ' p-3 rounded-md', 
     });
   }
 
@@ -70,7 +71,7 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
         <div className="mt-10 w-full lg:w-3/4 ">
           {reservations.map((reservation, index) => (
             <div key={index} className="mb-4">
-              <Card key={index} data={reservation} actionLabel="Cancel reservation"
+              <Card key={index} details={reservation} actionLabel="Cancel reservation"
                 onAction={() => showConfirmationDialog(reservation)}
                 disabled={false}
               />

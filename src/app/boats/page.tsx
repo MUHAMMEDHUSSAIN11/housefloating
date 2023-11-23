@@ -6,6 +6,7 @@ import ListingCard from '../components/ListingCard/ListingCard';
 import EmptyState from '../components/Misc/EmptyState';
 import useSWR from 'swr';
 import getListings from '../actions/getListings';
+import Spinner from '../components/Misc/Spinner';
 
 
 const Page = () => {
@@ -15,9 +16,8 @@ const Page = () => {
 
   if (isValidating || isLoading) {
     return (
-      <div>
-        {/*need to add Loading Component here */}
-        <p>Loading...</p>
+      <div className='items-center'>
+        <Spinner/>
       </div>
     )
   }

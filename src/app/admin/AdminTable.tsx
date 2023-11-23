@@ -1,11 +1,11 @@
 'use client';
 
-import UpdateStatusToConfirmed from '@/app/actions/updatetoConfirmed';
 import { DocumentData } from 'firebase/firestore';
 import React from 'react'
 import { BookingStatus } from '../enums/enums';
 import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
+import UpdateStatusToApproved from '../actions/updatetoApproved';
 
 // interface StoreReservation {
 //     BoatId: string,
@@ -39,7 +39,7 @@ const AdminTable: React.FC<DataProps> = ({ reservation }) => {
         toast.error('Reservation is already Cancelled');
         return;
       }
-      await UpdateStatusToConfirmed(reservation.BoatId,reservation.BookingDate);
+      await UpdateStatusToApproved(reservation.BoatId,reservation.BookingDate);
       router.refresh();
   }
   

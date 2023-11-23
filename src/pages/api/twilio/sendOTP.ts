@@ -19,6 +19,7 @@ export default async function handler(req:any, res:any) {
         console.error('Error creating verification:', error);
         res.status(500).json({ error: 'An error occurred' });
       });
+      return res;
   } catch (error) {
     console.error('Error sending OTP:', error);
     res.status(500).json({ error: 'An error occurred' });

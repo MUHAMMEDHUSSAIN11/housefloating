@@ -1,11 +1,15 @@
 'use client'
 
-import React, { useCallback } from 'react'
-import Image from 'next/image'
-import Button from '../components/Misc/Button'
-import { useRouter } from 'next/navigation'
-import { IoBoat, IoCalendarNumberSharp, IoCard, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5'
-import { BookingStatus } from '../enums/enums'
+import React, { useCallback } from 'react';
+import Image from 'next/image';
+import Button from '../components/Misc/Button';
+import { useRouter } from 'next/navigation';
+import { IoBoat, IoCalendarNumberSharp, IoCard, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
+import { BookingStatus } from '../enums/enums';
+import MakeStripe from '../actions/MakeStripe';
+import * as NProgress from "nprogress";
+
+
 
 // this component is used to display items in Cart page
 
@@ -19,7 +23,7 @@ interface FirestoreListing {
   HeadCount: number;
   MinorCount: number;
   Mode: string;
-  Price: string;
+  Price: number;
   Payment: boolean;
   Category: string;
   Status: string;
@@ -27,7 +31,7 @@ interface FirestoreListing {
 }
 
 interface CardListingProps {
-  data: FirestoreListing;
+ details : FirestoreListing;
   onAction?: (id: string) => void;
   disabled?: boolean;
   actionLabel?: string;
@@ -36,13 +40,21 @@ interface CardListingProps {
 
 
 
-const Card: React.FC<CardListingProps> = ({ data, onAction, disabled, actionId = '', actionLabel }) => {
+const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionId = '', actionLabel }) => {
   const router = useRouter();
 
   function formatDate(date: any) {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     return date.toDate().toLocaleDateString(undefined, options);
   }
+
+
+  const handlePush = () => {
+    router.push(`/listings/${details.BoatId}`);
+    NProgress.start();
+    NProgress.done();
+  };
+
   
   const handleCancel: any = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -57,33 +69,33 @@ const Card: React.FC<CardListingProps> = ({ data, onAction, disabled, actionId =
   return (
     <div className='shadow-lg rounded-lg font-sans'>
       <div className="flex flex-col md:flex-row ">
-        <div onClick={() => router.push(`/listings/${data.BoatId}`)} className="aspect-square h-60  w-auto md:w-3/6 lg:4/6 relative overflow-hidden cursor-pointer rounded-xl">
-          <Image fill className="object-cover h-auto w-auto group-hover:scale-110 transition" src={data.Image} alt="Listing" />
+        <div onClick={() => handlePush()} className="aspect-square h-60  w-auto md:w-3/6 lg:4/6 relative overflow-hidden cursor-pointer rounded-xl">
+          <Image fill className="object-cover h-auto w-auto group-hover:scale-110 transition" src={details.Image} alt="Listing" />
         </div>
 
         <div className='flex flex-col w-auto md:w-3/6 lg:w-4/6  gap-1 p-1'>
-          <p className='font-semibold text-lg'>{data.BoatName}, {data.Category} Houseboat</p>
+          <p className='font-semibold text-lg'>{details.BoatName}, {details.Category} Houseboat</p>
           <div className='flex items-center gap-2'> 
             <IoCalendarNumberSharp className="text-blue-600" size={20} />
-            <p>Trip Date: <span className="font-semibold">{formatDate(data.BookingDate)}</span></p>
+            <p>Trip Date: <span className="font-semibold">{formatDate(details.BookingDate)}</span></p>
           </div>
           <div className='flex items-center gap-2'> 
-          {data.Status == "Confirmed" ? (
+          {details.Status == "Confirmed" || details.Status ==  "Approved" ? (
             <IoCheckmarkCircle className="text-blue-600" size={20} />
           ):(
-            <IoTime className="text-red-600" size={20} />
+            <IoTime className="text-red-500" size={20} />
           )}
-            <p >Status: <span className="font-semibold">{data.Status}</span> </p>
+            <p >Status: <span className="font-semibold">{details.Status}</span> </p>
           </div>
           <div className='flex items-center gap-2'>
-          <IoPersonSharp className="text-blue-600" size={20}/><p>Guests: {data.HeadCount + data.MinorCount}</p>
+          <IoPersonSharp className="text-blue-600" size={20}/><p>Guests: {details.HeadCount + details.MinorCount}</p>
           </div>
           <div className='flex items-center gap-2'>
-         <IoBoat className='text-blue-600' size={20}/> <p>Cruise: {data.Mode}</p>
+         <IoBoat className='text-blue-600' size={20}/> <p>Cruise: {details.Mode}</p>
          </div>
          <div className='flex items-center gap-2'>
          <IoCard className='text-blue-600' size={20}/>
-          {data.Payment == false ? (
+          {details.Payment == false ? (
             <p>Payment: Not Paid</p>
           ):(
             <p>Payment: Completed</p>
@@ -93,12 +105,12 @@ const Card: React.FC<CardListingProps> = ({ data, onAction, disabled, actionId =
 
         <div className='flex flex-col border-t md:border-l md:border-t-0 border-gray-300 w-auto md:w-2/6 lg:w-2/6 md:flex-row items-end p-1'>
           <div className='w-full md:w-64 pb-4 gap-2'>
-            <div className='text-lg ml-32 md:ml-16 pb-2 items-center font-semibold'>Total  {data.Price}</div>
+            <div className='text-lg ml-32 md:ml-16 pb-2 items-center font-semibold'>Total ₹{details.Price}</div>
             <div className='pb-3'>
-            <Button disabled={data.Status !== BookingStatus.Confirmed} label={"Pay Securely"} onClick={handleCancel}/>
+            <Button disabled={details.Status !== BookingStatus.Approved} label={"Pay Securely"} onClick={() => MakeStripe(details)}/>
           </div>
             {onAction && actionLabel && (
-              <Button disabled={data.Status == BookingStatus.Cancelled} outline small label={actionLabel} onClick={handleCancel}/>
+              <Button disabled={details.Status == BookingStatus.Cancelled} outline small label={actionLabel} onClick={handleCancel}/>
             )}
           </div>
         </div>

@@ -12,6 +12,7 @@ import { auth } from '@/app/firebase/clientApp';
 import { useSignOut } from 'react-firebase-hooks/auth';
 import useRentModal from '@/app/hooks/useRentModal';
 import { useRouter } from 'next/navigation';
+import * as NProgress from 'nprogress';
 
 
 
@@ -24,7 +25,14 @@ const RightContent = () => {
     const [signOut, signOutloading, Signerror] = useSignOut(auth);
     const router = useRouter();
     
+    
+  const handlePush = () => {
+    router.push('/cart');
+    NProgress.start();
+    NProgress.done();
+  };
 
+  
     const handleLogout = () => {
         signOut();
     };
@@ -45,7 +53,7 @@ const RightContent = () => {
     return (
         <div className="relative">
             <div className="flex flex-row items-center gap-4 ">
-                <div className="p-2 cursor-pointer hover:shadow-md transition rounded-full" onClick={()=>router.push('/cart')}>
+                <div className="p-2 cursor-pointer hover:shadow-md transition rounded-full" onClick={()=>handlePush()}>
                     <GiSailboat size={33} />
                 </div>
                 <div onClick={toggleOpen} className="p-3 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition">

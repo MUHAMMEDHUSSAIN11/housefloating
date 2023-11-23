@@ -25,7 +25,7 @@ import HouseRules from '../../components/Descriptions/HouseRules';
 
 
 interface ListingClientProps {
-  listing : { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
+  listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
 }
 
 
@@ -59,13 +59,13 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
       newTotalPrice = (listing.getboat.data()?.price || 0) + additionalAdultCost + additionalChildCost;
     }
 
-    // Format the total price using toLocaleString to add commas and currency symbol if needed
-    const formattedTotalPrice = newTotalPrice.toLocaleString('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-    });
+    // // Format the total price using toLocaleString to add commas and currency symbol if needed
+    // const formattedTotalPrice = newTotalPrice.toLocaleString('en-IN', {
+    //   style: 'currency',
+    //   currency: 'INR',
+    // });
 
-    setTotalPrice(formattedTotalPrice);
+    setTotalPrice(newTotalPrice);
   }, [finalAdultCount, finalChildCount, bookingDate]);
 
 
@@ -165,7 +165,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
       <hr />
       <Updated />
       <Footer />
-      </>
+    </>
   )
 }
 

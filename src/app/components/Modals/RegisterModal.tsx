@@ -1,10 +1,9 @@
 ﻿'use client';
 
 import { AiFillFacebook } from "react-icons/ai";
-import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import useLoginModal from "@/app/hooks/useLoginModal";
@@ -18,6 +17,7 @@ import { useCreateUserWithEmailAndPassword, useSignInWithFacebook, useSignInWith
 import { auth, firestore } from "@/app/firebase/clientApp";
 import { User } from "firebase/auth";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { toast } from "sonner";
 
 
 const RegisterModal = () => {

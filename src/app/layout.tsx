@@ -3,8 +3,11 @@ import RegisterModal from './components/Modals/RegisterModal'
 import Navbar from './components/Navbar/Navbar'
 import './globals.css'
 import { Inter } from 'next/font/google'
-import ToasterProvider from './providers/ToasterProvider'
+
 import RentModal from './components/Modals/RentModal'
+import NextTopLoader from 'nextjs-toploader';
+import SonnerToastProvider from './providers/SonnerToastProvider'
+
 
 
 export const inter = Inter({
@@ -15,7 +18,7 @@ export const inter = Inter({
 
 export const metadata = {
   title: 'Alleppey Houseboats-Online Booking',
-  description: 'Book your Houseboat now',
+  description: 'Book your Houseboat online',
 }
 
 export default async function RootLayout({ children, }: { children: React.ReactNode }) {
@@ -23,11 +26,12 @@ export default async function RootLayout({ children, }: { children: React.ReactN
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ToasterProvider />
+        <SonnerToastProvider />
          <Navbar/> 
         <LoginModal />
         <RegisterModal />
         <RentModal />
+        <NextTopLoader color="#3b82f6" height={4} showSpinner={false} />
         {children}
       </body>
     </html>

@@ -1,7 +1,9 @@
-import { Timestamp, arrayRemove, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { Timestamp, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
-import toast from "react-hot-toast";
+
 import { BookingStatus } from "../enums/enums";
+import { toast } from "sonner";
+import SendCancellationTelegram from "./SendCancellationTelegram";
 
 interface BookingDetails {
   ReservationId: string;
@@ -13,7 +15,7 @@ interface BookingDetails {
   HeadCount: number;
   MinorCount: number;
   Mode: string;
-  Price: string;
+  Price: number;
   Payment: boolean;
   Category: string;
   Status: string;
@@ -22,7 +24,6 @@ interface BookingDetails {
 
 export default async function CancelReservation(OrderDetails: BookingDetails) {
   try {
-
     const boatRef = doc(collection(firestore, 'Boats'), OrderDetails.BoatId);
     const getboat = await getDoc(boatRef);
     const reservations: Timestamp[] = getboat.data()?.reservations || [];
@@ -60,16 +61,16 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
         Refund:false,
       });
       toast.success("Reservation cancelled successfully.");
-
     } else {
       // Reservation not found, display an error message
       toast.error("Reservation not found.");
     }
+    SendCancellationTelegram(OrderDetails.Email,OrderDetails.ReservationId,OrderDetails.Mode,OrderDetails.Category,OrderDetails.Payment,OrderDetails.BoatName,OrderDetails.Price,OrderDetails.Contactnumber,OrderDetails.BookingDate);
   } catch (error) {
     // Handle errors gracefully
     console.error("Error canceling reservation:", error);
     toast.error("Error canceling reservation.");
-
   }
+  
 }
 

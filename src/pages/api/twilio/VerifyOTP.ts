@@ -17,6 +17,7 @@ export default function handler(req:any,res:any){
         .then((verification_Check:any) => {
             res.json({ verification_Check_status: verification_Check.status });
         });   
+        return res;
     }
     catch(error){
         console.error('Error creating verification:', error);

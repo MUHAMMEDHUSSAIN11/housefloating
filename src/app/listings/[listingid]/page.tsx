@@ -5,6 +5,8 @@ import EmptyState from '@/app/components/Misc/EmptyState';
 import ListingClient from './ListingClient';
 
 import useSWR from 'swr';
+
+import Spinner from '@/app/components/Misc/Spinner';
 import getBoatbyId from '@/app/actions/getBoatbyId';
 
 interface Iparams {
@@ -22,7 +24,9 @@ const Listingpage = ({ params }: { params: Iparams }) => {
 
   return (
     isLoading ? (
-      <div className='pt-28 text-lg'>Loading</div>
+      <div className='pt-28 text-lg'>
+        <Spinner/>
+      </div>
     ) : (
       !fetchedBoatData || error ? (
         <EmptyState showReset />

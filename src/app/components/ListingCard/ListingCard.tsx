@@ -5,6 +5,8 @@ import Image from 'next/image'
 import Button from '../Misc/Button'
 import { Timestamp } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
+import * as NProgress from "nprogress";
+
 
 
 // this component is used to display items in boats page
@@ -33,6 +35,15 @@ interface ListingCardProps {
 
 const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, actionId = "", actionLabel}) => {
   const router = useRouter();
+  
+  const handlePush = () => {
+    router.push(`/listings/${data.id}`);
+    NProgress.start();
+    NProgress.done();
+  };
+
+  
+  
 
   const handleCancel:any = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,7 +56,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
     }, [disabled, onAction, actionId]);
 
   return (
-    <div onClick={() => router.push(`/listings/${data.id}`)} className="col-span-1 cursor-pointer group">
+    <div onClick={() => handlePush()} className="col-span-1 cursor-pointer group">
       <div className="flex flex-col gap-2 w-full">
         <div className="aspect-square w-full relative overflow-hidden rounded-xl">
           <Image fill className="object-cover h-full w-full group-hover:scale-110 transition" src={data.images[0]} alt="Listing" />

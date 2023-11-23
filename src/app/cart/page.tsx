@@ -22,7 +22,7 @@ interface Reservation {
   HeadCount: number;
   MinorCount: number;
   Mode: string;
-  Price: string;
+  Price: number;
   Payment: boolean;
   Category: string;
   Status: string;
@@ -32,11 +32,6 @@ interface Reservation {
 const CartPage = () => {
   const [user] = useAuthState(auth);
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
-
-  // function formatDate(date: any) {
-  //   const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  //   return date.toDate().toLocaleDateString(undefined, options);
-  // }
 
   const fetchReservations = async () => {
     if (user)
