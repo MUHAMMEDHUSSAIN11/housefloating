@@ -7,9 +7,7 @@ import getReservationById from '../actions/getReservationById';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import TripsClient from './TripsClient';
-import Updated from '../components/Hero/Updated';
-import Footer from '../components/Hero/Footer';
-import useSWR from 'swr';
+
 
 
 interface Reservation {

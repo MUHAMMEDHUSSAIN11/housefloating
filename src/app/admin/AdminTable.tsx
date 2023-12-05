@@ -5,46 +5,33 @@ import React from 'react'
 import { BookingStatus } from '../enums/enums';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import UpdateStatusToApproved from '../actions/updatetoApproved';
+import UpdateStatusToApprovedID from '../actions/UpdateStatusToApprovedID';
 
-// interface StoreReservation {
-//     BoatId: string,
-//     BoatName: string,
-//     BookingDate: any,
-//     Category: string,
-//     Contactnumber: string,
-//     Email: string,
-//     HeadCount: number,
-//     MinorCount: number,
-//     Mode: string,
-//     Payment: boolean,
-//     Price: string,
-//     Status: string,
-// }
 
 interface DataProps {
-    reservation: DocumentData;
+  reservation: DocumentData,
+  reservationID: string,
 }
 
-const AdminTable: React.FC<DataProps> = ({ reservation }) => {
-    const router = useRouter();
+const AdminTable: React.FC<DataProps> = ({ reservation, reservationID }) => {
+  const router = useRouter();
 
   function formatDate(date: any) {
-      const options = { day: 'numeric', month: 'long', year: 'numeric' };
-      return date.toDate().toLocaleDateString(options);
-    }
-
-  const UpdatingConfirmation = async (reservation : any) => {
-      if(reservation.Status == BookingStatus.Cancelled){
-        toast.error('Reservation is already Cancelled');
-        return;
-      }
-      await UpdateStatusToApproved(reservation.BoatId,reservation.BookingDate);
-      router.refresh();
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    return date.toDate().toLocaleDateString(options);
   }
-  
-    return (
-        <tr className="border-b">
+
+  const UpdatingConfirmation = async (reservation: any) => {
+    if (reservation.Status == BookingStatus.Cancelled) {
+      toast.error('Reservation is already Cancelled');
+      return;
+    }
+    await UpdateStatusToApprovedID(reservationID);
+    router.refresh();
+  }
+
+  return (
+    <tr className="border-b">
       <td className="px-4 py-2 text-black">{reservation.BoatName}</td>
       <td className="px-4 py-2 text-black">{reservation.Category}</td>
       <td className="px-4 py-2 text-black">{reservation.Contactnumber}</td>
@@ -54,12 +41,12 @@ const AdminTable: React.FC<DataProps> = ({ reservation }) => {
       <td className="px-4 py-2 text-black">{reservation.Status}</td>
       <td className="px-4 py-2 text-black">{formatDate(reservation.BookingDate)}</td>
       <td className="px-4 py-2">
-            <a href="#" onClick={() => UpdatingConfirmation(reservation)} className="text-blue-600 hover:underline">
-              Update
-            </a>
-          </td>
-        </tr>
-      );
-  };
-  
-  export default AdminTable;
+        <a href="#" onClick={() => UpdatingConfirmation(reservation)} className="text-blue-600 hover:underline">
+          Update
+        </a>
+      </td>
+    </tr>
+  );
+};
+
+export default AdminTable;

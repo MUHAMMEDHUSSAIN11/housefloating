@@ -54,7 +54,7 @@ const Page = () => {
             </thead>
             <tbody>
               {reservations.docs.map((listing) => (
-                <AdminTable key={listing.id} reservation={listing.data()} />
+                <AdminTable key={listing.id} reservation={listing.data()} reservationID={listing.id} />
               ))}
             </tbody>
           </table>

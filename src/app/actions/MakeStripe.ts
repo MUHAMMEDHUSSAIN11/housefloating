@@ -20,7 +20,8 @@ interface FirestoreListing {
 
 export default async function MakeStripe(Order:FirestoreListing) {
     try {
-        const OrderDetails:any[] = [Order.BoatName,Order.Price,Order.Contactnumber,Order.Image]
+      const advanceAmount = Order.Price * 0.3 ;
+        const OrderDetails:any[] = [Order.BoatName,advanceAmount,Order.Contactnumber,Order.Image]  
         const { data } = await axios.post('/api/stripe/route',
           {
             items: OrderDetails,

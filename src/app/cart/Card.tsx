@@ -48,6 +48,9 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
     return date.toDate().toLocaleDateString(undefined, options);
   }
 
+  const advanceAmount = details.Price * 0.3 ;
+  const remainingAmount = details.Price * 0.7;
+
 
   const handlePush = () => {
     router.push(`/listings/${details.BoatId}`);
@@ -103,17 +106,32 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
           </div>
         </div>
 
-        <div className='flex flex-col border-t md:border-l md:border-t-0 border-gray-300 w-auto md:w-2/6 lg:w-2/6 md:flex-row items-end p-1'>
-          <div className='w-full md:w-64 pb-4 gap-2'>
-            <div className='text-lg ml-32 md:ml-16 pb-2 items-center font-semibold'>Total ₹{details.Price}</div>
-            <div className='pb-3'>
-            <Button disabled={details.Status !== BookingStatus.Approved} label={"Pay Securely"} onClick={() => MakeStripe(details)}/>
-          </div>
-            {onAction && actionLabel && (
-              <Button disabled={details.Status == BookingStatus.Cancelled} outline small label={actionLabel} onClick={handleCancel}/>
-            )}
-          </div>
-        </div>
+        <div className='flex flex-col border-t md:border-l md:border-t-0 border-gray-300 w-auto md:w-2/6 lg:w-2/6 md:flex-row items-end p-4'>
+  <div className='w-full md:w-64 pb-4 gap-2'>
+    <div className='flex justify-between items-center mb-2'>
+      <div className='text-lg font-semibold'>Total Price:</div>
+      <div className='text-lg'>₹{details.Price}</div>
+    </div>
+    <div className='flex justify-between items-center mb-2'>
+      <div className='text-lg font-semibold'>Advance Payment:</div>
+      <div className='text-lg'>₹{advanceAmount}</div>
+    </div>
+    <div className='flex flex-col mb-2'>
+      <div className='flex justify-between items-center'>
+        <div className='text-lg font-semibold'>Remaining Amount:</div>
+        <div className='text-lg'>₹{remainingAmount}</div>
+      </div>
+      <p className='text-sm text-gray-500'>To be paid at the time of check-in</p>
+    </div>
+    <div className='pb-3'>
+      <Button disabled={details.Status !== BookingStatus.Approved} label={"Proceed to Payment"} onClick={() => MakeStripe(details)}/>
+    </div>
+    {onAction && actionLabel && (
+      <Button disabled={details.Status === BookingStatus.Cancelled} outline small label={actionLabel} onClick={handleCancel}/>
+    )}
+  </div>
+</div>
+
       </div>
     </div>
   )

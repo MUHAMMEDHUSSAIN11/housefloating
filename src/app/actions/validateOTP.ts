@@ -4,10 +4,10 @@ export default async function validateOTP(phonenumber: string, otp: string) {
         const response = await fetch('/api/twilio/VerifyOTP', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Set the content type to JSON
+                'Content-Type': 'application/json', 
             },
             body: JSON.stringify({
-                phoneNumber: phonenumber, // Send the phone number and OTP in the request body
+                phoneNumber: phonenumber, 
                 code: otp,
             }),
         });
