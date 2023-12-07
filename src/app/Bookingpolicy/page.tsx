@@ -10,7 +10,7 @@ const page = () => {
         <div className='flex flex-col gap-6 pl-1'>
           <h2 className="text-3xl text-center font-semibold mb-5">Booking Policies</h2>
           <h3 className='text-left text-xl font-semibold mb-1 pl-2'>Bookings</h3>
-          <ol className="list-decimal pl-6">
+          <ol className="list-decimal pl-8">
             <li className="mb-4">
               <p className="text-black">The person making the booking must be 18 years of age or older.</p>
             </li>

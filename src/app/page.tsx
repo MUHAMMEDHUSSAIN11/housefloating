@@ -12,7 +12,7 @@ import Faq from './components/Hero/Faq';
 export default async function Home() {
   return (
     <>
-      <Background />
+      <Background/>
       <WhySection/>
       <ExperienceSection/>
       <HowToBookSection/>

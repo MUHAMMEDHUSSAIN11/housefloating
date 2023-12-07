@@ -28,23 +28,14 @@ const Footer = () => {
                             <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase">Policies</h2>
                             <ul className="text-gray-900 font-medium">
                                 <li className="mb-4">
-                                    <a href="https://github.com/themesberg/flowbite" className="hover:underline ">Booking Policy</a>
+                                    <a href="/Bookingpolicy" className="hover:underline ">Booking Policy</a>
                                 </li>
                                 <li>
-                                    <a href="https://discord.gg/4eeurUVvTy" className="hover:underline">Cancellation Policy</a>
+                                    <a href="/Cancellationpolicy" className="hover:underline">Cancellation Policy</a>
                                 </li>
                             </ul>
                         </div>
                         <div>
-                            <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase ">Legal</h2>
-                            <ul className="text-gray-900  font-medium">
-                                <li className="mb-4">
-                                    <a href="#" className="hover:underline">Privacy Policy</a>
-                                </li>
-                                <li>
-                                    <a href="#" className="hover:underline">Terms &amp; Conditions</a>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>

@@ -22,6 +22,7 @@
     "eslint-config-next": "^13.4.12",
     "firebase": "^9.22.2",
     "firebase-admin": "^11.9.0",
+    "lucide-react": "^0.294.0",
     "net": "^1.0.2",
     "next": "13.4.4",
     "next-auth": "^4.22.1",

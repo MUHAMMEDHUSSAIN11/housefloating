@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google'
 import RentModal from './components/Modals/RentModal'
 import NextTopLoader from 'nextjs-toploader';
 import SonnerToastProvider from './providers/SonnerToastProvider'
+import ScrollToTopButton from './components/Misc/ScrolltoTop'
 
 
 
@@ -32,6 +33,7 @@ export default async function RootLayout({ children, }: { children: React.ReactN
         <RegisterModal />
         <RentModal />
         <NextTopLoader color="#3b82f6" height={4} showSpinner={false} />
+        <ScrollToTopButton />
         {children}
       </body>
     </html>
