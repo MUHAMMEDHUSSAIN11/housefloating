@@ -20,6 +20,7 @@ import DeluxeFood from '../../components/FoodMenu/DeluxeFood';
 import PremiumFood from '../../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
 import HouseRules from '../../components/Descriptions/HouseRules';
+import CalculatePrice from '@/app/actions/calculatePrice';
 
 
 
@@ -40,33 +41,18 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   const [finalChildCount, setFinalChildCount] = useState(0);
   const [bookingDate, setBookingdate] = useState<Date>(new Date);
   const cruiseType = useTravelModeStore();
-  // const date = useBookingDateStore();
 
-  const adultPrice = 500;
-  const childPrice = 250;
-  const weekendPrice = 1000;
-  let newTotalPrice;
 
   useEffect(() => {
-    // Calculate the additional cost for adults and children
-    const additionalAdultCost = (finalAdultCount - (listing.getboat.data()?.guestCount || 0)) * adultPrice;
-    const additionalChildCost = finalChildCount * childPrice;
-    const bookingDay = bookingDate.getDay();
-    if (bookingDay === 6 || bookingDay === 0) {
-      newTotalPrice = (listing.getboat.data()?.price || 0) + additionalAdultCost + additionalChildCost + weekendPrice;
-    }
-    else {
-      newTotalPrice = (listing.getboat.data()?.price || 0) + additionalAdultCost + additionalChildCost;
-    }
-
-    // // Format the total price using toLocaleString to add commas and currency symbol if needed
-    // const formattedTotalPrice = newTotalPrice.toLocaleString('en-IN', {
-    //   style: 'currency',
-    //   currency: 'INR',
-    // });
-
-    setTotalPrice(newTotalPrice);
+    CalculatePrice(finalAdultCount, finalChildCount, bookingDate, listing)
+      .then((totalPrice) => {
+        setTotalPrice(totalPrice);
+      })
+      .catch((error) => {
+        console.error('Error calculating total price:', error);
+      });
   }, [finalAdultCount, finalChildCount, bookingDate]);
+
 
 
   const onCreateReservation = useCallback(() => {
@@ -78,7 +64,6 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
     }
 
   }, [user, bookingConfirmModal, loginModal])
-
 
 
   return (
