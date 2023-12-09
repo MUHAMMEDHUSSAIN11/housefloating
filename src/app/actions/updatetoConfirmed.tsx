@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import { firestore } from "../firebase/clientApp";
 import { query, collection, where, getDocs, doc, updateDoc } from "firebase/firestore";
+import { BookingStatus } from "../enums/enums";
 
 export default async function UpdateStatusToConfirmed(boatId: string, bookingDate: Date) {
   try {
@@ -15,7 +16,7 @@ export default async function UpdateStatusToConfirmed(boatId: string, bookingDat
       const reservationId = reservationDoc.id;
 
       await updateDoc(doc(reservationsRef, reservationId), {
-        Status: "Confirmed"
+        Status: BookingStatus.Confirmed
       });
       
       toast.success("Booking Status Updated to Confirmed.");

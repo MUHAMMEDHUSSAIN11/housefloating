@@ -15,7 +15,7 @@ interface ListingHeadProps {
   category: string;
 }
 
-const ListingHead: React.FC<ListingHeadProps> = ({id,imageSrc,title,roomCount,category,}) => {
+const ListingHead: React.FC<ListingHeadProps> = ({id,imageSrc,title,roomCount,category}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const goToSlide = (slideIndex: number) => {
@@ -31,17 +31,19 @@ const ListingHead: React.FC<ListingHeadProps> = ({id,imageSrc,title,roomCount,ca
       {/* Thumbnail Images */}
       <div className="flex top-4 justify-center py-2">
         {imageSrc.map((img, slideIndex) => (
-          <div key={slideIndex} onClick={() => goToSlide(slideIndex)} className={`cursor-pointer ${slideIndex === currentIndex ? 'border-2 border-blue-500' : ''}`}>
+          <div key={slideIndex} onClick={() => goToSlide(slideIndex)} className={`cursor-pointer ${slideIndex === currentIndex ? 'border-2 border-blue-500' : ''}`} style={{ height: '80px' }}>
             <Image
               src={img}
               alt={`${title} preview ${slideIndex}`}
               width={80}
               height={80}
+              className="object-cover w-full h-full"
             />
           </div>
         ))}
       </div>
     </div>
   );
-};
-export default ListingHead
+}
+export default ListingHead;
+
