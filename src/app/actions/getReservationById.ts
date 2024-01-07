@@ -3,7 +3,7 @@ import { firestore } from "../firebase/clientApp";
 import { toast } from "sonner";
 
 
-// Fetching reservations for a particular user.
+// Fetching reservations for a particular user in cart page.
 type Reservation = {
   ReservationId: string;
   BoatId: string;

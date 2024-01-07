@@ -9,8 +9,8 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import OtpInput from 'react-otp-input';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, firestore } from '@/app/firebase/clientApp';
-import { DocumentData, DocumentSnapshot, Timestamp, addDoc, collection, doc, runTransaction } from 'firebase/firestore';
+import { auth} from '@/app/firebase/clientApp';
+import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 
 
 import useTravelModeStore from '@/app/hooks/useTravelModeStore';
@@ -20,8 +20,8 @@ import * as NProgress from 'nprogress';
 import { toast } from 'sonner';
 import sendotp from '@/app/actions/getOTP';
 import validateOTP from '@/app/actions/validateOTP';
-import SendTelegram from '@/app/actions/sendTelegram';
-import RequestBooking from '@/app/actions/RaiseBooking';
+import SendTelegram from '@/app/actions/SendRequestTelegram';
+import RequestBooking from '@/app/actions/RequestBooking';
 
 
 

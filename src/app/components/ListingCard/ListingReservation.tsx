@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from "react";
 import Dayselector from "../Inputs/DaySelector";
 import Button from "../Misc/Button";
 import useTravelModeStore from "@/app/hooks/useTravelModeStore";

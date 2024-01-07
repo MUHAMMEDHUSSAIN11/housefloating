@@ -26,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     client_reference_id: body.Contactnumber,
     mode: 'payment',
     line_items,
+    metadata: body.metadata,
   });
 
   res.status(200).json({ url: session.url });
