@@ -8,6 +8,8 @@ import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import TripsClient from './TripsClient';
 import { Timestamp } from 'firebase/firestore';
+import GpayBanner from '../components/Misc/Banner';
+import Spinner from '../components/Misc/Spinner';
 
 
 
@@ -31,42 +33,41 @@ interface Reservation {
 const CartPage = () => {
   const [user] = useAuthState(auth);
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
+  const [isLoading,setIsLoading] = useState(false);
 
   const fetchReservations = async () => {
-    if (user)
-     {
-      try {
-        const reservationsData = await getReservationById(user.email);
-        if (reservationsData) {
-          setReservations(reservationsData);
-        } else {
-          setReservations([]); // Set as an empty array when there are no reservations
-        }
-      } catch (error) {
-        console.error('Error fetching reservations:', error);
-      }
+    try {
+      const reservationsData = user ? await getReservationById(user.email) : null;
+      setReservations(reservationsData || []); 
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+    } finally {
+      setIsLoading(false); 
     }
   };
 
   useEffect(() => {
-    fetchReservations();
+    if (user) {
+      setIsLoading(true); 
+      fetchReservations();
+    }
   }, [user]);
+
 
 return (
   <div className="pt-28">
-    {user ? (
+      {isLoading ? (<Spinner /> ) : user && reservations ? (
         <ClientOnly>
-        <TripsClient reservations={reservations} />
+          <TripsClient reservations={reservations} />
+          <GpayBanner />
         </ClientOnly>
-    ) : (
-      <>
+      ) : (
         <ClientOnly>
           <EmptyState title="Not Logged in!" subtitle="Please log in to see reservations!" />
         </ClientOnly>
-      </>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 };
 
 export default CartPage;

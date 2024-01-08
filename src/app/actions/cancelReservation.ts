@@ -46,6 +46,8 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
       await updateDoc(reservationDocRef, { Status: BookingStatus.Cancelled });
 
       const cancellationsRef = doc(collection(firestore, "Cancellations"), OrderDetails.ReservationId);
+      //setting Refund to false, as the refund is not initiated.. 
+      //Manually update on db when the refund is completed for cancellations!!
       await setDoc(cancellationsRef, {
         BoatID: OrderDetails.BoatId,
         BoatName: OrderDetails.BoatName,
@@ -56,7 +58,7 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
         Mode: OrderDetails.Mode,
         Payment: OrderDetails.Payment,
         Price: OrderDetails.Price,
-        Refund: OrderDetails.Payment,
+        Refund: false,
       });
       toast.success("Reservation cancelled successfully.");
     } else {

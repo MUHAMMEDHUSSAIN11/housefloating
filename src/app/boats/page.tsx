@@ -41,8 +41,6 @@ const Page = () => {
           </div>
         </div>
       </Container>
-      {/* <hr/>
-      <Footer/> */}
     </>
   )
 }
