@@ -8,6 +8,7 @@ import { IoBoat, IoCalendarNumberSharp, IoCard, IoCheckmarkCircle, IoPersonSharp
 import { BookingStatus } from '../enums/enums';
 import MakeStripe from '../actions/MakeStripe';
 import * as NProgress from "nprogress";
+import { Timestamp } from 'firebase/firestore';
 
 
 
@@ -17,7 +18,7 @@ interface FirestoreListing {
   ReservationId : string;
   BoatId: string;
   BoatName: string;
-  BookingDate: any;
+  BookingDate: Timestamp;
   Contactnumber: string;
   Email: string;
   HeadCount: number;

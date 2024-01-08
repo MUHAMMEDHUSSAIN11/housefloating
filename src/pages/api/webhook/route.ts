@@ -50,10 +50,16 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             const BoatId = session.metadata?.boatId;
             if (ReservationId && BoatId) {
                 console.log(ReservationId);
-                await ConfirmAfterPayment(ReservationId);
-                await SendPaymentTelegram(ReservationId, BoatId, Date)
+                try {
+                    console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
+                    await ConfirmAfterPayment(ReservationId);
+                    await SendPaymentTelegram(ReservationId, BoatId, Date)
+                } catch (error:any) {
+                    res.status(400).send(`Status Update Error: ${error.message}`);
+                    return;
+                }
+
             }
-            console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
         } else if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             console.log(

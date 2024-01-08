@@ -35,8 +35,6 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
       return reservationDate.getDate() === bookingDate.getDate() && reservationDate.getMonth() === bookingDate.getMonth() && reservationDate.getFullYear() === bookingDate.getFullYear();
     });
 
-    console.log(indexOfReservationToRemove);
-
     if (indexOfReservationToRemove !== -1) {
       // Remove the reservation from the array
       reservations.splice(indexOfReservationToRemove, 1);
@@ -47,7 +45,7 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
       // Update the status field to "cancelled"
       await updateDoc(reservationDocRef, { Status: BookingStatus.Cancelled });
 
-      const cancellationsRef = doc(collection(firestore, "Cancellations"),OrderDetails.ReservationId);
+      const cancellationsRef = doc(collection(firestore, "Cancellations"), OrderDetails.ReservationId);
       await setDoc(cancellationsRef, {
         BoatID: OrderDetails.BoatId,
         BoatName: OrderDetails.BoatName,
@@ -58,19 +56,19 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
         Mode: OrderDetails.Mode,
         Payment: OrderDetails.Payment,
         Price: OrderDetails.Price,
-        Refund:false,
+        Refund: OrderDetails.Payment,
       });
       toast.success("Reservation cancelled successfully.");
     } else {
       // Reservation not found, display an error message
       toast.error("Reservation not found.");
     }
-    SendCancellationTelegram(OrderDetails.Email,OrderDetails.ReservationId,OrderDetails.Mode,OrderDetails.Category,OrderDetails.Payment,OrderDetails.BoatName,OrderDetails.Price,OrderDetails.Contactnumber,OrderDetails.BookingDate);
+    SendCancellationTelegram(OrderDetails.Email, OrderDetails.ReservationId, OrderDetails.Mode, OrderDetails.Category, OrderDetails.Payment, OrderDetails.BoatName, OrderDetails.Price, OrderDetails.Contactnumber, OrderDetails.BookingDate);
   } catch (error) {
     // Handle errors gracefully
     console.error("Error canceling reservation:", error);
     toast.error("Error canceling reservation.");
   }
-  
+
 }
 

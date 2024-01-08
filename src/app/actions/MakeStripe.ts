@@ -1,11 +1,12 @@
 import axios from "axios";
+import { Timestamp } from "firebase/firestore";
 import { toast } from "sonner";
 
 interface FirestoreListing {
     ReservationId : string;
     BoatId: string;
     BoatName: string;
-    BookingDate: any;
+    BookingDate: Timestamp;
     Contactnumber: string;
     Email: string;
     HeadCount: number;
@@ -25,7 +26,7 @@ export default async function MakeStripe(Order:FirestoreListing) {
         const metadata = {
           reservationId: Order.ReservationId,
           boatId: Order.BoatId, 
-          bookingDate: Order.BookingDate.toISOString(), 
+          bookingDate: Order.BookingDate.toString(), 
         };
 
         const { data } = await axios.post('/api/stripe/route',

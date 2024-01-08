@@ -7,6 +7,7 @@ import getReservationById from '../actions/getReservationById';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import TripsClient from './TripsClient';
+import { Timestamp } from 'firebase/firestore';
 
 
 
@@ -14,7 +15,7 @@ interface Reservation {
   ReservationId : string;
   BoatId: string;
   BoatName: string;
-  BookingDate: any;
+  BookingDate: Timestamp;
   Contactnumber: string;
   Email: string;
   HeadCount: number;

@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
 import { toast } from "sonner";
 
@@ -8,7 +8,7 @@ type Reservation = {
   ReservationId: string;
   BoatId: string;
   BoatName: string;
-  BookingDate: any;
+  BookingDate: Timestamp;
   Contactnumber: string;
   Email: string;
   HeadCount: number;

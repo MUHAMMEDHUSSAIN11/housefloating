@@ -10,13 +10,14 @@ export default async function UpdateStatusToConfirmed(boatId: string, bookingDat
     const q = query(reservationsRef, where("BoatId", "==", boatId), where("BookingDate", "==", bookingDate));
     const querySnapshot = await getDocs(q);
 
-    // If a matching document is found, update its Status to "Paid"
+    // If a matching document is found, update its Status to "Confirmed" and Payment to "True"!!
     if (!querySnapshot.empty) {
       const reservationDoc = querySnapshot.docs[0];
       const reservationId = reservationDoc.id;
 
       await updateDoc(doc(reservationsRef, reservationId), {
-        Status: BookingStatus.Confirmed
+        Status: BookingStatus.Confirmed,
+        Payment: true,
       });
       
       toast.success("Booking Status Updated to Confirmed.");

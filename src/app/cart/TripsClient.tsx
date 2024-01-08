@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import Container from '../components/Misc/Container';
 import Heading from '../components/Misc/Heading';
 import ClientOnly from '../components/ClientOnly';
@@ -13,13 +13,14 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
+import { Timestamp } from 'firebase/firestore';
 
 
 interface Reservation {
   ReservationId: string;
   BoatId: string;
   BoatName: string;
-  BookingDate: any;
+  BookingDate: Timestamp;
   Contactnumber: string;
   Email: string;
   HeadCount: number;

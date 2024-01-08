@@ -4,10 +4,7 @@ import { useEffect } from 'react'
 import { toast } from 'sonner'
 import EmptyState from './components/Misc/EmptyState'
  
-export default function Error({
-  error,
-  reset,
-}: {
+export default function Error({error,reset,}: {
   error: Error & { digest?: string }
   reset: () => void
 }) {
