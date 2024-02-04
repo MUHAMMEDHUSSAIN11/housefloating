@@ -1,13 +1,26 @@
 import { Timestamp, collection, getDocs } from 'firebase/firestore'; 
 import { firestore } from '../firebase/clientApp';
 
-export default async function getListings() {
+interface Listing{
+  category : string,
+  bathroomCount : number,
+  guestCount : number,
+  images : string [],
+  maxDayGuest : number,
+  maxNightGuest : number,
+  price : number,
+  reservations : any[],
+  roomCount : number,
+  title : string,
+}
+
+export default async function getListings(): Promise<Listing[]>  {
   try {
     const listingRef = collection(firestore, "Boats");
     const listingsQueryData = await getDocs(listingRef);
 
     const listings = listingsQueryData.docs.map((doc) => {
-      const data = doc.data();
+      const data = doc.data() as Listing;
       // Convert Firestore Timestamp objects to plain JavaScript objects for specific fields
       const reservations = data.reservations.map((timestamp: Timestamp) => ({
         seconds: timestamp.seconds,
@@ -22,6 +35,6 @@ export default async function getListings() {
     return listings;
   } catch (error) {
     console.log(error);
-    return null;
+    return [];
   }
 }

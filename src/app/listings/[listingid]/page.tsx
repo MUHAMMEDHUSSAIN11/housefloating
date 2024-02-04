@@ -18,6 +18,8 @@ const fetchBoatData = async (listingId: string ) => {
   return fetchedBoatData;
 };
 
+//maybe useParams can be implemented here.
+
 const Listingpage = ({ params }: { params: Iparams }) => {
   const listingId:any = params.listingid;
   const { data: fetchedBoatData,error,isLoading } = useSWR(listingId, () => fetchBoatData(listingId));

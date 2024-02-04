@@ -21,6 +21,7 @@ import PremiumFood from '../../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
 import HouseRules from '../../components/Descriptions/HouseRules';
 import CalculatePrice from '@/app/actions/calculatePrice';
+import { Categories } from '@/app/enums/enums';
 
 
 
@@ -119,14 +120,14 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
           )}
           {
             (() => {
-              if (listing.getboat.data()?.category === "Deluxe Houseboats") {
+              if (listing.getboat.data()?.category === Categories.Deluxe) {
                 return (
                   <>
                     <hr />
                     <DeluxeFood />
                   </>
                 )
-              } else if (listing.getboat.data()?.category === "Premium Houseboats") {
+              } else if (listing.getboat.data()?.category === Categories.Premium) {
                 return (
                   <>
                     <hr />

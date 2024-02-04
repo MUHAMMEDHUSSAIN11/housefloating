@@ -27,9 +27,9 @@ export default function GpayBanner() {
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <p className="text-md leading-6 text-white font-sans font-semibold">
-                    Pay via UPI easily! Message us on WhatsApp at +91-8714043824 with your email ID to complete your payment.         
+                    Pay via UPI easily! Message us on WhatsApp at +91-8714043824 with your email ID to make your UPI payment.         
                  </p>
-                <a href="https://wa.me/919497252368" className="flex-none rounded-full bg-green-500 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
+                <a href="https://wa.me/918714038424" className="flex-none rounded-full bg-green-500 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
                    WhatsApp <span aria-hidden="true">&rarr;</span>
                 </a>
             </div>

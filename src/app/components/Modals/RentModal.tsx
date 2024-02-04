@@ -25,6 +25,8 @@ enum STEPS {
     SUBIMAGETWO = 6,
     SUBIMAGETHREE = 7,
     PRICE = 8,
+    ADULT_ADD_PRICE = 9,
+    CHILD_ADD_PRICE = 10,
 }
 
 const categories = [
@@ -44,7 +46,7 @@ const RentModal = () => {
 
     const [step, setStep] = useState(STEPS.CATEGORY)
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000, title: '',maxDayGuest:0,maxNightGuest:0 } });
+    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000,adultAddonPrice: 500,childAddonPrice:300,title: '',maxDayGuest:0,maxNightGuest:0 } });
 
 
     const category = watch('category');
@@ -54,6 +56,8 @@ const RentModal = () => {
     const image = watch('images');
     const maxDayGuest = watch('maxDayGuest');
     const maxNightGuest = watch('maxNightGuest');
+    const childAddonPrice = watch('childAddonPrice');
+    const adultAddonPrice = watch('adultAddonPrice');
 
     const setCustomValue = (id: string, value: any) => {
         if (id === 'images') {
@@ -82,11 +86,11 @@ const RentModal = () => {
     };
 
     const onSubmit: SubmitHandler<FieldValues> = (data: FieldValues) => {
-        if (step !== STEPS.PRICE) {
+        if (step !== STEPS.CHILD_ADD_PRICE) {
             return onNext();
         }
         setIsLoading(true);
-
+        //Need to add a empty checking for details here !!
         const createBoatDocument = async () => {
             try {
               // Parse numeric values
@@ -117,7 +121,7 @@ const RentModal = () => {
 
 
     const actionLabel = useMemo(() => {
-        if (step === STEPS.PRICE) {
+        if (step === STEPS.CHILD_ADD_PRICE) {
             return 'Create';
         }
         return 'Next';
@@ -241,6 +245,25 @@ const RentModal = () => {
             </div>
         )
     }
+    
+    if (step === STEPS.ADULT_ADD_PRICE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Now, Additional Price for Adult" subtitle="How much do you charge per night?" />
+                <Input id="adultAddonPrice" label=" Additional Price for Adults" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+            </div>
+        )
+    }
+
+    if (step === STEPS.CHILD_ADD_PRICE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Now, Additional Price for Childrens" subtitle="How much do you charge per night?" />
+                <Input id="childAddonPrice" label=" Additional Price for Children" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+            </div>
+        )
+    }
+
 
     return (
         <Modal
