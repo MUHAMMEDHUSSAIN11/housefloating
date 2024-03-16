@@ -1,43 +1,44 @@
 import axios from "axios";
 import { Timestamp } from "firebase/firestore";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
+import { amount } from "../enums/enums";
 
 interface FirestoreListing {
-    ReservationId : string;
-    BoatId: string;
-    BoatName: string;
-    BookingDate: Timestamp;
-    Contactnumber: string;
-    Email: string;
-    HeadCount: number;
-    MinorCount: number;
-    Mode: string;
-    Price: number;
-    Payment: boolean;
-    Category: string;
-    Status: string;
-    Image: string;
-  }
+  ReservationId: string;
+  BoatId: string;
+  BoatName: string;
+  BookingDate: Timestamp;
+  Contactnumber: string;
+  Email: string;
+  HeadCount: number;
+  MinorCount: number;
+  Mode: string;
+  Price: number;
+  Payment: boolean;
+  Category: string;
+  Status: string;
+  Image: string;
+}
 
-export default async function MakeStripe(Order:FirestoreListing) {
-    try {
-      const advanceAmount = Order.Price * 0.3 ;
-        const OrderDetails:any[] = [Order.BoatName,advanceAmount,Order.Contactnumber,Order.Image];
-        const metadata = {
-          reservationId: Order.ReservationId,
-          boatId: Order.BoatId, 
-          bookingDate: Order.BookingDate.toString(), 
-        };
-
-        const { data } = await axios.post('/api/stripe/route',
-          {
-            items: OrderDetails,
-            metadata,
-          }
-        );
-        window.location.href = data.url;
-      } catch (error:any) {
-        toast.error("Sorry,Something went wrong. Contact our customer support");
-      }
+export default async function MakeStripe(Order: FirestoreListing) {
+  try {
+    const advanceAmount = Order.Price * amount.advance;
+    const OrderDetails: any[] = [Order.BoatName, advanceAmount, Order.Contactnumber, Order.Image];
+    const metadata = {
+      reservationId: Order.ReservationId,
+      boatId: Order.BoatId,
+      bookingDate: Order.BookingDate.toString(),
     };
-    
+
+    const { data } = await axios.post('/api/stripe/route',
+      {
+        items: OrderDetails,
+        metadata,
+      }
+    );
+    window.location.href = data.url;
+  } catch (error: any) {
+    toast.error("Sorry,Something went wrong. Contact our customer support");
+  }
+};
+

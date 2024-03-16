@@ -1,9 +1,8 @@
 import { Timestamp, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
-
 import { BookingStatus } from "../enums/enums";
-import { toast } from "sonner";
 import SendCancellationTelegram from "./SendCancellationTelegram";
+import toast from "react-hot-toast";
 
 interface BookingDetails {
   ReservationId: string;
@@ -59,6 +58,7 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
         Payment: OrderDetails.Payment,
         Price: OrderDetails.Price,
         Refund: false,
+        CreatedOn: Timestamp.fromDate(new Date()),
       });
       toast.success("Reservation cancelled successfully.");
     } else {
@@ -67,10 +67,8 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
     }
     SendCancellationTelegram(OrderDetails.Email, OrderDetails.ReservationId, OrderDetails.Mode, OrderDetails.Category, OrderDetails.Payment, OrderDetails.BoatName, OrderDetails.Price, OrderDetails.Contactnumber, OrderDetails.BookingDate);
   } catch (error) {
-    // Handle errors gracefully
     console.error("Error canceling reservation:", error);
     toast.error("Error canceling reservation.");
   }
-
 }
 

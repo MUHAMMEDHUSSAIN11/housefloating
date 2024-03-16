@@ -4,8 +4,8 @@ import { DocumentData } from 'firebase/firestore';
 import React from 'react'
 import { BookingStatus } from '../enums/enums';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 import UpdateStatusToApprovedID from '../actions/UpdateStatusToApprovedID';
+import toast from 'react-hot-toast';
 
 
 interface DataProps {

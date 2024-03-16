@@ -1,8 +1,7 @@
+import { Telegram } from "../enums/enums";
 
-export default  function SendPaymentTelegram(reservationId:string,BoatId:string,Date:any) {
-    const botToken = '6317566293:AAFj2P1IlI91Cap6iR8Scy_A4xvFnyJTiws';
-    const chatId = '6777591451';
-    const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+export default function SendPaymentTelegram(reservationId: string, BoatId: string, Date: any) {
+    const apiUrl = `https://api.telegram.org/bot${Telegram.botToken}/sendMessage`;
     const message = `
     ✨ Payment Success ✨
     
@@ -21,7 +20,7 @@ export default  function SendPaymentTelegram(reservationId:string,BoatId:string,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            chat_id: chatId,
+            chat_id: Telegram.chatId,
             text: message,
         }),
     })

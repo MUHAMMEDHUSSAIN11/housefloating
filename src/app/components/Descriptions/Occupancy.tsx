@@ -7,6 +7,9 @@ interface OccupancyProps {
     limit: number,
     title: string,
     category: string,
+    adultAddonPrice: number,
+    childAddonPrice: number,
+
 }
 
 const Occupancy: React.FC<OccupancyProps> = (props) => {
@@ -28,30 +31,12 @@ const Occupancy: React.FC<OccupancyProps> = (props) => {
                 <div className="p-4 rounded-lg shadow-md bg-white w-full">
                     <div>
                         <h2 className="text-lg font-sans text-gray-900">Extra Adult Cost</h2>
-                        
-                        {props.category === "Deluxe Houseboats" ? (
-                            <p className="pl-4">900</p>
-                        ) : props.category === "Premium Houseboats" ? (
-                            <p className=" pl-4">1200</p>
-                        ) : props.category === "Luxury Houseboats" ? (
-                            <p className=" pl-4">1500</p>
-                        ) : (
-                            <p className=" pl-4"></p>
-                        )}
+                        <p className='pl-4'>{props.adultAddonPrice}</p>
                     </div>
                     <hr/>
                     <div>
                         <h2 className="text-lg font-sans text-gray-900 pt-4">Extra Child Cost</h2>
-                        {props.category === "Deluxe Houseboats" ? (
-                            <p className=" pl-4">800</p>
-                        ) : props.category === "Premium Houseboats" ? (
-                            <p className=" pl-4">1000</p>
-                        ) : props.category === "Luxury Houseboats" ? (
-                            <p className=" pl-4">1200</p>
-                        ) : (
-                            <p className="text-gray-600 pl-4"></p>
-                        )}
-
+                        <p className=" pl-4">{props.childAddonPrice}</p>
                     </div>
                 </div>
             </div>

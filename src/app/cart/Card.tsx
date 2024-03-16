@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Button from '../components/Misc/Button';
 import { useRouter } from 'next/navigation';
 import { IoBoat, IoCalendarNumberSharp, IoCard, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
-import { BookingStatus } from '../enums/enums';
+import { BookingStatus, amount } from '../enums/enums';
 import MakeStripe from '../actions/MakeStripe';
 import * as NProgress from "nprogress";
 import { Timestamp } from 'firebase/firestore';
@@ -49,8 +49,8 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
     return date.toDate().toLocaleDateString(undefined, options);
   }
 
-  const advanceAmount = details.Price * 0.3;
-  const remainingAmount = details.Price * 0.7;
+  const advanceAmount = details.Price * amount.advance;
+  const remainingAmount = details.Price * amount.remaining;
 
 
   const handlePush = () => {

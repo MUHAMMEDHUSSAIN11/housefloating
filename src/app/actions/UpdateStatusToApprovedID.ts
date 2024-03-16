@@ -2,7 +2,7 @@
 import { firestore } from "../firebase/clientApp";
 import { collection, doc, updateDoc } from "firebase/firestore";
 import { BookingStatus } from "../enums/enums";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 export default async function UpdateStatusToApprovedID(ReservationId: string) {
     try {

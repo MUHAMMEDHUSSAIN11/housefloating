@@ -1,8 +1,8 @@
 'use client' 
  
-import { useEffect } from 'react'
-import { toast } from 'sonner'
-import EmptyState from './components/Misc/EmptyState'
+import { useEffect } from 'react';
+import EmptyState from './components/Misc/EmptyState';
+import toast from 'react-hot-toast';
  
 export default function Error({error,reset,}: {
   error: Error & { digest?: string }

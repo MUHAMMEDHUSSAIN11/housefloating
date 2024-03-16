@@ -1,6 +1,6 @@
 import { Timestamp, addDoc, collection, doc, runTransaction } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 interface Data {
     Contactnumber: any,
@@ -16,6 +16,7 @@ interface Data {
     Category: any,
     Status: any,
     Image: any,
+    CreatedOn: Timestamp,
 };
 
 export default async function RequestBooking(reservationData: Data) {
@@ -41,12 +42,9 @@ export default async function RequestBooking(reservationData: Data) {
             // Add the reservation to the "Reservations" collection
             const docRef = await addDoc(reservationsCollection, reservationData);
             return docRef;
-
         })
     } catch (error) {
         toast.error('something went wrong! Please contact our team');
-        throw error; // Rethrow the error for proper handling in the .catch block
     }
-
 }
 

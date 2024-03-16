@@ -24,15 +24,11 @@ import CalculatePrice from '@/app/actions/calculatePrice';
 import { Categories } from '@/app/enums/enums';
 
 
-
-
 interface ListingClientProps {
   listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
 }
 
-
 const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
-
   const [user] = useAuthState(auth);
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
@@ -107,13 +103,13 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
           </div>
           {cruiseType.travelMode === "Overnight" ? (
             <>
-              <Occupancy title={'Overnight Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxNightGuest} Count={listing.getboat.data()?.guestCount} />
+              <Occupancy title={'Overnight Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxNightGuest} Count={listing.getboat.data()?.guestCount} adultAddonPrice={listing.getboat.data()?.adultAddonPrice} childAddonPrice={listing.getboat.data()?.childAddonPrice} />
               <hr />
               <NightSteps />
             </>
           ) : (
             <>
-              <Occupancy title={'Day Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxDayGuest} Count={listing.getboat.data()?.guestCount} />
+              <Occupancy title={'Day Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxDayGuest} Count={listing.getboat.data()?.guestCount} adultAddonPrice={listing.getboat.data()?.adultAddonPrice} childAddonPrice={listing.getboat.data()?.childAddonPrice} />
               <hr />
               <DayCruiseSteps />
             </>

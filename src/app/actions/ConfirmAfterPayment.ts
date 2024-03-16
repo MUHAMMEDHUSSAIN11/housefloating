@@ -1,9 +1,11 @@
 import { collection, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
 import { BookingStatus } from "../enums/enums";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
-export default async function ConfirmAfterPayment(reservationId:string) {
+//used in webhook to update status after payment..
+
+export default async function ConfirmAfterPayment(reservationId: string) {
     try {
         // Query the Reservations collection to find the document with matching BoatId and BookingDate
         const reservationRef = doc(collection(firestore, "Reservations"), reservationId);
@@ -13,7 +15,7 @@ export default async function ConfirmAfterPayment(reservationId:string) {
                 Status: BookingStatus.Confirmed,
                 Payment: true,
             });
-            toast.success("Booking Status Updated to Approved.");
+            toast.success("Booking Status Updated to Confirmed.");
         } else {
             toast.error("No matching document found.");
         }

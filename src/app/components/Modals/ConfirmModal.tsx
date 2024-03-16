@@ -9,19 +9,17 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import OtpInput from 'react-otp-input';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth} from '@/app/firebase/clientApp';
-import { DocumentData, DocumentSnapshot } from 'firebase/firestore';
-
-
+import { auth } from '@/app/firebase/clientApp';
+import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore';
 import useTravelModeStore from '@/app/hooks/useTravelModeStore';
 import { useRouter } from 'next/navigation'
 import { BookingStatus } from '@/app/enums/enums';
 import * as NProgress from 'nprogress';
-import { toast } from 'sonner';
 import sendotp from '@/app/actions/getOTP';
 import validateOTP from '@/app/actions/validateOTP';
-import SendTelegram from '@/app/actions/SendRequestTelegram';
 import RequestBooking from '@/app/actions/RequestBooking';
+import { toast } from 'react-hot-toast';
+import SendRequestTelegram from '@/app/actions/SendRequestTelegram';
 
 
 
@@ -119,7 +117,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 toast.error("something went wrong!");
                 return;
             }
-            
+
         }
 
         // Validating the OTP
@@ -127,7 +125,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
             try {
                 setIsLoading(true);
                 if (otp.length < 4) {
-                    throw new Error("OTP must be 4 digits");
+                    toast.error("OTP must be 4 digits");
                 }
                 const response = await validateOTP(cleanedPhoneNumber, otp);
                 setIsLoading(false);
@@ -166,18 +164,23 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 Payment: false,
                 Category: listing.getboat.data()?.category,
                 Status: BookingStatus.Requested,
-                Image: listing.getboat.data()?.images[0]
+                Image: listing.getboat.data()?.images[0],
+                CreatedOn: Timestamp.fromDate(new Date())
             };
 
             await RequestBooking(reservationData)
-                  .then(() => {
+                .then(() => {
                     setIsLoading(false);
-                    toast.success('Boat enquiry raised successfully.');
+                    // toast.success('Boat enquiry raised successfully.');
+                    toast('Boat enquiry raised successfully! Confirmation will be received within 1 hour!.', {
+                        icon: '👏',
+                        duration: 6000,
+                    });
                     BookingConfirmModal.onClose();
                     setStep(STEPS.PHONENUMBER);
                     handlePush();
-                    SendTelegram(finalBookingDate,finalHeadCount,finalMinorCount,finalPrice,data.phonenumber,travelMode.travelMode,
-                        listing.getboat.data()?.title,listing.getboat.data()?.category);
+                    SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber, travelMode.travelMode,
+                        listing.getboat.data()?.title, listing.getboat.data()?.category);
                 })
                 .catch((error) => {
                     toast.error('something went wrong! Please contact our team');
@@ -200,7 +203,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
         bodyContent = (
             <div className='flex flex-col gap-4'>
                 <Heading title="verify your phonenumber" />
-                <OtpInput value={otp} inputStyle={{border: "1px solid transparent",borderRadius: "8px",width: "54px",height: "54px",fontSize: "12px",color: "#000",fontWeight: "400",caretColor: "blue"}}
+                <OtpInput value={otp} inputStyle={{ border: "1px solid transparent", borderRadius: "8px", width: "54px", height: "54px", fontSize: "12px", color: "#000", fontWeight: "400", caretColor: "blue" }}
                     shouldAutoFocus={true}
                     onChange={setOtp}
                     numInputs={4}

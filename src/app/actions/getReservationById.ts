@@ -1,6 +1,6 @@
 import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 
 // Fetching reservations for a particular user in cart page.
@@ -18,7 +18,7 @@ type Reservation = {
   Payment: boolean;
   Category: string;
   Status: string;
-  Image : string;
+  Image: string;
 };
 
 const getReservationById = async (email: string | null) => {
@@ -31,13 +31,13 @@ const getReservationById = async (email: string | null) => {
     // Fetch the documents that match the query.
     const querySnapshot = await getDocs(q);
 
-    const reservations:Reservation[] = [];
+    const reservations: Reservation[] = [];
     querySnapshot.forEach((doc) => {
-      const reservationData:any = doc.data();
-      const reservationWithId:Reservation = {ReservationId: doc.id, ...reservationData};
+      const reservationData: any = doc.data();
+      const reservationWithId: Reservation = { ReservationId: doc.id, ...reservationData };
       reservations.push(reservationWithId);
     });
-    
+
     return reservations;
   } catch (error) {
     console.error("Error fetching reservations:", error);

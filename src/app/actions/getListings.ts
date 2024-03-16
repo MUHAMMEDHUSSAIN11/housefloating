@@ -1,20 +1,20 @@
-import { Timestamp, collection, getDocs } from 'firebase/firestore'; 
+import { Timestamp, collection, getDocs } from 'firebase/firestore';
 import { firestore } from '../firebase/clientApp';
 
-interface Listing{
-  category : string,
-  bathroomCount : number,
-  guestCount : number,
-  images : string [],
-  maxDayGuest : number,
-  maxNightGuest : number,
-  price : number,
-  reservations : any[],
-  roomCount : number,
-  title : string,
+interface Listing {
+  category: string,
+  bathroomCount: number,
+  guestCount: number,
+  images: string[],
+  maxDayGuest: number,
+  maxNightGuest: number,
+  price: number,
+  reservations: any[],
+  roomCount: number,
+  title: string,
 }
 
-export default async function getListings(): Promise<Listing[]>  {
+export default async function getListings(): Promise<Listing[]> {
   try {
     const listingRef = collection(firestore, "Boats");
     const listingsQueryData = await getDocs(listingRef);
@@ -26,11 +26,7 @@ export default async function getListings(): Promise<Listing[]>  {
         seconds: timestamp.seconds,
         nanoseconds: timestamp.nanoseconds,
       }));
-      return {
-        id: doc.id,
-        ...data, 
-        reservations,
-      };
+      return { id: doc.id, ...data, reservations };
     });
     return listings;
   } catch (error) {

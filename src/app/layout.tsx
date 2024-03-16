@@ -3,11 +3,11 @@ import RegisterModal from './components/Modals/RegisterModal'
 import Navbar from './components/Navbar/Navbar'
 import './globals.css'
 import { Inter } from 'next/font/google'
-
 import RentModal from './components/Modals/RentModal'
 import NextTopLoader from 'nextjs-toploader';
 import SonnerToastProvider from './providers/SonnerToastProvider'
 import ScrollToTopButton from './components/Misc/ScrolltoTop'
+import { Toaster } from 'react-hot-toast'
 
 
 
@@ -27,8 +27,11 @@ export default async function RootLayout({ children, }: { children: React.ReactN
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SonnerToastProvider />
-         <Navbar/> 
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+        />
+        <Navbar />
         <LoginModal />
         <RegisterModal />
         <RentModal />

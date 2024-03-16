@@ -12,16 +12,17 @@ import * as NProgress from "nprogress";
 // this component is used to display items in boats page
 
 interface FirestoreListing {
-  id: string
-  bathroomCount: number
-  category: string
-  description: string
-  guestCount: number
-  images: string[]
-  roomCount: number
-  title: string
-  price: number
+  id: string,
+  bathroomCount: number,
+  category: string,
+  description: string,
+  guestCount: number,
+  images: string[],
+  roomCount: number,
+  title: string,
+  price: number,
   reservations:Timestamp[]
+
 }
 
 interface ListingCardProps {
@@ -37,6 +38,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
   const router = useRouter();
   
   const handlePush = () => {
+    //start done needs to be rechecked
     router.push(`/listings/${data.id}`);
     NProgress.start();
     NProgress.done();

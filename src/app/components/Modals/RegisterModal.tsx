@@ -3,9 +3,7 @@
 import { AiFillFacebook } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { useCallback, useEffect, useState } from "react";
-
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-
 import useLoginModal from "@/app/hooks/useLoginModal";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
 import Modal from "./Modal";
@@ -17,7 +15,7 @@ import { useCreateUserWithEmailAndPassword, useSignInWithFacebook, useSignInWith
 import { auth, firestore } from "@/app/firebase/clientApp";
 import { User } from "firebase/auth";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 
 const RegisterModal = () => {

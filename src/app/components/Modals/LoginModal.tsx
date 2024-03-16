@@ -15,8 +15,7 @@ import { auth, firestore } from "@/app/firebase/clientApp";
 import { User } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { FIREBASE_ERRORS } from "@/app/firebase/errors";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 
  

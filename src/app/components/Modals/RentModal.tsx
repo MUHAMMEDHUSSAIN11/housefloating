@@ -1,6 +1,6 @@
 'use client'
 import useRentModal from '@/app/hooks/useRentModal'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Modal from './Modal';
 import Heading from '../Misc/Heading';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
@@ -11,7 +11,7 @@ import { firestore } from '@/app/firebase/clientApp';
 import { addDoc } from '@firebase/firestore';
 import { collection } from 'firebase/firestore';
 import ImageUpload from '../Inputs/ImageUpload';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
 //This component is used to create listings.
 
@@ -46,7 +46,7 @@ const RentModal = () => {
 
     const [step, setStep] = useState(STEPS.CATEGORY)
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000,adultAddonPrice: 500,childAddonPrice:300,title: '',maxDayGuest:0,maxNightGuest:0 } });
+    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000,adultAddonPrice:500,childAddonPrice:300,title: '',maxDayGuest:0,maxNightGuest:0 } });
 
 
     const category = watch('category');
