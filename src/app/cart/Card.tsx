@@ -60,10 +60,8 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
   };
 
 
-  const handleCancel: any = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCancel: any = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
-
       if (disabled) {
         return;
       }

@@ -11,7 +11,7 @@ import getReservations from '../actions/getReservations';
 
 const Page = () => {
   const [user] = useAuthState(auth);
-  const isAdmin = user?.uid === 'zX8nYa6x9yRPW8rXbrEkCd7cWXH2';
+  const isAdmin = user?.uid == process.env.NEXT_PUBLIC_KHALAME;
 
   const { data: reservations, error, isValidating, isLoading } = useSWR('actions', getReservations, {
     refreshInterval: 10 * 60 * 1000,

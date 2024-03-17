@@ -8,12 +8,12 @@ import EmptyState from '../components/Misc/EmptyState';
 import Card from './Card';
 import CancelReservation from '../actions/cancelReservation';
 import { useRouter } from 'next/navigation';
-
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
+import { Timestamp } from 'firebase/firestore';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
-import { Timestamp } from 'firebase/firestore';
+
 
 
 interface Reservation {
@@ -38,14 +38,12 @@ interface TripsClientProps {
 }
 
 const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
-
-  
   const router = useRouter();
   const dtoast = useRef(null);
 
   const onConfirm = useCallback((reservation: Reservation) => {
      CancelReservation(reservation)
-     router.refresh();
+    router.push('/cart');
   }, [router])
 
   const reject = () => {
@@ -67,7 +65,6 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
   return (
     <Container>
       <Heading title="Trips" subtitle="Where you've been and where you're going" />
-
       {reservations !== null ? (
         <div className="mt-10 w-full lg:w-3/4 ">
           {reservations.map((reservation, index) => (
@@ -86,10 +83,8 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
           </ClientOnly>
         </>
       )}
-
       <Toast ref={dtoast} />
       <ConfirmDialog />
-
     </Container>
   );
 };

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Heading from '../Misc/Heading';
 import Image from 'next/image';
+import BreadCrumb from '../Misc/BreadCrumb';
 
 //This component is used for displaying individual listings images
 
@@ -25,6 +26,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({id,imageSrc,title,roomCount,ca
   return (
     <div className='px-1'>
       <Heading title={title} subtitle={`${category} `} />
+      <BreadCrumb/>
       <div className="aspect-square w-full h-[60vh] overflow-hidden rounded-xl relative group">
         <Image className="object-cover h-full w-full group-hover:scale-110 transition" src={imageSrc[currentIndex]} width={650} height={650} alt={title} />
       </div>
