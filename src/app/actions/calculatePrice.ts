@@ -28,6 +28,6 @@ export default async function CalculatePrice(finalAdultCount: number, finalChild
     }
     return newTotalPrice;
   } catch (error) {
-    toast.error("Something went wrong!. Please Contact Us");
+    toast.error("Something went wrong while fetching Price!. Please Contact Us");
   }
 }

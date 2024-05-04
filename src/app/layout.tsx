@@ -5,7 +5,6 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import RentModal from './components/Modals/RentModal'
 import NextTopLoader from 'nextjs-toploader';
-import SonnerToastProvider from './providers/SonnerToastProvider'
 import ScrollToTopButton from './components/Misc/ScrolltoTop'
 import { Toaster } from 'react-hot-toast'
 

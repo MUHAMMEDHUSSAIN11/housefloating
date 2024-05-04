@@ -8,7 +8,7 @@ const About = () => {
     <>
       <AboutImage />
       <div className="font-sans max-w-screen-lg mx-auto pt-28 p-2">
-        <h2 className="text-3xl text-center font-semibold mb-5">What we are</h2>
+        <h2 className="text-3xl text-center font-semibold mb-3">What we are</h2>
         <p className="text-lg font-medium text-gray-600">
           At Housefloating, we're your trusted partner for houseboat bookings in Alleppey. Our mission is simple: to make your houseboat adventure a breeze. We offer a handpicked selection of houseboats, catering to every budget and preference.
 
