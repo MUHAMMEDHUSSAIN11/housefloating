@@ -180,7 +180,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                     setStep(STEPS.PHONENUMBER);
                     handlePush();
                     SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber, travelMode.travelMode,
-                        listing.getboat.data()?.title, listing.getboat.data()?.category);
+                        listing.getboat.data()?.title, listing.getboat.data()?.category,listing.getboat.data()?.roomCount);
                 })
                 .catch((error) => {
                     toast.error('something went wrong! Please contact our team');

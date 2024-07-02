@@ -22,21 +22,11 @@ const Occupancy: React.FC<OccupancyProps> = (props) => {
                         <h2 className="text-lg font-sans text-gray-900">Normal Guest Count</h2>
                         <p className="pl-4">{props.Count}</p>
                     </div>
-                    <hr/>
-                    <div>
-                        <h2 className="text-lg font-sans text-gray-900 pt-4">Maximum Guest Count</h2>
-                        <p className="pl-4">{props.limit}</p>
-                    </div>
                 </div>
                 <div className="p-4 rounded-lg shadow-md bg-white w-full">
                     <div>
-                        <h2 className="text-lg font-sans text-gray-900">Extra Adult Cost</h2>
-                        <p className='pl-4'>{props.adultAddonPrice}</p>
-                    </div>
-                    <hr/>
-                    <div>
-                        <h2 className="text-lg font-sans text-gray-900 pt-4">Extra Child Cost</h2>
-                        <p className=" pl-4">{props.childAddonPrice}</p>
+                        <h2 className="text-lg font-sans text-gray-900 pt-4">Maximum Guest Count</h2>
+                        <p className="pl-4">{props.limit}</p>
                     </div>
                 </div>
             </div>

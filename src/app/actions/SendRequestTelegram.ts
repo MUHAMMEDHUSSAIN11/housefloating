@@ -1,7 +1,11 @@
 //Send telegram notification to admin upon new bookings
 import { Telegram } from "../enums/enums";
 
-export default async function SendRequestTelegram(finalBookingDate: Date, finalHeadCount: number, finalMinorCount: number, finalPrice: number, phonenumber: String, travelMode: string, boatTitle: string, boatCategory: string) {
+export default async function SendRequestTelegram(finalBookingDate: Date, finalHeadCount: number, 
+    finalMinorCount: number, finalPrice: number, 
+    phonenumber: String, travelMode: string, 
+    boatTitle: string, boatCategory: string,
+    boatRoomCount:number) {
     const apiUrl = `https://api.telegram.org/bot${Telegram.botToken}/sendMessage`;
 
     const message = `
@@ -12,8 +16,9 @@ export default async function SendRequestTelegram(finalBookingDate: Date, finalH
     - Price: ${finalPrice}
     - Phone Number: ${phonenumber}
     - Travel Mode: ${travelMode}
-    - Boat Title: ${boatTitle || 'N/A'}
-    - Boat Category: ${boatCategory || 'N/A'}
+    - Boat Title: ${boatTitle}
+    - Boat RoomCount: ${boatRoomCount}
+    - Boat Category: ${boatCategory}
   `;
     // Send a Telegram message
     fetch(apiUrl, {
