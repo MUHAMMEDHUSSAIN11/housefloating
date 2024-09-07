@@ -59,7 +59,6 @@ return (
       {isLoading ? (<Spinner /> ) : user && reservations ? (
         <ClientOnly>
           <TripsClient reservations={reservations} />
-          <GpayBanner />
         </ClientOnly>
       ) : (
         <ClientOnly>

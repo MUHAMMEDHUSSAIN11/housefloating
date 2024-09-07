@@ -13,6 +13,7 @@ import { Toaster } from 'react-hot-toast'
 export const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
+  preload:true
 })
 
 

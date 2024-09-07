@@ -40,11 +40,13 @@ const AdminTable: React.FC<DataProps> = ({ reservation, reservationID }) => {
       <td className="px-4 py-2 text-black">{reservation.Price}</td>
       <td className="px-4 py-2 text-black">{reservation.Status}</td>
       <td className="px-4 py-2 text-black">{formatDate(reservation.BookingDate)}</td>
-      <td className="px-4 py-2">
-        <a href="#" onClick={() => UpdatingConfirmation(reservation)} className="text-blue-600 hover:underline">
-          Update
-        </a>
-      </td>
+      {reservation.Status == BookingStatus.Requested &&
+        <td className="px-4 py-2">
+          <a href="#" onClick={() => UpdatingConfirmation(reservation)} className="text-blue-600 hover:underline">
+            Update
+          </a>
+        </td>
+      }
     </tr>
   );
 };
