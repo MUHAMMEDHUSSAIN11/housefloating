@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase/clientApp';
 import useSWR from 'swr';
@@ -9,11 +9,55 @@ import AdminTable from './AdminTable';
 import Spinner from '../components/Misc/Spinner';
 import getReservations from '../actions/getReservations';
 import isAuthority from '../actions/checkAuthority';
+import { DocumentData } from 'firebase/firestore';
+import { BookingStatus } from '../enums/enums';
+import { useRouter } from 'next/navigation';
+import UpdateStatusToApprovedID from '../actions/UpdateStatusToApprovedID';
+import toast from 'react-hot-toast';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
+import { Toast } from 'primereact/toast';
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/tailwind-light/theme.css';
+
 
 
 const Page = () => {
   const [user] = useAuthState(auth);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const router = useRouter();
+  const dtoast = useRef(null);
+
+  const onConfirm = useCallback((reservation: DocumentData) => {
+    UpdatingConfirmation(reservation)
+    router.push('/admin');
+  }, [router])
+
+  const reject = () => {
+  }
+
+  const UpdatingConfirmation = async (reservation: DocumentData) => {
+    if (reservation.Status == BookingStatus.Cancelled) {
+      toast.error('Reservation is already Cancelled');
+      return;
+    }
+    await UpdateStatusToApprovedID(reservation.id);
+    router.refresh();
+  }
+
+  const showConfirmationDialog = async (reservation: DocumentData) => {
+    confirmDialog({
+      message: 'Are you sure want to confirm this Order?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => onConfirm(reservation),
+      reject,
+      acceptClassName: ' p-3 rounded-md',
+      rejectClassName: ' p-3 rounded-md',
+    });
+  }
+
+
 
   const { data: reservations, error, isValidating, isLoading } = useSWR('actions', getReservations, {
     refreshInterval: 10 * 60 * 1000,
@@ -64,11 +108,13 @@ const Page = () => {
           </thead>
           <tbody>
             {reservations.docs.map((listing) => (
-              <AdminTable key={listing.id} reservation={listing.data()} reservationID={listing.id} />
+              <AdminTable key={listing.id} reservation={listing.data()} reservationID={listing.id}  onAction={() => showConfirmationDialog(listing)} />
             ))}
           </tbody>
         </table>
       </div>
+      <Toast ref={dtoast} />
+      <ConfirmDialog />
     </div>
   );
 };

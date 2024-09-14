@@ -14,8 +14,6 @@ import { Timestamp } from 'firebase/firestore';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
 
-
-
 interface Reservation {
   ReservationId: string;
   BoatId: string;

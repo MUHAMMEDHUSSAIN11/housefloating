@@ -2,12 +2,10 @@ import toast from "react-hot-toast";
 import { amount } from "../enums/enums";
 
 export default async function CalculatePrice(finalAdultCount: number, finalChildCount: number, bookingDate: Date, listing: any) {
-  try
-   {
-    if (!bookingDate)
-       {
-        return;
-      }
+  try {
+    if (!bookingDate) {
+      return;
+    }
     const adultPrice = await listing.getboat.data()?.adultAddonPrice;
     const childPrice = await listing.getboat.data()?.childAddonPrice;
 
@@ -29,8 +27,7 @@ export default async function CalculatePrice(finalAdultCount: number, finalChild
       newTotalPrice += amount.holidayPrice;
     }
     return newTotalPrice;
-  } catch (error)
-  {
+  } catch (error) {
     toast.error("Something went wrong while fetching Price!. Please Contact Us");
   }
 }

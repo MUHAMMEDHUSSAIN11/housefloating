@@ -18,6 +18,6 @@ export default async function UpdateStatusToApprovedID(ReservationId: string) {
             toast.error("No matching document found.");
         }
     } catch (error) {
-        toast.error("Failed to update status to Paid.");
+        toast.error("Failed to update status to Approved .");
     }
 }

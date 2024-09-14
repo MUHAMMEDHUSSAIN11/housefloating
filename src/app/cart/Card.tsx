@@ -9,8 +9,7 @@ import { BookingStatus, amount } from '../enums/enums';
 import MakeStripe from '../actions/MakeStripe';
 import * as NProgress from "nprogress";
 import { Timestamp } from 'firebase/firestore';
-
-
+import calculateAdvance from '../actions/advanceCalculate';
 
 // this component is used to display items in Cart page
 
@@ -40,7 +39,6 @@ interface CardListingProps {
 }
 
 
-
 const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionId = '', actionLabel }) => {
   const router = useRouter();
 
@@ -49,9 +47,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
     return date.toDate().toLocaleDateString(undefined, options);
   }
 
-  const advanceAmount = details.Price * amount.advance;
-  const remainingAmount = details.Price * amount.remaining;
-
+  const advanceDetails = calculateAdvance(details.Price);
 
   const handlePush = () => {
     router.push(`/listings/${details.BoatId}`);
@@ -113,12 +109,12 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             </div>
             <div className='flex justify-between items-center mb-2'>
               <div className='text-lg font-semibold'>Advance Payment:</div>
-              <div className='text-lg'>₹{advanceAmount}</div>
+              <div className='text-lg'>₹{advanceDetails.AdvanceAmount}</div>
             </div>
             <div className='flex flex-col mb-2'>
               <div className='flex justify-between items-center'>
                 <div className='text-lg font-semibold'>Remaining Amount:</div>
-                <div className='text-lg'>₹{remainingAmount}</div>
+                <div className='text-lg'>₹{advanceDetails.RemainingAmount}</div>
               </div>
               <p className='text-sm text-gray-500'>To be paid at the time of check-in</p>
             </div>

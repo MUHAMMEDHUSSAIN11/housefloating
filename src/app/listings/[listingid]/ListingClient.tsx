@@ -21,7 +21,8 @@ import PremiumFood from '../../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
 import HouseRules from '../../components/Descriptions/HouseRules';
 import CalculatePrice from '@/app/actions/calculatePrice';
-import { Categories } from '@/app/enums/enums';
+import { Categories, TravelMode } from '@/app/enums/enums';
+import toast from 'react-hot-toast';
 
 
 interface ListingClientProps {
@@ -37,6 +38,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   const [finalAdultCount, setFinalAdultCount] = useState(listing.getboat.data()?.guestCount);
   const [finalChildCount, setFinalChildCount] = useState(0);
   const [bookingDate, setBookingdate] = useState<Date>(new Date);
+
   const cruiseType = useTravelModeStore();
 
 
@@ -53,14 +55,21 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
 
 
   const onCreateReservation = useCallback(() => {
-    //need to check if final guest count should be less than maximum for mode of travel
     if (user) {
-      return bookingConfirmModal.onOpen();
+      if(cruiseType.travelMode == TravelMode.DayCruise && finalAdultCount <= listing.getboat.data()?.maxDayGuest)
+      {
+        return bookingConfirmModal.onOpen();
+      }else if(cruiseType.travelMode == TravelMode.OverNight && finalAdultCount <= listing.getboat.data()?.maxNightGuest)
+      {
+        return bookingConfirmModal.onOpen();
+      }else{
+        toast.error("Maximum number of Guests exceeded!!")
+      }
+
     } else {
       return loginModal.onOpen();
     }
-
-  }, [user, bookingConfirmModal, loginModal])
+  }, [user, bookingConfirmModal, loginModal,cruiseType,finalAdultCount])
 
 
   return (
@@ -95,9 +104,12 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
                 totalPrice={totalPrice}
                 onChangeDate={(value) => setBookingdate(value)}
                 onSubmit={onCreateReservation}
+                setAdultCount={setFinalAdultCount}
+                setChildCount={setFinalChildCount}
                 disabled={isLoading}
                 disabledDates={listing.reservedDates}
                 date={bookingDate}
+                guestCount={listing.getboat.data()?.guestCount}
               />
             </div>
           </div>

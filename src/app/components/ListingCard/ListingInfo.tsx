@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react'
 import Counter from '../Inputs/Counter';
+import { TravelMode } from '@/app/enums/enums';
 
 
 //This component is used for displaying individual item's details and counter
@@ -31,9 +32,9 @@ const coordinates = [9.5008, 76.3443]
 const ListingInfo: React.FC<ListingInfoProps> = ({ dayGuestCountMax,nightGuestCountMax, travelMode, bathroomCount, description, guestCount, roomCount, setAdultCount, setChildCount, adultCount, childCount }) => {
 
   let adultCounterMax = 0;
-  if (travelMode === "DayCruise") {
+  if (travelMode === TravelMode.DayCruise) {
     adultCounterMax = dayGuestCountMax;
-  } else if (travelMode === "Overnight") {
+  } else if (travelMode === TravelMode.OverNight) {
     adultCounterMax = nightGuestCountMax;
   }
 
