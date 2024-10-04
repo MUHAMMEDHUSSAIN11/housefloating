@@ -28,6 +28,7 @@ interface FirestoreListing {
   Category: string;
   Status: string;
   Image: string;
+  UserId: string;
 }
 
 interface CardListingProps {

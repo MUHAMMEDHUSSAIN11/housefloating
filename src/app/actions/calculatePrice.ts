@@ -21,12 +21,23 @@ export default async function CalculatePrice(finalAdultCount: number, finalChild
       newTotalPrice = (listing.getboat.data()?.price || 0) + additionalAdultCost + additionalChildCost;
     }
 
-    const isHolidaySeason = await bookingDate >= new Date(new Date().getFullYear(), 11, 1) && bookingDate <= new Date(new Date().getFullYear() + 1, 0, 15);
+    // const isHolidaySeason = await bookingDate >= new Date(new Date().getFullYear(), 11, 1) && bookingDate <= new Date(new Date().getFullYear() + 1, 0, 15);
+    const isPreChristmasSeason = bookingDate >= new Date(new Date().getFullYear(), 11, 13)
+      && bookingDate <= new Date(new Date().getFullYear(), 11, 19);
 
-    if (isHolidaySeason) {
-      newTotalPrice += amount.holidayPrice;
+    const isChristmasSeason = bookingDate >= new Date(new Date().getFullYear(), 11, 20)
+      && bookingDate <= new Date(new Date().getFullYear() + 1, 0, 8);
+
+    if (isPreChristmasSeason) {
+      newTotalPrice = newTotalPrice * amount.preChristmas;
     }
+    if (isChristmasSeason) {
+      newTotalPrice = newTotalPrice * amount.christmasSeason;
+    }
+
+
     return newTotalPrice;
+
   } catch (error) {
     toast.error("Something went wrong while fetching Price!. Please Contact Us");
   }

@@ -18,16 +18,23 @@ interface FirestoreListing {
   Category: string;
   Status: string;
   Image: string;
+  UserId: string;
 }
 
 export default async function MakeStripe(Order: FirestoreListing) {
   try {
     const advanceAmount = Order.Price * amount.advance;
+    const balanceAmount = Order.Price * amount.remaining;
+
     const OrderDetails: any[] = [Order.BoatName, advanceAmount, Order.Contactnumber, Order.Image];
+
     const metadata = {
       reservationId: Order.ReservationId,
       boatId: Order.BoatId,
       bookingDate: Order.BookingDate.toString(),
+      userId : Order.UserId,
+      userEmail: Order.Email,
+      remainingAmount: balanceAmount
     };
 
     const { data } = await axios.post('/api/stripe/route',

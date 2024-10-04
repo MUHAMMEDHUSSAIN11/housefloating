@@ -5,6 +5,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import ConfirmAfterPayment from '@/app/actions/ConfirmAfterPayment';
 import SendPaymentTelegram from '@/app/actions/SendPaymentTelegram';
+import createPayment, { paymentModel } from '@/app/actions/createPayment';
+import { Timestamp } from 'firebase/firestore';
 
 const webhookSecret: string = process.env.webhook!;
 
@@ -39,14 +41,33 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         // Cast event data to Stripe object.
         if (event.type === 'payment_intent.succeeded') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            const ReservationId = session.metadata?.reservationId;
-            const BoatId = session.metadata?.boatId;
-            if (ReservationId && BoatId) {
+
+            const reservationId = session.metadata?.reservationId;
+            const boatId = session.metadata?.boatId;
+            const paymentStatus = paymentIntent.status;
+            const amountPaidInRupees = paymentIntent.amount / 100;
+            const userEmail = session.metadata?.userEmail;
+            const userId = session.metadata?.userId;
+            const remainingAmount = session.metadata?.remainingAmount;
+
+            const payment: paymentModel = {
+                ReservationId: reservationId,
+                BoatId: boatId,
+                PaidDate: Timestamp.now(), 
+                PaymentStatus: paymentStatus,
+                AmountPaidInRupees: amountPaidInRupees,
+                UserEmail: userEmail,
+                UserId: userId,
+                RemainingAmount: remainingAmount,
+            };
+
+            if (reservationId && boatId) {
                 try {
                     console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
-                    await ConfirmAfterPayment(ReservationId);
-                    await SendPaymentTelegram(ReservationId, BoatId, Date)
-                } catch (error:any) {
+                    await ConfirmAfterPayment(reservationId);
+                    await createPayment(payment);
+                    await SendPaymentTelegram(reservationId, boatId, Date)
+                } catch (error: any) {
                     res.status(400).send(`Status Update Error: ${error.message}`);
                     return;
                 }

@@ -13,6 +13,7 @@ import { useSignOut } from 'react-firebase-hooks/auth';
 import useRentModal from '@/app/hooks/useRentModal';
 import { useRouter } from 'next/navigation';
 import * as NProgress from 'nprogress';
+import isAuthority from '@/app/actions/checkAuthority';
 
 
 
@@ -80,7 +81,7 @@ const RightContent = () => {
                             <div className="sm:block md:hidden px-4 py-3 hover:bg-neutral-100 transition ">Contact Us</div>
                             </>
                         )}
-                        {user?.uid == process.env.NEXT_PUBLIC_KHALAME && (
+                        {user && isAuthority(user.uid) && (
                             <>
                              <UserMenuItem onClick={() => router.push('/admin')} label="Reservations" />
                              <hr/>

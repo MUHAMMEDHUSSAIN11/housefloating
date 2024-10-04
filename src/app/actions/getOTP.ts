@@ -2,7 +2,7 @@ export default async function sendotp(phonenumber: string) {
     try {
         //some error in api fetching not in regular intervals
         // Make API call using fetch to your custom API route
-        const response = await fetch('/api/twilio/SendOTP', {
+        const response = await fetch('/api/twilio/sendOTP', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

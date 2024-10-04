@@ -12,9 +12,8 @@ import GpayBanner from '../components/Misc/Banner';
 import Spinner from '../components/Misc/Spinner';
 
 
-
 interface Reservation {
-  ReservationId : string;
+  ReservationId: string;
   BoatId: string;
   BoatName: string;
   BookingDate: Timestamp;
@@ -28,35 +27,55 @@ interface Reservation {
   Category: string;
   Status: string;
   Image: string;
+  UserId: string;
 };
 
 const CartPage = () => {
   const [user] = useAuthState(auth);
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
-  const [isLoading,setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // const fetchReservations = async () => {
+  //   try {
+  //     const reservationsData = user ? await getReservationById(user.email) : null;
+  //     setReservations(reservationsData || []); 
+  //   } catch (error) {
+  //     console.error('Error fetching reservations:', error);
+  //   } finally {
+  //     setIsLoading(false); 
+  //   }
+  // };
 
   const fetchReservations = async () => {
     try {
-      const reservationsData = user ? await getReservationById(user.email) : null;
-      setReservations(reservationsData || []); 
+      if (user) {
+        const reservationsData = await getReservationById(user.email);
+        const updatedReservations = reservationsData?.map(reservation => ({
+          ...reservation,
+          UserId: user.uid, // Include user.uid in each reservation
+        }));
+        setReservations(updatedReservations || []);
+      } else {
+        setReservations([]); // Handle the case when the user is not authenticated
+      }
     } catch (error) {
       console.error('Error fetching reservations:', error);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (user) {
-      setIsLoading(true); 
+      setIsLoading(true);
       fetchReservations();
     }
   }, [user]);
 
 
-return (
-  <div className="pt-28">
-      {isLoading ? (<Spinner /> ) : user && reservations ? (
+  return (
+    <div className="pt-28">
+      {isLoading ? (<Spinner />) : user && reservations ? (
         <ClientOnly>
           <TripsClient reservations={reservations} />
         </ClientOnly>
