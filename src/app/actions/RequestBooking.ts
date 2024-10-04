@@ -22,6 +22,7 @@ interface Data {
 export default async function RequestBooking(reservationData: Data) {
     try {
         const reservationsCollection = collection(firestore, 'Reservations');
+
         await runTransaction(firestore, async (transaction) => {
             const boatDocRef = doc(firestore, 'Boats', reservationData.BoatId);
 
@@ -34,14 +35,15 @@ export default async function RequestBooking(reservationData: Data) {
                 Math.floor(reservationData.BookingDate.getTime() / 1000), // Convert milliseconds to seconds
                 0 // Nanoseconds
             );
+
             // Add the new bookingDate (as Timestamp) to the reservations array
             currentReservations.push(finalBookingTimestamp);
 
             // Update the "Reservations" array in the "Boats" collection
             transaction.update(boatDocRef, { reservations: currentReservations });
+
             // Add the reservation to the "Reservations" collection
-            const docRef = await addDoc(reservationsCollection, reservationData);
-            return docRef;
+            return await addDoc(reservationsCollection, reservationData);
         })
     } catch (error) {
         toast.error('something went wrong! Please contact our team');
