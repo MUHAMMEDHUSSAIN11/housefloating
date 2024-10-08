@@ -1,4 +1,4 @@
-import { Timestamp, collection, getDocs } from 'firebase/firestore';
+import { Timestamp, collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { firestore } from '../firebase/clientApp';
 
 interface Listing {
@@ -16,8 +16,14 @@ interface Listing {
 
 export default async function getListings(): Promise<Listing[]> {
   try {
+    // const listingRef = collection(firestore, "Boats");
+    // const listingsQueryData = await getDocs(listingRef);
+
     const listingRef = collection(firestore, "Boats");
-    const listingsQueryData = await getDocs(listingRef);
+    // Order the listings by price in increasing order
+    const listingsQuery = query(listingRef, orderBy("price", "asc"));
+    const listingsQueryData = await getDocs(listingsQuery);
+    
 
     const listings = listingsQueryData.docs.map((doc) => {
       const data = doc.data() as Listing;
@@ -26,6 +32,7 @@ export default async function getListings(): Promise<Listing[]> {
         seconds: timestamp.seconds,
         nanoseconds: timestamp.nanoseconds,
       }));
+      
       return { id: doc.id, ...data, reservations };
     });
     return listings;

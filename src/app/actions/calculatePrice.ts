@@ -35,8 +35,7 @@ export default async function CalculatePrice(finalAdultCount: number, finalChild
       newTotalPrice = newTotalPrice * amount.christmasSeason;
     }
 
-
-    return newTotalPrice;
+    return  Math.round(newTotalPrice);
 
   } catch (error) {
     toast.error("Something went wrong while fetching Price!. Please Contact Us");

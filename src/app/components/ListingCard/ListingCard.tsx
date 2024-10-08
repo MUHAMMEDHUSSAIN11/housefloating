@@ -21,7 +21,7 @@ interface FirestoreListing {
   roomCount: number,
   title: string,
   price: number,
-  reservations:Timestamp[]
+  reservations: Timestamp[]
 
 }
 
@@ -34,9 +34,9 @@ interface ListingCardProps {
 }
 
 
-const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, actionId = "", actionLabel}) => {
+const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, actionId = "", actionLabel }) => {
   const router = useRouter();
-  
+
   const handlePush = () => {
     //start done needs to be rechecked
     router.push(`/listings/${data.id}`);
@@ -44,10 +44,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
     NProgress.done();
   };
 
-  
-  
-
-  const handleCancel:any = useCallback(
+  const handleCancel: any = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
 
@@ -70,7 +67,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
           <div className='font-semibold'>{data.category}</div>
         </div>
         <div className="flex flex-row items-center gap-1">
-        <div className="font-light">Starting From</div>
+          <div className="font-light">Starting From</div>
           <div className="font-semibold">₹ {data.price} /-</div>
         </div>
         <div className='flex flex-row items-center gap-1'>
@@ -80,7 +77,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
           <Button
             disabled={disabled}
             small
-            label={actionLabel} 
+            label={actionLabel}
             onClick={handleCancel}
           />
         )}
