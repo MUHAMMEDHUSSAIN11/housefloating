@@ -48,7 +48,7 @@ const WhySection = () => {
                     </div>
                 </div>
                 <div className="sm:hidden"> {/* Show carousel for sm screens */}
-                    <Carousel showThumbs={false} showArrows={false} autoPlay={true} infiniteLoop={true}>
+                    <Carousel showThumbs={false} showIndicators={false} showArrows={false} autoPlay={true} infiniteLoop={true}>
                         <div className="text-center">
                             <div className="bg-blue-500 text-white rounded-full p-3 inline-flex">
                                 <FaHandshake size={25}/>

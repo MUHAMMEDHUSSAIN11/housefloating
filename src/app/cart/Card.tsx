@@ -10,6 +10,7 @@ import MakeStripe from '../actions/MakeStripe';
 import * as NProgress from "nprogress";
 import { Timestamp } from 'firebase/firestore';
 import calculateAdvance from '../actions/advanceCalculate';
+import CheckIsDateOver from '../actions/checkDateOver';
 
 // this component is used to display items in Cart page
 
@@ -55,6 +56,8 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
     NProgress.start();
     NProgress.done();
   };
+
+  const IsDateOver = CheckIsDateOver(formatDate(details.BookingDate));
 
 
   const handleCancel: any = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -123,7 +126,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
               <Button disabled={details.Status !== BookingStatus.Approved} label={"Proceed to Payment"} onClick={() => MakeStripe(details)} />
             </div>
             {onAction && actionLabel && (
-              <Button disabled={details.Status === BookingStatus.Cancelled} outline small label={actionLabel} onClick={handleCancel} />
+              <Button disabled={details.Status === BookingStatus.Cancelled || IsDateOver } outline small label={actionLabel} onClick={handleCancel} />
             )}
           </div>
         </div>

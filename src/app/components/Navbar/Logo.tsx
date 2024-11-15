@@ -15,7 +15,7 @@ const Logo = () => {
   const router = useRouter();
   return (
     <div onClick={() => handlePush()}>
-        <Image src= "/images/hf.jpg" alt="logo" className="block cursor-pointer" height={100} width={200}/>
+        <Image src= "/images/hf.jpg" alt="logo" className="block cursor-pointer" priority={true} height={100} width={200}/>
         </div>
   );
 };

@@ -12,7 +12,7 @@ const ExperienceSection = () => {
               <h2 className="text-2xl font-semibold font-sans sm:text-3xl">
                 Experience the Tranquil Beauty of <br />Alleppey's Backwaters
               </h2>
-              <p className="mt-4 text-lg text-gray-700 font-sans text-justify px-1">
+              <p className="mt-4 text-lg text-gray-700 font-sans text-justify px-4 sm:px-6 lg:px-0">                
                 Immerse yourself in the serene and captivating world of Alleppey's backwaters. Aboard our traditional houseboats, you'll embark on a journey of tranquility and awe as you navigate the winding waterways surrounded by lush greenery and picturesque landscapes.
               </p>
             </div>

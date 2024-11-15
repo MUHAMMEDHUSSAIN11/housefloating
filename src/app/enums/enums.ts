@@ -1,8 +1,15 @@
 export enum BookingStatus
 {
+    //when user requests a boat
     Requested = "Requested",
+
+    //when admin approves the request
     Approved  = "Approved",
+
+    //when user pays the advance
     Confirmed = "Confirmed",
+
+    //when user cancels 
     Cancelled = "Cancelled",
 }
 

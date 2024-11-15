@@ -8,8 +8,6 @@ import NextTopLoader from 'nextjs-toploader';
 import ScrollToTopButton from './components/Misc/ScrolltoTop'
 import { Toaster } from 'react-hot-toast'
 
-
-
 export const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
