@@ -1,8 +1,12 @@
+'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const Categories = () => {
+    const router = useRouter();
+
     return (
         <section className="py-16 bg-gray-200S px-1 font-sans">
             <div className="max-w-7xl mx-auto pb-16">
@@ -10,7 +14,7 @@ const Categories = () => {
             </div>
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Deluxe Houseboat */}
-                <div className="bg-white rounded-lg shadow-lg">
+                <div onClick={() => router.push('/boats')} className="bg-white rounded-lg shadow-lg cursor-pointer">
                     <div className="relative aspect-w-16 aspect-h-9 px-1">
                         <Image
                             src="/images/deluxe.jpg"
@@ -33,7 +37,7 @@ const Categories = () => {
                     </div>
                 </div>
                 {/* Premium Houseboat */}
-                <div className="bg-white rounded-lg shadow-lg">
+                <div onClick={() => router.push('/boats')} className="bg-white rounded-lg shadow-lg cursor-pointer">
                     <div className="relative aspect-w-16 aspect-h-9">
                         <Image
                             src="/images/premium2.jpg"
@@ -56,7 +60,7 @@ const Categories = () => {
                     </div>
                 </div>
                 {/* Luxury Houseboat */}
-                <div className="bg-white rounded-lg shadow-lg">
+                <div onClick={() => router.push('/boats')} className="bg-white rounded-lg shadow-lg cursor-pointer">
                     <div className="relative aspect-w-16 aspect-h-9">
                         <Image
                             src="/images/premium.jpg"
