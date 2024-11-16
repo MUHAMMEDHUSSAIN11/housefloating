@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { categories } from './SortCategories'; // Ensure the correct path
-import UserMenuItem from '../Navbar/UserMenuItem'; // Ensure the correct path
+import { categories } from './SortCategories';
+import UserMenuItem from '../Navbar/UserMenuItem';
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 
 interface FilterProps {
   setSortedListings: (category: string, roomCount: number) => void;
@@ -28,8 +29,12 @@ const Filter: React.FC<FilterProps> = ({ setSortedListings }) => {
   };
 
   return (
-    <div className="flex flex-row items-center justify-center mt-9 font-sans bg-white w-auto sm:py-2 py-2 rounded-full shadow-md transition cursor-pointer gap-4">
-      <div className="text-md px-6 flex-1 text-center relative mr-4">
+    <div className="flex flex-row items-center justify-center mt-9 font-sans bg-white w-auto py-2 rounded-full  shadow-lg transition cursor-pointer gap-4">
+      <div className="p-2 ml-3 bg-blue-500 rounded-full text-white flex items-center justify-center">
+        <HiAdjustmentsHorizontal size={24} />
+      </div>
+      <div className="text-md  flex-1 text-center relative mr-4">
+
         <button
           className="py-2 px-4 font-semibold bg-secondary text-black rounded-[5px] w-full flex items-center justify-between"
           onClick={() => setIsCategoryFilterOpen(!isCategoryFilterOpen)}
@@ -63,7 +68,7 @@ const Filter: React.FC<FilterProps> = ({ setSortedListings }) => {
         )}
       </div>
 
-      <div className="text-md px-6 text-center relative">
+      <div className="text-md  text-center relative">
         {/* Room Count Dropdown */}
         <button
           onClick={() => setIsRoomFilterOpen(!isRoomFilterOpen)}
@@ -88,7 +93,7 @@ const Filter: React.FC<FilterProps> = ({ setSortedListings }) => {
 
         {/* Room count options dropdown */}
         {isRoomFilterOpen && (
-          <div className="absolute left-0 z-40 mt-4 w-full rounded-md bg-white shadow-lg dark:bg-dark-2 py-2">
+          <div className="absolute left-0 z-40 mt-4 mr-2 w-full rounded-md bg-white shadow-lg dark:bg-dark-2 py-2">
             {[1, 2, 3, 4, 5].map((roomCount) => (
               <UserMenuItem
                 key={roomCount}

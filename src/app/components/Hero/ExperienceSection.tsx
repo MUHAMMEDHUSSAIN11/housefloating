@@ -18,7 +18,7 @@ const ExperienceSection = () => {
             </div>
           </div>
           <div className="mt-10 lg:mt-0 lg:w-1/2 lg:pl-12">
-            <div className="relative w-auto h-auto mx-auto lg:ml-10 text-center">
+            <div className="relative w-auto h-auto mx-auto lg:ml-10 text-center px-4">
               <Image
                 src="/images/canal.jpeg"
                 alt="Alleppey Houseboat"

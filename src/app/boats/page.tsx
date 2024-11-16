@@ -89,7 +89,7 @@ const Page = () => {
                 <ListingCard key={listing.id} data={listing} />
               ))
             ) : (
-              <EmptyState />
+              <EmptyState  showReset={true}/>
             )}
           </div>
         </div>
