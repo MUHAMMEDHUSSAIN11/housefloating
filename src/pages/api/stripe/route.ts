@@ -21,8 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    success_url: 'https://housefloating.com/cart',
-    cancel_url: 'https://housefloating.com/cart',
+    success_url: 'https://housefloating.vercel.app/cart',
+    cancel_url: 'https://housefloating.vercel.app/cart',
     client_reference_id: body.Contactnumber,
     mode: 'payment',
     line_items,
