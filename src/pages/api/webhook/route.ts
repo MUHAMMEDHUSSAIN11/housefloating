@@ -49,24 +49,24 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             const userEmail = session.metadata?.userEmail;
             const userId = session.metadata?.userId;
             const remainingAmount = session.metadata?.remainingAmount;
+            const bookingDate = session.metadata?.bookingDate;
 
             const payment: paymentModel = {
                 ReservationId: reservationId,
                 BoatId: boatId,
-                PaidDate: Timestamp.now(), 
+                PaidDate: Timestamp.now(),
                 PaymentStatus: paymentStatus,
                 AmountPaidInRupees: amountPaidInRupees,
                 UserEmail: userEmail,
                 UserId: userId,
                 RemainingAmount: remainingAmount,
             };
-
             if (reservationId && boatId) {
                 try {
                     console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
                     await ConfirmAfterPayment(reservationId);
                     await createPayment(payment);
-                    await SendPaymentTelegram(reservationId, boatId, Date)
+                    await SendPaymentTelegram(reservationId, boatId, bookingDate);
                 } catch (error: any) {
                     res.status(400).send(`Status Update Error: ${error.message}`);
                     return;

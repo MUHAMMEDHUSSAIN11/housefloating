@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { Telegram } from "../enums/enums";
 
 export default function SendPaymentTelegram(reservationId: string, BoatId: string, Date: any) {
@@ -9,7 +10,8 @@ export default function SendPaymentTelegram(reservationId: string, BoatId: strin
     
     Reservation ID: ${reservationId}
     Boat ID: ${BoatId}
-    Date: ${Date}
+    Booking Date: ${Date}
+    Paid Date : ${Timestamp.now()}
     
     Please take necessary actions and ensure a smooth experience for the customer.
     `;

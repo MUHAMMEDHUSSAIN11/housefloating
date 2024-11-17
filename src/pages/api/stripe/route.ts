@@ -27,6 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     mode: 'payment',
     line_items,
     metadata: body.metadata,
+    payment_intent_data: {
+      metadata: body.metadata,
+  },
   });
 
   res.status(200).json({ url: session.url });
