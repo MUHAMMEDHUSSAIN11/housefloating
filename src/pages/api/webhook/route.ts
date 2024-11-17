@@ -8,7 +8,7 @@ import SendPaymentTelegram from '@/app/actions/SendPaymentTelegram';
 import createPayment, { paymentModel } from '@/app/actions/createPayment';
 import { Timestamp } from 'firebase/firestore';
 
-const webhookSecret: string = process.env.webhook!;
+const webhookSecret: string = process.env.webhookTestVercel!;
 
 // Stripe requires the raw body to construct the event.
 export const config = {
