@@ -3,10 +3,11 @@ import Cors from 'micro-cors';
 import { stripe } from "@/lib/Stripe";
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
-import ConfirmAfterPayment from '@/app/actions/ConfirmAfterPayment';
 import SendPaymentTelegram from '@/app/actions/SendPaymentTelegram';
-import createPayment, { paymentModel } from '@/app/actions/createPayment';
 import { Timestamp } from 'firebase/firestore';
+import createPayment, { paymentModel } from '@/app/actions/createWebhookPayment';
+import ConfirmAfterPayment from '@/app/actions/confirmAfterWebhookPayment';
+import SendFailedPaymentTelegram from '@/app/actions/SendFailedPaymentTelegram';
 
 const webhookSecret: string = process.env.webhookVercel!;
 
@@ -38,16 +39,20 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             return;
         }
         const session = event.data.object as Stripe.Checkout.Session;
+        const reservationId = session.metadata?.reservationId;
+        const boatId = session.metadata?.boatId;
+        const bookingDate = session.metadata?.bookingDate;
+        const userEmail = session.metadata?.userEmail;
+        const userId = session.metadata?.userId;
+
         // Cast event data to Stripe object.
         if (event.type === 'payment_intent.succeeded') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-            const reservationId = session.metadata?.reservationId;
-            const boatId = session.metadata?.boatId;
+           
             const paymentStatus = paymentIntent.status;
             const amountPaidInRupees = paymentIntent.amount / 100;
-            const userEmail = session.metadata?.userEmail;
-            const userId = session.metadata?.userId;
+
             const remainingAmount = session.metadata?.remainingAmount;
             const bookingDate = session.metadata?.bookingDate;
 
@@ -63,7 +68,6 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             };
             if (reservationId && boatId) {
                 try {
-                    console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
                     await ConfirmAfterPayment(reservationId);
                     await createPayment(payment);
                     await SendPaymentTelegram(reservationId, boatId, bookingDate);
@@ -74,6 +78,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         } else if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
+            await SendFailedPaymentTelegram(reservationId, boatId, bookingDate ,userEmail, paymentIntent.last_payment_error?.message );
             console.log(`❌ Payment failed: ${paymentIntent.last_payment_error?.message}`);
         } else {
             console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);

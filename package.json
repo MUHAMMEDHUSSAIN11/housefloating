@@ -21,7 +21,7 @@
     "eslint": "^8.42.0",
     "eslint-config-next": "^13.4.12",
     "firebase": "^9.22.2",
-    "firebase-admin": "^11.9.0",
+    "firebase-admin": "^11.11.1",
     "lucide-react": "^0.294.0",
     "micro": "^10.0.1",
     "micro-cors": "^0.1.1",
