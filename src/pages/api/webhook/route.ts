@@ -8,7 +8,7 @@ import SendFailedPaymentTelegram from '@/app/actions/SendFailedPaymentTelegram';
 import { CreatePaymentAndConfirmBooking, paymentModel } from '@/app/actions/CreatePaymentAndConfirmBooking';
 import { Timestamp } from 'firebase-admin/firestore';
 
-const webhookSecret: string = process.env.webhook!;
+const webhookSecret: string = process.env.webhookVercel!;
 
 // Stripe requires the raw body to construct the event.
 export const config = {
