@@ -65,10 +65,14 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 UserId: userId,
                 RemainingAmount: remainingAmount,
             };
-            if (reservationId && boatId) {
-                await CreatePaymentAndConfirmBooking(reservationId, payment);
-                await SendPaymentTelegram(reservationId, boatId, bookingDate,userEmail);
-            }
+            res.status(200).json({ received: true });
+            console.log("Started Calling Payment and confirm Booking");
+            await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment);
+            // if (reservationId && boatId) {
+            //     console.log(reservationId && boatId);
+            //     await CreatePaymentAndConfirmBooking(reservationId, payment);
+            //     await SendPaymentTelegram(reservationId, boatId, bookingDate,userEmail);
+            // }
         } else if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
             await SendFailedPaymentTelegram(reservationId, boatId, bookingDate, userEmail, paymentIntent.last_payment_error?.message);
@@ -84,3 +88,23 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default cors(webhookHandler as any);
+
+
+async function processBookingAndNotification(reservationId : any, boatId : any, bookingDate : any, userEmail : any, payment : any) {
+    console.log('Starting async processing...');
+    try {
+        console.log('Updating database...');
+        await CreatePaymentAndConfirmBooking(reservationId, payment);
+        console.log('Database update successful');
+    } catch (dbError) {
+        console.error('Database update failed:', dbError);
+    }
+
+    try {
+        console.log('Sending Telegram notification...');
+        await SendPaymentTelegram(reservationId, boatId, bookingDate, userEmail);
+        console.log('Telegram message sent');
+    } catch (telegramError) {
+        console.error('Telegram notification failed:', telegramError);
+    }
+}
