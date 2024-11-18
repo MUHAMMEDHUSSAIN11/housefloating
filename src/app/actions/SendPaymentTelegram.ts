@@ -1,7 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 import { Telegram } from "../enums/enums";
+import dayjs from 'dayjs';
 
-export default function SendPaymentTelegram(reservationId: string, BoatId: string, Date: any) {
+export default function SendPaymentTelegram(reservationId: string, BoatId: string, date: any , email : string | undefined) {
+    const formattedDate = dayjs(Date.now()).format('dddd, MMMM D, YYYY h:mm A');
     const apiUrl = `https://api.telegram.org/bot${Telegram.botToken}/sendMessage`;
     const message = `
     ✨ Payment Success ✨
@@ -9,9 +11,14 @@ export default function SendPaymentTelegram(reservationId: string, BoatId: strin
     A payment has been made for a reservation.
     
     Reservation ID: ${reservationId}
+
     Boat ID: ${BoatId}
-    Booking Date: ${Date}
-    Paid Date : ${Timestamp.now()}
+
+    Booking Date: ${date}
+
+    User Email : ${email}
+
+    Paid Date : ${formattedDate}
     
     Please take necessary actions and ensure a smooth experience for the customer.
     `;

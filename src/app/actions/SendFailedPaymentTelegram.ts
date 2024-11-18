@@ -1,19 +1,20 @@
-import { Timestamp } from "firebase/firestore";
+import dayjs from "dayjs";
 import { Telegram } from "../enums/enums";
 
-export default function SendFailedPaymentTelegram(reservationId: string | undefined, BoatId: string | undefined, Date: any, userEmail : string | undefined,errorMessage : string | undefined) {
+export default function SendFailedPaymentTelegram(reservationId: string | undefined, BoatId: string | undefined, bookingDate: any, userEmail : string | undefined,errorMessage : string | undefined) {
+    const formattedDate = dayjs(Date.now()).format('dddd, MMMM D, YYYY h:mm A');
     const apiUrl = `https://api.telegram.org/bot${Telegram.botToken}/sendMessage`;
     const message = `
     !!! Payment Failed !!!
     
     A payment has been failed for a reservation.
     
-    Reservation ID: ${reservationId}
-    Boat ID: ${BoatId}
-    Booking Date: ${Date}
-    Email : ${userEmail}
-    Paid Date : ${Timestamp.now()}
-    Error Message : ${errorMessage}
+    - Reservation ID: ${reservationId}
+    - Boat ID: ${BoatId}
+    - Booking Date: ${bookingDate}
+    - Email : ${userEmail}
+    - Payment Try Date : ${formattedDate}
+    - Error Message : ${errorMessage}
     
     Please take necessary actions and ensure a smooth experience for the customer.
     `;

@@ -4,10 +4,9 @@ import { stripe } from "@/lib/Stripe";
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 import SendPaymentTelegram from '@/app/actions/SendPaymentTelegram';
-import { Timestamp } from 'firebase/firestore';
-import createPayment, { paymentModel } from '@/app/actions/createWebhookPayment';
-import ConfirmAfterPayment from '@/app/actions/confirmAfterWebhookPayment';
 import SendFailedPaymentTelegram from '@/app/actions/SendFailedPaymentTelegram';
+import { CreatePaymentAndConfirmBooking, paymentModel } from '@/app/actions/CreatePaymentAndConfirmBooking';
+import { Timestamp } from 'firebase-admin/firestore';
 
 const webhookSecret: string = process.env.webhookVercel!;
 
@@ -49,7 +48,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (event.type === 'payment_intent.succeeded') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-           
+
             const paymentStatus = paymentIntent.status;
             const amountPaidInRupees = paymentIntent.amount / 100;
 
@@ -67,18 +66,12 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 RemainingAmount: remainingAmount,
             };
             if (reservationId && boatId) {
-                try {
-                    await ConfirmAfterPayment(reservationId);
-                    await createPayment(payment);
-                    await SendPaymentTelegram(reservationId, boatId, bookingDate);
-                } catch (error: any) {
-                    res.status(400).send(`Status Update Error: ${error.message}`);
-                    return;
-                }
+                await CreatePaymentAndConfirmBooking(reservationId, payment);
+                await SendPaymentTelegram(reservationId, boatId, bookingDate,userEmail);
             }
         } else if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            await SendFailedPaymentTelegram(reservationId, boatId, bookingDate ,userEmail, paymentIntent.last_payment_error?.message );
+            await SendFailedPaymentTelegram(reservationId, boatId, bookingDate, userEmail, paymentIntent.last_payment_error?.message);
             console.log(`❌ Payment failed: ${paymentIntent.last_payment_error?.message}`);
         } else {
             console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
