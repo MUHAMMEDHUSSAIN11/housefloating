@@ -18,6 +18,7 @@ export const CreatePaymentAndConfirmBooking = async ( reservationId: string, pay
     {
         const reservationRef = adminDb.collection('Reservations').doc(reservationId);
     try {
+        console.log("Started getting adminDb", reservationRef);
         // Run Firestore transaction
         await adminDb.runTransaction(async (transaction) => {
             // Add payment details to "Payments" collection
@@ -30,10 +31,10 @@ export const CreatePaymentAndConfirmBooking = async ( reservationId: string, pay
                 Payment: true,
             });
         });
+
+        console.log("dbcall executed");
     } catch (error) {
-        console.error(
-            "Transaction failed: Failed to update payment details and confirm booking.",
-            error
-        );
+        console.log(error);
+      
     }
 };
