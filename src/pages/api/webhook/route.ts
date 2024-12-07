@@ -37,17 +37,19 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(400).send(`Webhook Error: ${error.message}`);
             return;
         }
+
         const session = event.data.object as Stripe.Checkout.Session;
         const reservationId = session.metadata?.reservationId;
         const boatId = session.metadata?.boatId;
         const bookingDate = session.metadata?.bookingDate;
         const userEmail = session.metadata?.userEmail;
         const userId = session.metadata?.userId;
+        const contactNumber = session.metadata?.contactNumber;
+        const boatName = session.metadata?.boatName;
 
         // Cast event data to Stripe object.
         if (event.type === 'payment_intent.succeeded') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
 
             const paymentStatus = paymentIntent.status;
             const amountPaidInRupees = paymentIntent.amount / 100;
@@ -67,22 +69,16 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             };
             res.status(200).json({ received: true });
             console.log("Started Calling Payment and confirm Booking");
-            await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment);
-            // if (reservationId && boatId) {
-            //     console.log(reservationId && boatId);
-            //     await CreatePaymentAndConfirmBooking(reservationId, payment);
-            //     await SendPaymentTelegram(reservationId, boatId, bookingDate,userEmail);
-            // }
+            await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment,contactNumber,boatName);
         } else if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            await SendFailedPaymentTelegram(reservationId, boatId, bookingDate, userEmail, paymentIntent.last_payment_error?.message);
+            await SendFailedPaymentTelegram(reservationId, boatId,boatName ,bookingDate, userEmail, paymentIntent.last_payment_error?.message,contactNumber);
             console.log(`❌ Payment failed: ${paymentIntent.last_payment_error?.message}`);
         } else {
             console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
         }
         res.json({ received: true });
     } else {
-        res.setHeader('Allow', 'POST');
         res.status(405).end('Method Not Allowed');
     }
 };
@@ -90,19 +86,13 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 export default cors(webhookHandler as any);
 
 
-async function processBookingAndNotification(reservationId : any, boatId : any, bookingDate : any, userEmail : any, payment : any) {
-    console.log('Starting async processing...');
+async function processBookingAndNotification(reservationId : any, boatId : any, bookingDate : any, userEmail : any, payment : any, contactNumber: any, boatName : any) {
     try {
         console.log('Updating database...');
         await CreatePaymentAndConfirmBooking(reservationId, payment);
-        console.log('Database update successful');
-    } catch (dbError) {
-        console.error('Database update failed:', dbError);
-    }
-
-    try {
+        console.log('Database update successful', reservationId,payment);
         console.log('Sending Telegram notification...');
-        await SendPaymentTelegram(reservationId, boatId, bookingDate, userEmail);
+        await SendPaymentTelegram(reservationId, boatId,boatName ,bookingDate, userEmail, contactNumber );
         console.log('Telegram message sent');
     } catch (telegramError) {
         console.error('Telegram notification failed:', telegramError);

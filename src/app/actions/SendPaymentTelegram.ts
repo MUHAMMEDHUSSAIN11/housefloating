@@ -2,7 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import { Telegram } from "../enums/enums";
 import dayjs from 'dayjs';
 
-export default function SendPaymentTelegram(reservationId: string, BoatId: string, date: any , email : string | undefined) {
+export default function SendPaymentTelegram(reservationId: string, BoatId: string, BoatName : string,date: any , email : string | undefined, contactNumber : string) {
     const formattedDate = dayjs(Date.now()).format('dddd, MMMM D, YYYY h:mm A');
     const apiUrl = `https://api.telegram.org/bot${Telegram.botToken}/sendMessage`;
     const message = `

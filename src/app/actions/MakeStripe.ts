@@ -31,10 +31,12 @@ export default async function MakeStripe(Order: FirestoreListing) {
     const metadata = {
       reservationId: Order.ReservationId,
       boatId: Order.BoatId,
+      boatName: Order.BoatName,
       bookingDate: Order.BookingDate.toString(),
       userId : Order.UserId,
       userEmail: Order.Email,
-      remainingAmount: balanceAmount
+      remainingAmount: balanceAmount,
+      contactNumber : Order.Contactnumber
     };
 
     const { data } = await axios.post('/api/stripe/route',
