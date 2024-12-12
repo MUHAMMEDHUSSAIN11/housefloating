@@ -68,15 +68,15 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 RemainingAmount: remainingAmount,
             };
 
-            res.status(200).json({ received: true });
-
             console.log("Started Calling Payment and confirm Booking");
+
             await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment, contactNumber, boatName);
+            res.status(200).json({ received: true });
         } else if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
+            SendFailedPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, paymentIntent.last_payment_error?.message, contactNumber)
             res.status(200).json({ received: true }); // Respond immediately
 
-            SendFailedPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, paymentIntent.last_payment_error?.message, contactNumber)
         } else {
             console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
             res.status(200).json({ received: true }); // Respond for unknown events
