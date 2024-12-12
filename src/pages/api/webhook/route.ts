@@ -89,8 +89,8 @@ export default cors(webhookHandler as any);
 async function processBookingAndNotification(reservationId : any, boatId : any, bookingDate : any, userEmail : any, payment : any, contactNumber: any, boatName : any) {
     try {
         console.log('Updating database...');
-        await CreatePaymentAndConfirmBooking(reservationId, payment);
-        console.log('Database update successful', reservationId,payment);
+        // await CreatePaymentAndConfirmBooking(reservationId, payment);
+        // console.log('Database update successful', reservationId,payment);
         console.log('Sending Telegram notification...');
         await SendPaymentTelegram(reservationId, boatId,boatName ,bookingDate, userEmail, contactNumber );
         console.log('Telegram message sent');
