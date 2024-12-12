@@ -33,7 +33,6 @@ export default async function SendPaymentTelegram(reservationId: string, BoatId:
             text: message,
         }),
     })
-        .then(response => response.json())
         .catch(error => {
             console.error('Error sending Telegram message:', error);
         });
