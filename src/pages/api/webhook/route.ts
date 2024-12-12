@@ -67,15 +67,19 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
                 UserId: userId,
                 RemainingAmount: remainingAmount,
             };
+
             res.status(200).json({ received: true });
+
             console.log("Started Calling Payment and confirm Booking");
-            await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment,contactNumber,boatName);
+            await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment, contactNumber, boatName);
         } else if (event.type === 'payment_intent.payment_failed') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            await SendFailedPaymentTelegram(reservationId, boatId,boatName ,bookingDate, userEmail, paymentIntent.last_payment_error?.message,contactNumber);
-            console.log(`❌ Payment failed: ${paymentIntent.last_payment_error?.message}`);
+            res.status(200).json({ received: true }); // Respond immediately
+
+            SendFailedPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, paymentIntent.last_payment_error?.message, contactNumber)
         } else {
             console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
+            res.status(200).json({ received: true }); // Respond for unknown events
         }
         res.json({ received: true });
     } else {
@@ -86,13 +90,13 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 export default cors(webhookHandler as any);
 
 
-async function processBookingAndNotification(reservationId : any, boatId : any, bookingDate : any, userEmail : any, payment : any, contactNumber: any, boatName : any) {
+async function processBookingAndNotification(reservationId: any, boatId: any, bookingDate: any, userEmail: any, payment: any, contactNumber: any, boatName: any) {
     try {
         console.log('Updating database...');
-        // await CreatePaymentAndConfirmBooking(reservationId, payment);
-        // console.log('Database update successful', reservationId,payment);
+        await CreatePaymentAndConfirmBooking(reservationId, payment);
+        console.log('Database update successful', reservationId, payment);
         console.log('Sending Telegram notification...');
-        await SendPaymentTelegram(reservationId, boatId,boatName ,bookingDate, userEmail, contactNumber );
+        await SendPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, contactNumber);
         console.log('Telegram message sent');
     } catch (telegramError) {
         console.error('Telegram notification failed:', telegramError);

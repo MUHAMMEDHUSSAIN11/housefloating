@@ -19,6 +19,7 @@ export const CreatePaymentAndConfirmBooking = async ( reservationId: string, pay
         const reservationRef = adminDb.collection('Reservations').doc(reservationId);
     try {
         console.log("Started getting adminDb", reservationRef);
+        console.log("AdminDB",adminDb);
         // Run Firestore transaction
         await adminDb.runTransaction(async (transaction) => {
             // Add payment details to "Payments" collection
