@@ -2,6 +2,7 @@ import axios from "axios";
 import { Timestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
 import { amount } from "../enums/enums";
+import dayjs from "dayjs";
 
 interface FirestoreListing {
   ReservationId: string;
@@ -26,13 +27,15 @@ export default async function MakeStripe(Order: FirestoreListing) {
     const advanceAmount = Order.Price * amount.advance;
     const balanceAmount = Order.Price * amount.remaining;
 
+    const formattedBookingDate = dayjs(Order.BookingDate.toDate()).format('DD-MM-YYYY');
+
     const OrderDetails: any[] = [Order.BoatName, advanceAmount, Order.Contactnumber, Order.Image];
 
     const metadata = {
       reservationId: Order.ReservationId,
       boatId: Order.BoatId,
       boatName: Order.BoatName,
-      bookingDate: Order.BookingDate.toString(),
+      bookingDate: formattedBookingDate.toString(),
       userId : Order.UserId,
       userEmail: Order.Email,
       remainingAmount: balanceAmount,

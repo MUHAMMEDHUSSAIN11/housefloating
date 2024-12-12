@@ -22,69 +22,71 @@ const cors = Cors({
 });
 
 const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    if (req.method === 'POST') {
-        const body = await buffer(req);
-        const signature = req.headers['stripe-signature']!;
 
-        let event: Stripe.Event;
-        try {
-            event = stripe.webhooks.constructEvent(
-                body.toString(),
-                signature,
-                webhookSecret
-            );
-        } catch (error: any) {
-            res.status(400).send(`Webhook Error: ${error.message}`);
-            return;
-        }
-
-        const session = event.data.object as Stripe.Checkout.Session;
-        const reservationId = session.metadata?.reservationId;
-        const boatId = session.metadata?.boatId;
-        const bookingDate = session.metadata?.bookingDate;
-        const userEmail = session.metadata?.userEmail;
-        const userId = session.metadata?.userId;
-        const contactNumber = session.metadata?.contactNumber;
-        const boatName = session.metadata?.boatName;
-
-        // Cast event data to Stripe object.
-        if (event.type === 'payment_intent.succeeded') {
-            const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
-            const paymentStatus = paymentIntent.status;
-            const amountPaidInRupees = paymentIntent.amount / 100;
-
-            const remainingAmount = session.metadata?.remainingAmount;
-            const bookingDate = session.metadata?.bookingDate;
-
-            const payment: paymentModel = {
-                ReservationId: reservationId,
-                BoatId: boatId,
-                PaidDate: Timestamp.now(),
-                PaymentStatus: paymentStatus,
-                AmountPaidInRupees: amountPaidInRupees,
-                UserEmail: userEmail,
-                UserId: userId,
-                RemainingAmount: remainingAmount,
-            };
-
-            console.log("Started Calling Payment and confirm Booking");
-
-            await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment, contactNumber, boatName);
-            res.status(200).json({ received: true });
-        } else if (event.type === 'payment_intent.payment_failed') {
-            const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            SendFailedPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, paymentIntent.last_payment_error?.message, contactNumber)
-            res.status(200).json({ received: true }); // Respond immediately
-
-        } else {
-            console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
-            res.status(200).json({ received: true }); // Respond for unknown events
-        }
-        res.json({ received: true });
-    } else {
-        res.status(405).end('Method Not Allowed');
+    if (req.method !== 'POST') {
+        res.setHeader('Allow', 'POST');
+        res.status(405).send('Method Not Allowed');
+        return;
     }
+
+    const body = await buffer(req);
+    const signature = req.headers['stripe-signature']!;
+
+    let event: Stripe.Event;
+    try {
+        event = stripe.webhooks.constructEvent(
+            body.toString(),
+            signature,
+            webhookSecret
+        );
+    } catch (error: any) {
+        res.status(400).send(`Webhook Error: ${error.message}`);
+        return;
+    }
+
+    const session = event.data.object as Stripe.Checkout.Session;
+    const reservationId = session.metadata?.reservationId;
+    const boatId = session.metadata?.boatId;
+    const bookingDate = session.metadata?.bookingDate;
+    const userEmail = session.metadata?.userEmail;
+    const userId = session.metadata?.userId;
+    const contactNumber = session.metadata?.contactNumber;
+    const boatName = session.metadata?.boatName;
+
+    // Cast event data to Stripe object.
+    if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+        const paymentStatus = paymentIntent.status;
+        const amountPaidInRupees = paymentIntent.amount / 100;
+
+        const remainingAmount = session.metadata?.remainingAmount;
+        const bookingDate = session.metadata?.bookingDate;
+
+        const payment: paymentModel = {
+            ReservationId: reservationId,
+            BoatId: boatId,
+            PaidDate: Timestamp.now(),
+            PaymentStatus: paymentStatus,
+            AmountPaidInRupees: amountPaidInRupees,
+            UserEmail: userEmail,
+            UserId: userId,
+            RemainingAmount: remainingAmount,
+        };
+
+        console.log("Started Calling Payment and confirm Booking");
+
+        await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment, contactNumber, boatName);
+        return res.status(200).send({ received: true });
+    } else if (event.type === 'payment_intent.payment_failed') {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        SendFailedPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, paymentIntent.last_payment_error?.message, contactNumber)
+        return res.status(200).json({ received: true });
+    } else {
+        console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
+        return res.status(200).json({ received: true }); 
+    }
+
 };
 
 export default cors(webhookHandler as any);

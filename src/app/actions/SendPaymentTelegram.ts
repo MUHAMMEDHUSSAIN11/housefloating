@@ -2,8 +2,9 @@ import { Timestamp } from "firebase/firestore";
 import { Telegram } from "../enums/enums";
 import dayjs from 'dayjs';
 
-export default async function SendPaymentTelegram(reservationId: string, BoatId: string, BoatName : string,date: any , email : string | undefined, contactNumber : string) {
-    const formattedDate = dayjs(Date.now()).format('dddd, MMMM D, YYYY h:mm A');
+export default async function SendPaymentTelegram(reservationId: string, BoatId: string, BoatName: string, date: any, email: string | undefined, contactNumber: string) {
+    const formattedCurrentDate = dayjs(Date.now()).format('dddd, MMMM D, YYYY h:mm A');
+
     const apiUrl = `https://api.telegram.org/bot${Telegram.botToken}/sendMessage`;
     const message = `
     ✨ Payment Success ✨
@@ -14,11 +15,15 @@ export default async function SendPaymentTelegram(reservationId: string, BoatId:
 
     Boat ID: ${BoatId}
 
+    Boat Name: ${BoatName}
+
+    Contact Number : ${contactNumber}
+
     Booking Date: ${date}
 
     User Email : ${email}
 
-    Paid Date : ${formattedDate}
+    Paid Date : ${formattedCurrentDate}
     
     Please take necessary actions and ensure a smooth experience for the customer.
     `;
@@ -33,6 +38,7 @@ export default async function SendPaymentTelegram(reservationId: string, BoatId:
             text: message,
         }),
     })
+        .then(response => console.log("TelegramResponse", response.json()))
         .catch(error => {
             console.error('Error sending Telegram message:', error);
         });
