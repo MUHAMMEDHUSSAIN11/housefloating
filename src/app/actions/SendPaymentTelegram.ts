@@ -29,21 +29,20 @@ export default async function SendPaymentTelegram(reservationId: string, BoatId:
     `;
     // Send a Telegram message
 
-    console.log("ChatId and Message", Telegram.chatId,message);
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            chat_id: Telegram.chatId,
-            text: message,
-        }),
-    })
-        .then(response => console.log("TelegramResponse", response.json()))
-        .catch(error => {
-            console.error('Error sending Telegram message:', error);
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: Telegram.chatId,
+                text: message,
+            }),
         });
+        const responseData = await response.json();
+        console.log('Telegram Response:', responseData);
+    } catch (error) {
+        console.error('Error sending Telegram message:', error);
+    }
 }
 
 
