@@ -28,6 +28,8 @@ export default async function SendPaymentTelegram(reservationId: string, BoatId:
     Please take necessary actions and ensure a smooth experience for the customer.
     `;
     // Send a Telegram message
+
+    console.log("ChatId and Message", Telegram.chatId,message);
     fetch(apiUrl, {
         method: 'POST',
         headers: {
