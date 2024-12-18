@@ -74,8 +74,6 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
             RemainingAmount: remainingAmount,
         };
 
-        console.log("Started Calling Payment and confirm Booking");
-
         await processBookingAndNotification(reservationId, boatId, bookingDate, userEmail, payment, contactNumber, boatName);
         return res.status(200).send({ received: true });
     } else if (event.type === 'payment_intent.payment_failed') {
@@ -94,12 +92,8 @@ export default cors(webhookHandler as any);
 
 async function processBookingAndNotification(reservationId: any, boatId: any, bookingDate: any, userEmail: any, payment: any, contactNumber: any, boatName: any) {
     try {
-        console.log('Updating database...');
         await CreatePaymentAndConfirmBooking(reservationId, payment);
-        console.log('Database update successful', reservationId, payment);
-        console.log('Sending Telegram notification...');
         await SendPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, contactNumber);
-        console.log('Telegram message sent');
     } catch (telegramError) {
         console.error('Telegram notification failed:', telegramError);
     }

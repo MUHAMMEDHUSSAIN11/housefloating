@@ -31,7 +31,7 @@ export default async function SendRequestTelegram(finalBookingDate: Date, finalH
     - Requested Date: ${formattedDate}
   `;
     // Send a Telegram message
-    fetch(apiUrl, {
+   await fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

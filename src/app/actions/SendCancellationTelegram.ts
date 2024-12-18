@@ -21,7 +21,7 @@ export default async function SendCancellationTelegram(Email: string, Reservatio
     - Boat Category: ${Category || 'N/A'}`;
 
     // Send a Telegram message
-    fetch(apiUrl, {
+   await fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

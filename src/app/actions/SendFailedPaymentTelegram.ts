@@ -29,7 +29,7 @@ export default async function SendFailedPaymentTelegram(reservationId: string | 
     Please take necessary actions and ensure a smooth experience for the customer.
     `;
     // Send a Telegram message
-    fetch(apiUrl, {
+   await fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
