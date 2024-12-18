@@ -30,19 +30,32 @@ export default async function SendRequestTelegram(finalBookingDate: Date, finalH
     
     - Requested Date: ${formattedDate}
   `;
-    // Send a Telegram message
-    fetch(apiUrl, {
+
+    const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             chat_id: Telegram.chatId,
             text: message,
         }),
-    })
-        .then(response => response.json())
-        .catch(error => {
-            console.error('Error sending Telegram message:', error);
-        });
+    });
+    const responseData = await response.json();
+    console.log('Telegram Response:', responseData);
+
+
+    // Send a Telegram message
+    // fetch(apiUrl, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //         chat_id: Telegram.chatId,
+    //         text: message,
+    //     }),
+    // })
+    //     .then(response => response.json())
+    //     .catch(error => {
+    //         console.error('Error sending Telegram message:', error);
+    //     });
 }
