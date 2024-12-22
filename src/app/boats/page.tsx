@@ -8,6 +8,7 @@ import useSWR from 'swr';
 import getListings from '../actions/getListings';
 import Spinner from '../components/Misc/Spinner';
 import Filter from '../components/Misc/Filter';
+import BoatsEmptyState from './BoatsEmptyState';
 
 const Page = () => {
   const [sortedListings, setSortedListings] = useState<any[]>([]); // State for sorted listings
@@ -89,7 +90,7 @@ const Page = () => {
                 <ListingCard key={listing.id} data={listing} />
               ))
             ) : (
-              <EmptyState  showReset={true}/>
+              <BoatsEmptyState  showReset={true}/>
             )}
           </div>
         </div>
