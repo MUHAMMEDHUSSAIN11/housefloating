@@ -6,9 +6,9 @@ export type AdvanceDetails =
     RemainingAmount : number
 }
 
-export default function calculateAdvance(Price: number ): AdvanceDetails {
-    const advanceAmount = Price * amount.advance;
-    const remainingAmount = Price * amount.remaining;
+export default function calculateAdvance(Price: number): AdvanceDetails {
+    const advanceAmount = Math.round((Price * amount.advance) * 100) / 100;
+    const remainingAmount = Math.round((Price * amount.remaining) * 100) / 100;
 
     return {
         AdvanceAmount: advanceAmount,
