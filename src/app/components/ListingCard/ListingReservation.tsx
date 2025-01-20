@@ -20,16 +20,16 @@ interface ListingReservationProps {
   guestCount: number,
 }
 
-const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdultCount, setChildCount, totalPrice, date, onChangeDate, onSubmit, disabled, disabledDates,guestCount }) => {
+const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdultCount, setChildCount, totalPrice, date, onChangeDate, onSubmit, disabled, disabledDates, guestCount }) => {
   //sm:pt-2 needs to be rechecked
-  
+
   const ModeStore = useTravelModeStore();
 
   const changeTravelMode = (travelMode: TravelMode) => {
     ModeStore.setTravelMode(travelMode);
     setAdultCount(guestCount);
   };
-  
+
 
   return (
     <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden sm:pt-2 shadow-md">
@@ -52,7 +52,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdult
       <Dayselector value={date} disabledDates={disabledDates} onChange={(value) => onChangeDate(value)} />
       <hr />
       <div className="p-4">
-        <Button disabled={disabled} label="Reserve" onClick={onSubmit} />
+        <Button disabled={disabled} label=" Request Reservation" onClick={onSubmit} />
       </div>
       <hr />
       <div className="p-4 flex flex-col items-center">

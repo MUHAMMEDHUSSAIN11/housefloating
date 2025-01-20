@@ -9,7 +9,7 @@ const AdditionalInfo = () => {
       <h2 className="text-xl font-semibold  mb-4">Additional Information</h2>
       <ul className="pl-4 text-md">
         <li className="mb-2 flex items-center">
-          <IoCheckmarkCircle className="mr-2 text-blue-500" size={25}/> Confirmation will be received within 1 hour of booking.
+          <IoCheckmarkCircle className="mr-2 text-blue-500" size={25}/> Confirmation will be received once booking is Approved.
         </li>
         <li className="mb-2 flex items-center">
           <IoFastFoodSharp className="mr-2 text-blue-500" size={20} /> Meals Included.

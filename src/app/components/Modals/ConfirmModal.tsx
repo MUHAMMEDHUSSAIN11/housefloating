@@ -172,7 +172,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 .then(() => {
                     setIsLoading(false);
                     // toast.success('Boat enquiry raised successfully.');
-                    toast('Boat enquiry raised successfully! Confirmation will be received within 1 hour!.', {
+                    toast('Boat enquiry raised successfully! Confirmation will be received once booking is Approved!.', {
                         icon: '👏',
                         duration: 6000,
                     });
@@ -224,7 +224,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                     <p className="text-gray-900">Total Price: {finalPrice}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
                 </div>
-                <p className="text-gray-900"> We aim to provide updates within 1 hour. Thank you for your patience!</p>
+                <p className="text-gray-900"> We’ll update you soon. Thanks for waiting!!</p>
                 <p className="text-gray-900">Please note that some boats may be unavailable due to Offline or Spot Bookings.</p>
                 <p className="text-gray-900">Look out for a confirmation message on your WhatsApp or Email!</p>
                 <p className="text-gray-900">If the chosen boat is unavailable, we'll quickly provide a list of alternative options for you to consider.</p>
