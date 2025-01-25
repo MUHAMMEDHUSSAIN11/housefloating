@@ -24,7 +24,7 @@ export enum amount
 {
     advance = 0.3,
     remaining = 0.7,
-    weekendPrice = 1000,
+    weekendPrice = 2500,
     preChristmas = 1.71, 
     christmasSeason = 2.20,
 }
