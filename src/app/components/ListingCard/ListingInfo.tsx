@@ -52,7 +52,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ dayGuestCountMax,nightGuestCo
         <Counter onChange={(value) => setAdultCount(value)} min={guestCount}  max={adultCounterMax} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
       </div>
       <div className=''>
-        <Counter onChange={(value) => setChildCount(value)} value={childCount} title="Number of Childrens" subtitle="Ages 5 to 11" />
+        <Counter onChange={(value) => setChildCount(value)} value={childCount} max={roomCount} title="Number of Childrens" subtitle="Ages 5 to 11" />
       </div>
       <hr />
       <div className='sm:hidden md:block'>
