@@ -10,7 +10,7 @@ const Categories = () => {
     return (
         <section className="py-16 bg-gray-200S px-1 font-sans">
             <div className="max-w-7xl mx-auto pb-16">
-                <h1 className="text-3xl font-semibold text-center font-sans text-gray-800 mb-5">Houseboat Categories</h1>
+                <h2 className="text-3xl font-semibold text-center font-sans text-gray-800 mb-5">Houseboat Categories</h2>
             </div>
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Deluxe Houseboat */}
