@@ -16,8 +16,8 @@ export const inter = Inter({
 
 
 export const metadata = {
-  title: 'Alleppey Houseboats-Online Booking',
-  description: 'Book your Houseboat online',
+  title: 'Houseboats in Alleppey - Book Luxury & Premium Houseboats Online',
+  description: "Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
 }
 
 export default async function RootLayout({ children, }: { children: React.ReactNode }) {
