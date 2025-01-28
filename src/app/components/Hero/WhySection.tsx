@@ -28,14 +28,14 @@ const WhySection = () => {
                             <BsFillCartCheckFill size={25} />
                             </div>
                             <h3 className="text-xl mt-4 font-medium">Easy Booking</h3>
-                            <p className="text-gray-700 mt-2">Explore a wide range of houseboats</p>
+                            <p className="text-gray-700 mt-2">Booking houseboats in alleppey <br/> has never been easier</p>
                         </div>
                         <div className="text-center">
                             <div className="bg-blue-500 text-white rounded-full p-3 inline-flex">
                             <FaSnowflake  size={25} />
                             </div>
                             <h3 className="text-xl mt-4 font-medium">Wide variety </h3>
-                            <p className="text-gray-700 mt-2">Choose from extensive variety of houseboats</p>
+                            <p className="text-gray-700 mt-2">Choose from wide variety of houseboats</p>
                         </div>
                         {/* Item 4 */}
                         <div className="text-center">
@@ -43,7 +43,7 @@ const WhySection = () => {
                                 <FaPhone size={25}  />
                             </div>
                             <h3 className="text-xl mt-4 font-medium">Continuous Support</h3>
-                            <p className="text-gray-700 mt-2">We're always here to help you, whenever you need it</p>
+                            <p className="text-gray-700 mt-2">We're always here to help you,<br/> whenever you need it</p>
                         </div>
                     </div>
                 </div>
