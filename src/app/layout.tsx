@@ -16,7 +16,7 @@ export const inter = Inter({
 
 
 export const metadata = {
-  title: 'Houseboats in Alleppey - Book Luxury & Premium Houseboats Online',
+  title: 'Houseboats in Alleppey – Book Online at Best Prices',
   description: "Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
 }
 
