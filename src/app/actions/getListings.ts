@@ -21,8 +21,8 @@ export default async function getListings(): Promise<Listing[]> {
 
     const listingRef = collection(firestore, "Boats");
     // Order the listings by price in increasing order
-    const listingsQuery = query(listingRef, orderBy("price", "asc"));
-    const listingsQueryData = await getDocs(listingsQuery);
+    // const listingsQuery = query(listingRef, orderBy("price", "asc"));
+    const listingsQueryData = await getDocs(listingRef);
     
 
     const listings = listingsQueryData.docs.map((doc) => {
