@@ -27,6 +27,7 @@ export enum amount
     weekendPrice = 2500,
     preChristmas = 1.71, 
     christmasSeason = 2.20,
+    offerPrice = 1.1
 }
 
 export enum Telegram

@@ -6,6 +6,7 @@ import Button from '../Misc/Button'
 import { Timestamp } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
 import * as NProgress from "nprogress";
+import { amount } from '@/app/enums/enums'
 
 
 
@@ -44,6 +45,9 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
     NProgress.done();
   };
 
+  const strikeThroughPrice = Math.round(data.price * amount.offerPrice);
+  const offerPrice = data.price;
+
   const handleCancel: any = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
@@ -68,10 +72,11 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
         </div>
         <div className="flex flex-row items-center gap-1">
           <div className="font-light">Starting From</div>
-          <div className="font-semibold">₹ {data.price} /-</div>
+          <div className="text-gray-600 line-through">₹ {strikeThroughPrice} /-</div>
         </div>
         <div className='flex flex-row items-center gap-1'>
-          <div className='font-semibold'></div>
+          <div className="font-semibold">₹ {offerPrice} /-</div>
+
         </div>
         {onAction && actionLabel && (
           <Button
