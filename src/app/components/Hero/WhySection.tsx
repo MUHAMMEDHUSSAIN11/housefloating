@@ -26,7 +26,7 @@ const HowToBookSection = () => {
 
         {/* Mobile: Carousel | Desktop: Grid */}
         <div className="block md:hidden">
-          <Carousel showThumbs={false} showStatus={false} autoPlay infiniteLoop>
+          <Carousel showThumbs={false} showStatus={false} showIndicators={false} autoPlay infiniteLoop>
             {steps.map((step, index) => (
               <div key={index} className="text-center">
                 <div className="bg-blue-500 text-white rounded-full p-3 inline-flex">
