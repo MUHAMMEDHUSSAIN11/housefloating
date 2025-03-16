@@ -21,8 +21,9 @@ import PremiumFood from '../../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
 import HouseRules from '../../components/Descriptions/HouseRules';
 import CalculatePrice from '@/app/actions/calculatePrice';
-import { Categories, TravelMode } from '@/app/enums/enums';
+import { Categories, coordinates, TravelMode } from '@/app/enums/enums';
 import toast from 'react-hot-toast';
+import dynamic from 'next/dynamic';
 
 
 interface ListingClientProps {
@@ -43,33 +44,35 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
 
 
   useEffect(() => {
-    CalculatePrice(finalAdultCount, finalChildCount, bookingDate, listing)
+    CalculatePrice(finalAdultCount, finalChildCount, bookingDate, listing, cruiseType.travelMode)
       .then((totalPrice) => {
         setTotalPrice(totalPrice);
       })
       .catch((error) => {
         console.error('Error calculating total price:', error);
       });
-  }, [finalAdultCount, finalChildCount, bookingDate]);
+  }, [finalAdultCount, finalChildCount, bookingDate, cruiseType]);
 
 
 
   const onCreateReservation = useCallback(() => {
     if (user) {
-      if(cruiseType.travelMode == TravelMode.DayCruise && finalAdultCount <= listing.getboat.data()?.maxDayGuest)
-      {
+      if (cruiseType.travelMode == TravelMode.DayCruise && finalAdultCount <= listing.getboat.data()?.maxDayGuest) {
         return bookingConfirmModal.onOpen();
-      }else if(cruiseType.travelMode == TravelMode.OverNight && finalAdultCount <= listing.getboat.data()?.maxNightGuest)
-      {
+      } else if (cruiseType.travelMode == TravelMode.OverNight && finalAdultCount <= listing.getboat.data()?.maxNightGuest) {
         return bookingConfirmModal.onOpen();
-      }else{
+      } else {
         toast.error("Maximum number of Guests exceeded!!")
       }
 
     } else {
       return loginModal.onOpen();
     }
-  }, [user, bookingConfirmModal, loginModal,cruiseType,finalAdultCount])
+  }, [user, bookingConfirmModal, loginModal, cruiseType, finalAdultCount])
+
+  const Map = dynamic(() => import('../../components/Misc/Map'), {
+    ssr: false
+  });
 
 
   return (
@@ -113,6 +116,10 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               />
             </div>
           </div>
+          <div className="block md:hidden">
+            <Map center={coordinates} />
+
+          </div>
           {cruiseType.travelMode === "Overnight" ? (
             <>
               <Occupancy title={'Overnight Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxNightGuest} Count={listing.getboat.data()?.guestCount} adultAddonPrice={listing.getboat.data()?.adultAddonPrice} childAddonPrice={listing.getboat.data()?.childAddonPrice} />
@@ -132,21 +139,21 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
                 return (
                   <>
                     <hr />
-                    <DeluxeFood />
+                    <DeluxeFood bookingType={cruiseType.travelMode} />
                   </>
                 )
               } else if (listing.getboat.data()?.category === Categories.Premium) {
                 return (
                   <>
                     <hr />
-                    <PremiumFood />
+                    <PremiumFood bookingType={cruiseType.travelMode} />
                   </>
                 )
               } else {
                 return (
                   <>
                     <hr />
-                    <LuxuryFood />
+                    <LuxuryFood bookingType={cruiseType.travelMode} />
                   </>
                 )
               }

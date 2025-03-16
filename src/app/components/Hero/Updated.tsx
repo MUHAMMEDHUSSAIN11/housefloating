@@ -7,7 +7,7 @@ const Updated = () => {
             <div className="max-w-7xl mx-auto">
                 <div className="text-center">
                     <h2 className="text-4xl font-bold mb-5">Let's keep in touch</h2>
-                    <p className="text-lg mb-8">Housefloating is expanding beyond Alleppey!</p>
+                    <p className="text-lg mb-8">We've some exciting updates!</p>
                 </div>
             </div>
         </section>

@@ -1,9 +1,9 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import React, { useState } from 'react'
+import React from 'react'
 import Counter from '../Inputs/Counter';
-import { TravelMode } from '@/app/enums/enums';
+import { coordinates, TravelMode } from '@/app/enums/enums';
 
 
 //This component is used for displaying individual item's details and counter
@@ -28,7 +28,6 @@ const Map = dynamic(() => import('../Misc/Map'), {
 });
 
 
-const coordinates = [9.5008, 76.3443]
 const ListingInfo: React.FC<ListingInfoProps> = ({ dayGuestCountMax,nightGuestCountMax, travelMode, bathroomCount, description, guestCount, roomCount, setAdultCount, setChildCount, adultCount, childCount }) => {
 
   let adultCounterMax = 0;
@@ -55,7 +54,8 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ dayGuestCountMax,nightGuestCo
         <Counter onChange={(value) => setChildCount(value)} value={childCount} max={roomCount} title="Number of Childrens" subtitle="Ages 5 to 11" />
       </div>
       <hr />
-      <div className='sm:hidden md:block'>
+      {/* <div className='sm:hidden md:block'> */}
+      <div className="hidden md:block">
       <Map center={coordinates} />
       </div>
       <hr />

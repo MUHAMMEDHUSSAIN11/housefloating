@@ -1,7 +1,11 @@
 import toast from "react-hot-toast";
-import { amount } from "../enums/enums";
+import { amount, TravelMode } from "../enums/enums";
 
-export default async function CalculatePrice(finalAdultCount: number, finalChildCount: number, bookingDate: Date, listing: any) {
+export default async function CalculatePrice(finalAdultCount: number,
+  finalChildCount: number,
+  bookingDate: Date,
+  listing: any,
+  cruiseType: string) {
   try {
     if (!bookingDate) {
       return;
@@ -28,14 +32,28 @@ export default async function CalculatePrice(finalAdultCount: number, finalChild
     const isChristmasSeason = bookingDate >= new Date(new Date().getFullYear(), 11, 20)
       && bookingDate <= new Date(new Date().getFullYear() + 1, 0, 8);
 
+    const isSummerVaccation = bookingDate >= new Date(new Date().getFullYear(), 4, 1)
+      && bookingDate <= new Date(new Date().getFullYear(), 5, 31);
+
     if (isPreChristmasSeason) {
       newTotalPrice = newTotalPrice * amount.preChristmas;
     }
+
     if (isChristmasSeason) {
       newTotalPrice = newTotalPrice * amount.christmasSeason;
     }
+//summer vaccation prices
+    if (isSummerVaccation) {
+      newTotalPrice = newTotalPrice + amount.summerVaccationPrice;
+    }
 
-    return  Math.round(newTotalPrice);
+    //different Price for Day Cruise
+
+    if (cruiseType == TravelMode.DayCruise) {
+      newTotalPrice = newTotalPrice - amount.dayCruiseReduction;
+    }
+
+    return Math.round(newTotalPrice);
 
   } catch (error) {
     toast.error("Something went wrong while fetching Price!. Please Contact Us");

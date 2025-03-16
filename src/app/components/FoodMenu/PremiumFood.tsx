@@ -1,7 +1,10 @@
 'use client';
 import React, { useState } from 'react';
+import { FoodProps } from './DeluxeFood';
+import { TravelMode } from '@/app/enums/enums';
 
-const PremiumFood = () => {
+const PremiumFood: React.FC<FoodProps> = ({ bookingType }) => {
+
     const [isVeg, setIsVeg] = useState(true);
 
     const handleVegClick = () => {
@@ -82,56 +85,58 @@ const PremiumFood = () => {
                             </>
                         )}
                     </div>
-                    <div className="w-1/2 pl-4"> {/* Right Side */}
-                        {isVeg ? (
-                            // Content for Veg Menu (dinner and next breakfast)
-                            <>
-                                <h2 className='font-2xl font-semibold font-sans pt-4'>Dinner</h2>
-                                <ul className='pl-5 marker:text-blue-500' >
-                                    <li className='list-disc'>Chappati</li>
-                                    <li className='list-disc'>Dal Curry</li>
-                                    <li className='list-disc'>Aloo Matter</li>
-                                    <li className='list-disc'>Gobi</li>
-                                    <li className='list-disc'>Cabbage White Thoran</li>
-                                    <li className='list-disc'>Vegetable Salad</li>
-                                    <li className='list-disc'>Vendakka Mezhukupurathy</li>
-                                </ul>
-                                <h2 className='font-2xl font-semibold font-sans pt-4'>Breakfast (Only One Combination)</h2>
-                                <ul className='pl-5 marker:text-blue-500' >
-                                    <li className='list-disc'>Tea /Coffee</li>
-                                    <li className='list-disc'>Bread, Jam, Butter, Omlette OR</li>
-                                    <li className='list-disc'>Iddly, Sambar(By default) OR</li>
-                                    <li className='list-disc'>Dosa, Sambar OR</li>
-                                    <li className='list-disc'>Poori Masala OR</li>
-                                    <li className='list-disc'>Appam and Vegetable Curry / Egg Roast OR</li>
-                                    <li className='list-disc'>Puttu and Kadala Curry</li>
-                                </ul>
-                            </>
-                        ) : (
-                            // Content for Non-Veg Menu (dinner and next breakfast)
-                            <>
-                                <h2 className='font-2xl font-semibold font-sans pt-4'>Dinner</h2>
-                                <ul className='pl-5 marker:text-blue-500'>
-                                    <li className='list-disc'>Chappati</li>
-                                    <li className='list-disc'>Dal Curry</li>
-                                    <li className='list-disc'>Chicken Fry</li>
-                                    <li className='list-disc'>Fish curry</li>
-                                    <li className='list-disc'>Vendakka Mezhukupurathy</li>
-                                    <li className='list-disc'>Salad</li>
-                                </ul>
-                                <h2 className='font-2xl font-semibold font-sans pt-4'>Breakfast (Only One Combination)</h2>
-                                <ul className='pl-5 marker:text-blue-500'>
-                                    <li className='list-disc'>Tea /Coffee</li>
-                                    <li className='list-disc'>Bread, Jam, Butter, Omlette OR</li>
-                                    <li className='list-disc'>Iddly, Sambar. (By default) OR</li>
-                                    <li className='list-disc'>Dosa, Sambar OR</li>
-                                    <li className='list-disc'>Poori Masala OR</li>
-                                    <li className='list-disc'>Appam and Vegetable Curry / Egg Roast OR</li>
-                                    <li className='list-disc'>Puttu and Kadala Curry</li>
-                                </ul>
-                            </>
-                        )}
-                    </div>
+                    {bookingType == TravelMode.OverNight && (
+                        <div className="w-1/2 pl-4"> {/* Right Side */}
+                            {isVeg ? (
+                                // Content for Veg Menu (dinner and next breakfast)
+                                <>
+                                    <h2 className='font-2xl font-semibold font-sans pt-4'>Dinner</h2>
+                                    <ul className='pl-5 marker:text-blue-500' >
+                                        <li className='list-disc'>Chappati</li>
+                                        <li className='list-disc'>Dal Curry</li>
+                                        <li className='list-disc'>Aloo Matter</li>
+                                        <li className='list-disc'>Gobi</li>
+                                        <li className='list-disc'>Cabbage White Thoran</li>
+                                        <li className='list-disc'>Vegetable Salad</li>
+                                        <li className='list-disc'>Vendakka Mezhukupurathy</li>
+                                    </ul>
+                                    <h2 className='font-2xl font-semibold font-sans pt-4'>Breakfast (Only One Combination)</h2>
+                                    <ul className='pl-5 marker:text-blue-500' >
+                                        <li className='list-disc'>Tea /Coffee</li>
+                                        <li className='list-disc'>Bread, Jam, Butter, Omlette OR</li>
+                                        <li className='list-disc'>Iddly, Sambar(By default) OR</li>
+                                        <li className='list-disc'>Dosa, Sambar OR</li>
+                                        <li className='list-disc'>Poori Masala OR</li>
+                                        <li className='list-disc'>Appam and Vegetable Curry / Egg Roast OR</li>
+                                        <li className='list-disc'>Puttu and Kadala Curry</li>
+                                    </ul>
+                                </>
+                            ) : (
+                                // Content for Non-Veg Menu (dinner and next breakfast)
+                                <>
+                                    <h2 className='font-2xl font-semibold font-sans pt-4'>Dinner</h2>
+                                    <ul className='pl-5 marker:text-blue-500'>
+                                        <li className='list-disc'>Chappati</li>
+                                        <li className='list-disc'>Dal Curry</li>
+                                        <li className='list-disc'>Chicken Fry</li>
+                                        <li className='list-disc'>Fish curry</li>
+                                        <li className='list-disc'>Vendakka Mezhukupurathy</li>
+                                        <li className='list-disc'>Salad</li>
+                                    </ul>
+                                    <h2 className='font-2xl font-semibold font-sans pt-4'>Breakfast (Only One Combination)</h2>
+                                    <ul className='pl-5 marker:text-blue-500'>
+                                        <li className='list-disc'>Tea /Coffee</li>
+                                        <li className='list-disc'>Bread, Jam, Butter, Omlette OR</li>
+                                        <li className='list-disc'>Iddly, Sambar. (By default) OR</li>
+                                        <li className='list-disc'>Dosa, Sambar OR</li>
+                                        <li className='list-disc'>Poori Masala OR</li>
+                                        <li className='list-disc'>Appam and Vegetable Curry / Egg Roast OR</li>
+                                        <li className='list-disc'>Puttu and Kadala Curry</li>
+                                    </ul>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div >

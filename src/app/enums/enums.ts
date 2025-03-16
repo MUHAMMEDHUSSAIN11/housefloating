@@ -24,10 +24,14 @@ export enum amount
 {
     advance = 0.3,
     remaining = 0.7,
-    weekendPrice = 2500,
+    weekendPrice = 2000,
     preChristmas = 1.71, 
     christmasSeason = 2.20,
-    offerPrice = 1.1
+    offerPrice = 1.1,
+    summerVaccationPrice = 2500,
+
+    //need to be removed in upcoming sprints
+    dayCruiseReduction = 500
 }
 
 export enum Telegram
@@ -41,3 +45,5 @@ export enum TravelMode
     DayCruise = "DayCruise",
     OverNight = "Overnight"
 }
+
+export const coordinates: [number, number] = [9.5008, 76.3443];
