@@ -13,7 +13,7 @@ const NewMiddleContent = () => {
       name: 'Houseboats',
       key: 'houseboats',
       path: '/houseBoats',
-      image: '/images/HB_Icon.png'
+      image: '/images/Houseboat_Icon.PNG'
     },
     {
       name: 'Shikara',
