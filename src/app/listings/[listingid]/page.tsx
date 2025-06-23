@@ -26,7 +26,7 @@ const Listingpage = ({ params }: { params: Iparams }) => {
 
   return (
     isLoading ? (
-      <div className='pt-28 text-lg'>
+      <div className='pt-44 md:pt-24 text-lg'>
         <Spinner/>
       </div>
     ) : (
