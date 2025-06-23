@@ -1,7 +1,7 @@
 import { Timestamp, collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { firestore } from '../firebase/clientApp';
 
-interface Listing {
+ interface Listing {
   category: string,
   bathroomCount: number,
   guestCount: number,
