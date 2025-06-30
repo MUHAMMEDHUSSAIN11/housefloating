@@ -6,7 +6,6 @@ import ListingCard from '../components/ListingCard/ListingCard';
 import EmptyState from '../components/Misc/EmptyState';
 import useSWR from 'swr';
 import getListings from '../actions/getListings';
-import Spinner from '../components/Misc/Spinner';
 import Filter from '../components/Misc/Filter';
 import BoatsEmptyState from './BoatsEmptyState';
 import ListingCardSkeleton from '../components/ListingCard/ListingCardSkeleton';
@@ -88,7 +87,7 @@ const Page = () => {
           <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-8">
             {sortedListings.length > 0 ? (
               sortedListings.map((listing: any) => (
-                <ListingCard key={listing.id} data={listing} />
+                <ListingCard key={listing.boatId} data={listing} />
               ))
             ) : (
               <BoatsEmptyState showReset={true} />
