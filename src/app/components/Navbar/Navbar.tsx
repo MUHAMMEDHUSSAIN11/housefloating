@@ -6,6 +6,7 @@ import Logo from './Logo';
 import RightContent from './RightContent';
 import NewMiddleContent from './NewMiddleContent';
 import { usePathname } from 'next/navigation';
+import NavbarIcons from './NavbarIcons';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -16,12 +17,24 @@ const Navbar = () => {
       <div className=" border-b-[1px]">
         <Container>
           {/* Desktop Layout */}
-          <div className="hidden md:flex flex-row items-center justify-between gap-3">
+          {/* <div className="hidden md:flex flex-row items-center justify-between gap-3">
             <Logo />
             <div className="">
               <NewMiddleContent />
             </div>
             <RightContent />
+          </div> */}
+
+          {/* Desktop Layout */}
+          <div className="hidden md:flex flex-row items-center justify-between gap-3">
+            <Logo />
+            <div >
+              <NewMiddleContent />
+            </div>
+            <div className="flex flex-row items-center gap-4">
+              <NavbarIcons />
+              <RightContent />
+            </div>
           </div>
           
           {/* Mobile Layout */}

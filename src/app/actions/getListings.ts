@@ -12,6 +12,7 @@ import { firestore } from '../firebase/clientApp';
   reservations: any[],
   roomCount: number,
   title: string,
+  id:string
 }
 
 export default async function getListings(): Promise<Listing[]> {
@@ -33,7 +34,7 @@ export default async function getListings(): Promise<Listing[]> {
         nanoseconds: timestamp.nanoseconds,
       }));
       
-      return { id: doc.id, ...data, reservations };
+      return { boatId: doc.id, ...data, reservations };
     });
     return listings;
   } catch (error) {

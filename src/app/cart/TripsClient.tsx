@@ -65,10 +65,10 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
     <Container>
       <Heading title="Trips" subtitle="Where you've been and where you're going" />
       {reservations !== null ? (
-        <div className="mt-10 w-full lg:w-3/4 ">
+        <div className="mt-10 w-full lg:w-5/6 ">
           {reservations.map((reservation, index) => (
             <div key={index} className="mb-4">
-              <Card key={index} details={reservation} actionLabel="Cancel reservation"
+              <Card key={index} details={reservation} actionLabel="Cancel booking"
                 onAction={() => showConfirmationDialog(reservation)}
                 disabled={false}
               />

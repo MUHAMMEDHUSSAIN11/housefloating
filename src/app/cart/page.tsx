@@ -8,7 +8,6 @@ import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import TripsClient from './TripsClient';
 import { Timestamp } from 'firebase/firestore';
-import GpayBanner from '../components/Misc/Banner';
 import Spinner from '../components/Misc/Spinner';
 
 
@@ -34,17 +33,6 @@ const CartPage = () => {
   const [user] = useAuthState(auth);
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  // const fetchReservations = async () => {
-  //   try {
-  //     const reservationsData = user ? await getReservationById(user.email) : null;
-  //     setReservations(reservationsData || []); 
-  //   } catch (error) {
-  //     console.error('Error fetching reservations:', error);
-  //   } finally {
-  //     setIsLoading(false); 
-  //   }
-  // };
 
   const fetchReservations = async () => {
     try {

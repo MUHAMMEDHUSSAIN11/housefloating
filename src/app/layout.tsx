@@ -8,6 +8,7 @@ import NextTopLoader from 'nextjs-toploader';
 import ScrollToTopButton from './components/Misc/ScrolltoTop'
 import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
+import BottomNavbar from './components/BottomNavbar/BottomNavbar'
 
 export const inter = Inter({
   subsets: ['latin'],
@@ -63,6 +64,7 @@ export default async function RootLayout({ children, }: { children: React.ReactN
         <RentModal />
         <NextTopLoader color="#3b82f6" height={4} showSpinner={false} />
         <ScrollToTopButton />
+        <BottomNavbar/>
         {children}
       </body>
     </html>
