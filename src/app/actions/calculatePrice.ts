@@ -32,8 +32,12 @@ export default async function CalculatePrice(finalAdultCount: number,
     const isChristmasSeason = bookingDate >= new Date(new Date().getFullYear(), 11, 20)
       && bookingDate <= new Date(new Date().getFullYear() + 1, 0, 8);
 
+    // const isSummerVaccation = bookingDate >= new Date(new Date().getFullYear(), 4, 1)
+    //   && bookingDate <= new Date(new Date().getFullYear(), 5, 31);
+
     const isSummerVaccation = bookingDate >= new Date(new Date().getFullYear(), 4, 1)
-      && bookingDate <= new Date(new Date().getFullYear(), 5, 31);
+      && bookingDate <= new Date(new Date().getFullYear(), 5, 0);
+
 
     if (isPreChristmasSeason) {
       newTotalPrice = newTotalPrice * amount.preChristmas;
@@ -42,7 +46,7 @@ export default async function CalculatePrice(finalAdultCount: number,
     if (isChristmasSeason) {
       newTotalPrice = newTotalPrice * amount.christmasSeason;
     }
-//summer vaccation prices
+    //summer vaccation prices
     if (isSummerVaccation) {
       newTotalPrice = newTotalPrice + amount.summerVaccationPrice;
     }
