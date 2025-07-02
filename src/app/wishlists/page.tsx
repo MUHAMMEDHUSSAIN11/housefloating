@@ -1,11 +1,11 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Heart, Star, MapPin, Calendar, Share, MoreHorizontal } from 'lucide-react';
+import { Heart, } from 'lucide-react';
 import getWishlists from '../actions/getWishLists';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase/clientApp';
 import removeWishlist from '../actions/removeWishlist';
-import { User } from 'firebase/auth';
+import * as NProgress from "nprogress";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -25,6 +25,14 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [user] = useAuthState(auth);
   const router = useRouter();
+
+
+   const handlePush = (boatId:string) => {
+      //start done needs to be rechecked
+      router.push(`/listings/${boatId}`);
+      NProgress.start();
+      NProgress.done();
+    };
 
 
   useEffect(() => {
@@ -100,7 +108,7 @@ const Page = () => {
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                </div>
+                </div>              
               ))}
             </div>
           </div>
@@ -138,7 +146,7 @@ const Page = () => {
           /* Wishlist Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {wishlistItems.map((item) => (
-              <div key={item.BoatId} className="group cursor-pointer">
+              <div key={item.BoatId} onClick={() => handlePush(item.BoatId)} className="group cursor-pointer">
                 <div className="relative mb-3">
                   {/* Image Container */}
                   <div className="relative h-64 w-full overflow-hidden rounded-xl bg-gray-100">

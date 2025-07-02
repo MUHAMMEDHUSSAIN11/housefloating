@@ -11,54 +11,46 @@ import BoatsEmptyState from './BoatsEmptyState';
 import ListingCardSkeleton from '../components/ListingCard/ListingCardSkeleton';
 
 const Page = () => {
-  const [sortedListings, setSortedListings] = useState<any[]>([]); // State for sorted listings
-  const [sortCriteria, setSortCriteria] = useState<{ category: string; roomCount: number }>({
+  const [filteredListings, setFilteredListings] = useState<any[]>([]);
+  const [filterCriteria, setFilterCriteria] = useState<{ category: string; roomCount: number }>({
     category: '',
-    roomCount: 2,
+    roomCount: 0, // Changed to 0 to show all by default
   });
 
   const { data: listings, error, isValidating, isLoading } = useSWR('actions', getListings, {
     refreshInterval: 25 * 60 * 1000,
   });
 
-  const sortListings = (category: string, roomCount: number) => {
-    let updatedListings = [...(listings || [])];
+  const filterListings = (category: string, roomCount: number) => {
+    if (!listings) return;
 
-    updatedListings.sort((a, b) => {
-      // Sort by category first (if category exists)
-      if (category) {
-        if (a.category === category && b.category !== category) return -1;
-        if (b.category === category && a.category !== category) return 1;
-      }
+    let filtered = [...listings];
 
-      if (roomCount !== undefined) {
-        const aRoomCount = a.roomCount || 0; // Ensure it's a number (default to 0)
-        const bRoomCount = b.roomCount || 0; // Ensure it's a number (default to 0)
+    // Filter by category if specified
+    if (category && category !== '') {
+      filtered = filtered.filter(listing => listing.category === category);
+    }
 
-        if (aRoomCount === roomCount && bRoomCount !== roomCount) return -1; // Prioritize the matching room count
-        if (bRoomCount === roomCount && aRoomCount !== roomCount) return 1; // Prioritize the matching room count
+    // Filter by room count if specified (greater than 0)
+    if (roomCount > 0) {
+      filtered = filtered.filter(listing => {
+        const listingRoomCount = listing.roomCount || 0;
+        return listingRoomCount === roomCount;
+      });
+    }
 
-        // Compare the room count numerically
-        return aRoomCount - bRoomCount;
-      }
-
-      // Maintain original order if no condition applies
-      return 0;
-    });
-
-    setSortedListings(updatedListings);
+    setFilteredListings(filtered);
   };
-
 
   useEffect(() => {
     if (listings) {
-      setSortedListings(listings); // Set initial listings
+      setFilteredListings(listings); // Show all listings initially
     }
   }, [listings]);
 
   useEffect(() => {
-    sortListings(sortCriteria.category, sortCriteria.roomCount);
-  }, [sortCriteria, listings]);
+    filterListings(filterCriteria.category, filterCriteria.roomCount);
+  }, [filterCriteria, listings]);
 
   if (isValidating || isLoading) {
     return (
@@ -78,15 +70,14 @@ const Page = () => {
         <div className="pb-20 pt-44 md:pt-24">
           <div className="flex flex-row items-center justify-center">
             <Filter
-              setSortedListings={(category: string, roomCount: number) => {
-                setSortCriteria({ category, roomCount });
+              setFilteredListings={(category: string, roomCount: number) => {
+                setFilterCriteria({ category, roomCount });
               }}
             />
           </div>
-
           <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-8">
-            {sortedListings.length > 0 ? (
-              sortedListings.map((listing: any) => (
+            {filteredListings.length > 0 ? (
+              filteredListings.map((listing: any) => (
                 <ListingCard key={listing.boatId} data={listing} />
               ))
             ) : (

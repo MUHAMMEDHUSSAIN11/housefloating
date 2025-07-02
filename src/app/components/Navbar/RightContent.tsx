@@ -1,6 +1,5 @@
 'use client';
-
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback } from 'react'
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from '../Avatar/Avatar';
 import useLoginModal from '@/app/hooks/useLoginModal';
@@ -13,43 +12,39 @@ import useRentModal from '@/app/hooks/useRentModal';
 import { useRouter } from 'next/navigation';
 import * as NProgress from 'nprogress';
 import isAuthority from '@/app/actions/checkAuthority';
-
-
+import useClickOutside from '@/app/hooks/useClickOutside'; // Import the hook
 
 const RightContent = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
     const rentModal = useRentModal();
-    const [isOpen, setIsOpen] = useState(false);
+    
+    // Use the custom hook instead of useState and useEffect
+    const { isOpen, setIsOpen, ref } = useClickOutside(false);
+    
     const [user, loading, error] = useAuthState(auth);
     const [signOut, signOutloading, Signerror] = useSignOut(auth);
     const router = useRouter();
-
-
+    
     const handlePush = () => {
         router.push('/cart');
         NProgress.start();
         NProgress.done();
     };
-
-
+    
     const handleLogout = () => {
         signOut();
     };
-
+    
     const toggleOpen = useCallback(() => {
         setIsOpen((value) => !value);
-    }, []);
-
-    useEffect(() => {
-        setIsOpen(false);
-    }, []);
-
+    }, [setIsOpen]);
+    
     const onRent = useCallback(() => {
         //open rent modal
         rentModal.onOpen();
     }, [rentModal])
-
+    
     return (
         <div className="relative">
             <div className="flex flex-row items-center gap-4 ">
@@ -64,7 +59,10 @@ const RightContent = () => {
                 </div>
             </div>
             {isOpen &&
-               <div className="absolute rounded-xl shadow-md w-[40vw] md:w-48 bg-white overflow-hidden right-0 top-12 text-sm z-[60]">
+               <div 
+                   ref={ref} // Add the ref to the dropdown
+                   className="absolute rounded-xl shadow-md w-[40vw] md:w-48 bg-white overflow-hidden right-0 top-12 text-sm z-[60]"
+               >
                {/* <div className="absolute rounded-xl shadow-md w-[40vw] md:w-40 bg-white overflow-hidden right-0 top-12 text-sm min-w-[180px]"> */}
                     <div className="flex flex-col cursor-pointer">
                         {user && (
@@ -93,7 +91,6 @@ const RightContent = () => {
             }
         </div>
     );
-
 };
 
 export default RightContent
