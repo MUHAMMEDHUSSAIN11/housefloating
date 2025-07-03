@@ -12,7 +12,9 @@ import { firestore } from '../firebase/clientApp';
   reservations: any[],
   roomCount: number,
   title: string,
-  id:string
+  id:string,
+  guestTitle: string,
+  dayCruisePrice : number
 }
 
 export default async function getListings(): Promise<Listing[]> {

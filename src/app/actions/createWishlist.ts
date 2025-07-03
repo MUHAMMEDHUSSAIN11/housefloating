@@ -7,7 +7,7 @@ const createWishlist = async ( boatData: FirestoreListing, user: User ): Promise
     try {
         const wishlistItem = {
             BoatId: boatData.boatId,
-            BoatName: boatData.title,
+            BoatName: boatData.guestTitle,
             CreatedOn: new Date().toISOString(),
             UserEmail: user.email,
             UserId: user.uid,

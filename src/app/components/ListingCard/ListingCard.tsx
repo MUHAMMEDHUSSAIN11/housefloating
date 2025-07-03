@@ -31,6 +31,8 @@ export interface FirestoreListing {
   title: string,
   price: number,
   reservations: Timestamp[],
+  guestTitle: string,
+  dayCruisePrice: number,
 }
 
 interface ListingCardProps {
@@ -188,7 +190,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
           />
         </div>
         <div className="font-semibold text-lg">
-          {data.title},{data.roomCount} Bedrooms
+          {data.guestTitle},{data.roomCount} Bedrooms
         </div>
         <div className='flex flex-row items-center gap-1'>
           <div className='font-semibold'>{data.category}</div>

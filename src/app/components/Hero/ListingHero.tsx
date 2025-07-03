@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
-import GetHeroListings, { ListingItem, TransformListingsToItems } from '@/app/actions/getHeroListings';
+import GetHeroListings, { HeroListing } from '@/app/actions/getHeroListings';
 import useSWR from 'swr';
 
 
 interface GridSectionProps {
   title: string;
   path: string;
-  items: ListingItem[];
+  items: HeroListing[];
 }
 
 
@@ -22,7 +22,6 @@ const ListingHero: React.FC = () => {
     refreshInterval: 0, // Don't auto-refresh (or set to 60000 for 1-minute refresh)
   });
 
-  const transformedListings = TransformListingsToItems(listings);
 
   const GridSection: React.FC<GridSectionProps> = ({ title, items, path }) => (
     <div className="mb-12">
@@ -77,7 +76,7 @@ const ListingHero: React.FC = () => {
                     {item.title}
                   </h3>
                   <p className="text-sm font-semibold text-gray-900">
-                    {item.price}
+                    ₹{item.dayCruisePrice.toLocaleString('en-IN')}
                     <span className="text-sm font-normal text-gray-600 ml-1">
                       per day
                     </span>
@@ -161,7 +160,7 @@ const ListingHero: React.FC = () => {
       <div className="pt-56 md:pt-40 ">
 
         {/* Houseboats Section */}
-        <GridSection title="Houseboats" items={transformedListings} path="houseBoats" />
+        <GridSection title="Houseboats" items={listings} path="houseBoats" />
 
         {/* Shikara Section */}
         {/* <GridSection title="Shikara" items={shikaras} path="shikara" /> */}

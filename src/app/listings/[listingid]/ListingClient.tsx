@@ -26,9 +26,11 @@ import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 
 
-interface ListingClientProps {
+export interface ListingClientProps {
   listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
 }
+
+
 
 const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   const [user] = useAuthState(auth);
@@ -81,7 +83,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
       <div className='max-w-screen-lg mx-auto pt-40 md:pt-20'>
         <div className='flex flex-col gap-6'>
           <ListingHead
-            title={listing.getboat.data()?.title}
+            title={listing.getboat.data()?.guestTitle}
             imageSrc={listing.getboat.data()?.images}
             category={listing.getboat.data()?.category}
             roomCount={listing.getboat.data()?.roomCount}

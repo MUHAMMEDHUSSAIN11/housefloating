@@ -15,8 +15,8 @@ interface ParsedData extends Record<string, any> {
   maxDayGuest: number;
   maxNightGuest: number;
   reservations: any[];
+  dayCruisePrice: number;
 }
-
 
 
 const generateBoatId = (counter:number, prefix = 'HF', padding = 4) =>

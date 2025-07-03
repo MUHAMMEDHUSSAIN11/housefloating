@@ -4,18 +4,13 @@ import { firestore } from "../firebase/clientApp";
 export interface HeroListing {
   id: string;
   category: string;
-  images: string[];
+  image: string;
   price: number;
   title: string;
+  dayCruisePrice: number;
 }
 
-export interface ListingItem {
-  id: string;
-  title: string;
-  price: string;
-  image: string;
-  category: string;
-}
+
 
 
 export default async function GetHeroListings(): Promise<HeroListing[]> {
@@ -24,16 +19,17 @@ export default async function GetHeroListings(): Promise<HeroListing[]> {
     // Limit the query to only fetch 8 documents from Firebase
     const limitedQuery = query(listingRef, limit(8));
     const listingsQueryData = await getDocs(limitedQuery);
-   
+
     const listings = listingsQueryData.docs.map((doc) => {
       const data = doc.data();
-     
+
       return {
         id: doc.id,
         category: data.category || '',
-        images: data.images || [],
+        image: data.images[0] || [],
         price: data.price || 0,
-        title: data.title || ''
+        title: data.guestTitle || '',
+        dayCruisePrice: data.dayCruisePrice || 0,
       } as HeroListing;
     });
     return listings;
@@ -43,13 +39,13 @@ export default async function GetHeroListings(): Promise<HeroListing[]> {
   }
 }
 
-// Transform Firebase data to component format
-export function TransformListingsToItems(listings: HeroListing[]): ListingItem[] {
-  return listings.map(listing => ({
-    id: listing.id,
-    title: listing.title,
-    price: `₹${listing.price.toLocaleString()}`, // Format price with Indian Rupee symbol and commas
-    image: listing.images[0] , // Use first image
-    category: listing.category
-  }));
-}
+// // Transform Firebase data to component format
+// export function TransformListingsToItems(listings: HeroListing[]): ListingItem[] {
+//   return listings.map(listing => ({
+//     id: listing.id,
+//     title: listing.guestTitle,
+//     price: `₹${listing.price.toLocaleString()}`, // Format price with Indian Rupee symbol and commas
+//     image: listing.images[0], // Use first image
+//     category: listing.category
+//   }));
+// }

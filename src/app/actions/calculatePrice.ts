@@ -1,65 +1,86 @@
 import toast from "react-hot-toast";
 import { amount, TravelMode } from "../enums/enums";
+import { DocumentData, DocumentSnapshot } from "firebase/firestore";
 
-export default async function CalculatePrice(finalAdultCount: number,
-  finalChildCount: number,
-  bookingDate: Date,
-  listing: any,
-  cruiseType: string) {
+export default async function CalculatePrice(finalAdultCount: number, finalChildCount: number, bookingDate: Date,
+  listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> },
+  cruiseType: string): Promise<number | undefined> {
   try {
+
     if (!bookingDate) {
-      return;
+      return undefined;
     }
-    const adultPrice = await listing.getboat.data()?.adultAddonPrice;
-    const childPrice = await listing.getboat.data()?.childAddonPrice;
 
-    const additionalAdultCost = await (finalAdultCount - (listing.getboat.data()?.guestCount || 0)) * adultPrice;
-    const additionalChildCost = await finalChildCount * childPrice;
-    const bookingDay = bookingDate.getDay();
+    const listingData = await listing.getboat.data();
+    if (!listingData) {
+      throw new Error("Unable to retrieve listing data");
+    }
 
-    // Update total price based on conditions
-    let newTotalPrice;
-    if (bookingDay === 6 || bookingDay === 0) {
-      newTotalPrice = (listing.getboat.data()?.price || 0) + additionalAdultCost + additionalChildCost + amount.weekendPrice;
+    // Extract pricing data with fallbacks
+    const {
+      adultAddonPrice = 0,
+      childAddonPrice = 0,
+      guestCount = 0,
+      dayCruisePrice = 0,
+      price = 0
+    } = listingData;
+
+    // Calculate additional costs
+    const additionalAdults = Math.max(0, finalAdultCount - guestCount);
+    const additionalAdultCost = additionalAdults * adultAddonPrice;
+    const additionalChildCost = finalChildCount * childAddonPrice;
+
+    // Set base price based on cruise type
+    let basePrice: number;
+    if (cruiseType === TravelMode.DayCruise) {
+      basePrice = dayCruisePrice;
+    } else if (cruiseType === TravelMode.OverNight) {
+      basePrice = price;
     } else {
-      newTotalPrice = (listing.getboat.data()?.price || 0) + additionalAdultCost + additionalChildCost;
+      basePrice = price; // Default fallback
     }
 
-    // const isHolidaySeason = await bookingDate >= new Date(new Date().getFullYear(), 11, 1) && bookingDate <= new Date(new Date().getFullYear() + 1, 0, 15);
-    const isPreChristmasSeason = bookingDate >= new Date(new Date().getFullYear(), 11, 13)
-      && bookingDate <= new Date(new Date().getFullYear(), 11, 19);
+    // Calculate total before seasonal adjustments
+    let totalPrice = basePrice + additionalAdultCost + additionalChildCost;
 
-    const isChristmasSeason = bookingDate >= new Date(new Date().getFullYear(), 11, 20)
-      && bookingDate <= new Date(new Date().getFullYear() + 1, 0, 8);
+    // Apply weekend surcharge
+    const bookingDay = bookingDate.getDay();
+    if (bookingDay === 6 || bookingDay === 0) {
+      totalPrice += amount.weekendPrice;
+    }
 
-    // const isSummerVaccation = bookingDate >= new Date(new Date().getFullYear(), 4, 1)
-    //   && bookingDate <= new Date(new Date().getFullYear(), 5, 31);
+    const bookingYear = bookingDate.getFullYear();
 
-    const isSummerVaccation = bookingDate >= new Date(new Date().getFullYear(), 4, 1)
-      && bookingDate <= new Date(new Date().getFullYear(), 5, 0);
+    // Summer vacation (May 1-31 of booking year)
+    const isSummerVacation = bookingDate >= new Date(bookingYear, 4, 1) &&
+      bookingDate <= new Date(bookingYear, 4, 31);
 
+    // Pre-Christmas season (Dec 14-20 of booking year)
+    const isPreChristmasSeason = bookingDate >= new Date(bookingYear, 11, 13) &&
+      bookingDate <= new Date(bookingYear, 11, 19);
 
+    // Christmas season (Dec 21 of booking year to Jan 8 of next year)
+    const isChristmasSeason = bookingDate >= new Date(bookingYear, 11, 20) &&
+      bookingDate <= new Date(bookingYear + 1, 0, 8);
+
+    // Apply seasonal adjustments
     if (isPreChristmasSeason) {
-      newTotalPrice = newTotalPrice * amount.preChristmas;
+      totalPrice *= amount.preChristmas;
     }
 
     if (isChristmasSeason) {
-      newTotalPrice = newTotalPrice * amount.christmasSeason;
-    }
-    //summer vaccation prices
-    if (isSummerVaccation) {
-      newTotalPrice = newTotalPrice + amount.summerVaccationPrice;
+      totalPrice *= amount.christmasSeason;
     }
 
-    //different Price for Day Cruise
-
-    if (cruiseType == TravelMode.DayCruise) {
-      newTotalPrice = newTotalPrice - amount.dayCruiseReduction;
+    if (isSummerVacation) {
+      totalPrice += amount.summerVaccationPrice;
     }
 
-    return Math.round(newTotalPrice);
+    return Math.round(totalPrice);
 
   } catch (error) {
-    toast.error("Something went wrong while fetching Price!. Please Contact Us");
+    console.error("Price calculation error:", error);
+    toast.error("Something went wrong while calculating price. Please contact us.");
+    return undefined;
   }
 }

@@ -42,11 +42,19 @@ const categories = [
 ]
 
 const RentModal = () => {
+
     const rentModal = useRentModal();
 
     const [step, setStep] = useState(STEPS.CATEGORY)
     const [isLoading, setIsLoading] = useState(false);
-    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>({ defaultValues: { category: '', guestCount: 1, roomCount: 1, bathroomCount: 1, images: [], price: 6000, adultAddonPrice: 500, childAddonPrice: 300, title: '', maxDayGuest: 0, maxNightGuest: 0 } });
+    const { register, handleSubmit, setValue, watch, formState: { errors, }, reset } = useForm<FieldValues>(
+        {
+            defaultValues: {
+                category: '', guestCount: 1, roomCount: 1, bathroomCount: 1,
+                images: [], price: 6000, dayCruisePrice: 4500, adultAddonPrice: 500, childAddonPrice: 300,
+                title: '', guestTitle: '', maxDayGuest: 0, maxNightGuest: 0
+            }
+        });
 
 
     const category = watch('category');
@@ -58,6 +66,7 @@ const RentModal = () => {
     const maxNightGuest = watch('maxNightGuest');
     const childAddonPrice = watch('childAddonPrice');
     const adultAddonPrice = watch('adultAddonPrice');
+    const guestTitle = watch('subTitle');
 
     const setCustomValue = (id: string, value: any) => {
         if (id === 'images') {
@@ -96,6 +105,7 @@ const RentModal = () => {
             const parsedData = {
                 ...data,
                 price: parseFloat(data.price),
+                dayCruisePrice: parseFloat(data.dayCruisePrice),
                 maxDayGuest: parseInt(data.maxDayGuest),
                 maxNightGuest: parseInt(data.maxNightGuest),
                 reservations: [],
@@ -107,7 +117,7 @@ const RentModal = () => {
                     rentModal.onClose();
                     toast.success("Boat successfully added");
                 });
-                
+
         } catch (error) {
             console.error(error);
             toast.error("Failed to add boat!");
@@ -166,8 +176,8 @@ const RentModal = () => {
             <div className="flex flex-col gap-8">
                 <Heading title="How would you describe your place?" subtitle="Short and sweet works best!" />
                 <Input id="title" label="Title" disabled={isLoading} register={register} errors={errors} required />
-                {/* <hr />
-                <Input id="description" label="Description" disabled={isLoading} register={register} errors={errors} required /> */}
+                <hr />
+                <Input id="subTitle" label="Guest's Title" disabled={isLoading} register={register} errors={errors} required />
             </div>
         )
     }
@@ -237,7 +247,9 @@ const RentModal = () => {
         bodyContent = (
             <div className="flex flex-col gap-8">
                 <Heading title="Now, set your price" subtitle="How much do you charge per night?" />
-                <Input id="price" label="Price" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+                <Input id="price" label="OverNight Price" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+                <Input id="dayCruisePrice" label="DayCruise Price" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+
             </div>
         )
     }

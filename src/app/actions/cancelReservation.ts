@@ -3,6 +3,7 @@ import { firestore } from "../firebase/clientApp";
 import { BookingStatus } from "../enums/enums";
 import SendCancellationTelegram from "./SendCancellationTelegram";
 import toast from "react-hot-toast";
+import SendCancellationAttemptFailedTelegram from "./SendCancellationAttemptFailedTelegram";
 
 interface BookingDetails {
   ReservationId: string;
@@ -61,11 +62,13 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
         CreatedOn: Timestamp.fromDate(new Date()),
       });
       toast.success("Reservation cancelled successfully.");
+      SendCancellationTelegram(OrderDetails.Email, OrderDetails.ReservationId, OrderDetails.Mode, OrderDetails.Category, OrderDetails.Payment, OrderDetails.BoatName, OrderDetails.Price, OrderDetails.Contactnumber, OrderDetails.BookingDate);
+
     } else {
       // Reservation not found, display an error message
       toast.error("Reservation not found.");
+      SendCancellationAttemptFailedTelegram(OrderDetails.Email, OrderDetails.ReservationId, OrderDetails.Mode, OrderDetails.Category, OrderDetails.Payment, OrderDetails.BoatName, OrderDetails.Price, OrderDetails.Contactnumber, OrderDetails.BookingDate);
     }
-    SendCancellationTelegram(OrderDetails.Email, OrderDetails.ReservationId, OrderDetails.Mode, OrderDetails.Category, OrderDetails.Payment, OrderDetails.BoatName, OrderDetails.Price, OrderDetails.Contactnumber, OrderDetails.BookingDate);
   } catch (error) {
     console.error("Error canceling reservation:", error);
     toast.error("Error canceling reservation.");

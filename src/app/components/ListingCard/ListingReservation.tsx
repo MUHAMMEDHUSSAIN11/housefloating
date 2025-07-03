@@ -5,8 +5,6 @@ import Dayselector from "../Inputs/DaySelector";
 import Button from "../Misc/Button";
 import useTravelModeStore from "@/app/hooks/useTravelModeStore";
 
-//This component is used for displaying individual items..
-
 interface ListingReservationProps {
   price: number;
   date: Date,
@@ -21,7 +19,6 @@ interface ListingReservationProps {
 }
 
 const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdultCount, setChildCount, totalPrice, date, onChangeDate, onSubmit, disabled, disabledDates, guestCount }) => {
-  //sm:pt-2 needs to be rechecked
 
   const ModeStore = useTravelModeStore();
 
