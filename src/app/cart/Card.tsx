@@ -18,6 +18,7 @@ interface FirestoreListing {
   ReservationId: string;
   BoatId: string;
   BoatName: string;
+  BoatTitle: string;
   BookingDate: Timestamp;
   Contactnumber: string;
   Email: string;
@@ -119,7 +120,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             {/* Title */}
             <div className="mb-4">
               <h3 className='text-xl font-bold text-gray-900 mb-1'>
-                {details.BoatName}
+                {details.BoatTitle}
               </h3>
               <p className='text-sm text-gray-600 font-medium'>
                 {details.Category} Houseboat

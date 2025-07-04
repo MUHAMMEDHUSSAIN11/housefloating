@@ -10,6 +10,7 @@ interface Data {
     Email: any,
     BoatId: string,
     BoatName: string,
+    BoatTitle: string,
     MinorCount: number,
     Mode: string,
     Payment: boolean,

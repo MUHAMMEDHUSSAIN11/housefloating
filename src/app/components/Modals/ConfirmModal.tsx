@@ -159,6 +159,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 Email: user?.email,
                 BoatId: listing.getboat.id,
                 BoatName: listing.getboat.data()?.title,
+                BoatTitle: listing.getboat.data()?.guestTitle,
                 MinorCount: finalMinorCount,
                 Mode: travelMode.travelMode,
                 Payment: false,

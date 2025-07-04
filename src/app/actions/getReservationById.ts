@@ -8,6 +8,7 @@ type Reservation = {
   ReservationId: string;
   BoatId: string;
   BoatName: string;
+  BoatTitle: string;
   BookingDate: Timestamp;
   Contactnumber: string;
   Email: string;

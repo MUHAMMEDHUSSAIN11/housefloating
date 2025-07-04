@@ -20,7 +20,7 @@ const BoatsEmptyState: React.FC<EmptyStateProps> = ({
   const router = useRouter();
 
   const handlePush = async () => {
-    await router.push('/boats');
+    await router.push('/houseBoats');
     await NProgress.start();
     await NProgress.done();
   };

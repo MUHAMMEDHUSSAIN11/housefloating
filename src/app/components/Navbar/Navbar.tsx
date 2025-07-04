@@ -17,15 +17,6 @@ const Navbar = () => {
       <div className=" border-b-[1px]">
         <Container>
           {/* Desktop Layout */}
-          {/* <div className="hidden md:flex flex-row items-center justify-between gap-3">
-            <Logo />
-            <div className="">
-              <NewMiddleContent />
-            </div>
-            <RightContent />
-          </div> */}
-
-          {/* Desktop Layout */}
           <div className="hidden md:flex flex-row items-center justify-between gap-3">
             <Logo />
             <div >
