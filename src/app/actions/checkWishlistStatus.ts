@@ -8,7 +8,7 @@ const checkWishlistStatus = async (user: User | null | undefined, data: Firestor
         try {
             const q = query(
                 collection(firestore, 'Wishlists'),
-                where('BoatId', '==', data.boatId),
+                where('BoatId', '==', data.docId),
                 where('UserId', '==', user?.uid)
             );
             const querySnapshot = await getDocs(q);
