@@ -1,6 +1,4 @@
-
 'use client';
-
 
 import React, { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -13,7 +11,7 @@ import isAuthority from '../actions/checkAuthority';
 
 
 
-const page = () => {
+const ListingPage = () => {
   const [user] = useAuthState(auth);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
@@ -394,4 +392,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ListingPage;
