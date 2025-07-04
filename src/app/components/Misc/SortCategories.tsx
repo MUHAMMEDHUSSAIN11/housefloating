@@ -4,7 +4,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { IoBoat, IoDiamond, IoBoatSharp } from "react-icons/io5";
 import { IoIosBoat } from "react-icons/io";
 import CategoryBox from "../Misc/CategoryBox";
-import { Categories, MobileCategories } from '@/app/enums/enums';
+import { Categories } from '@/app/enums/enums';
 
 
 interface SortCategoriesProps {
