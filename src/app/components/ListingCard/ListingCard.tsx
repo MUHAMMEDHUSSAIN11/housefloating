@@ -21,7 +21,7 @@ import { User } from 'firebase/auth'
 
 export interface FirestoreListing {
   id: string,
-  boatId: string,
+  docId: string,
   bathroomCount: number,
   category: string,
   description: string,
@@ -54,7 +54,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
 
   const handlePush = () => {
     //start done needs to be rechecked
-    router.push(`/listings/${data.boatId}`);
+    router.push(`/listings/${data.docId}`);
     NProgress.start();
     NProgress.done();
   };
@@ -90,7 +90,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
     };
 
     fetchWishlistStatus();
-  }, [user, data.id]); // Re-run when user or boat ID changes
+  }, [user, data.docId]); // Re-run when user or boat ID changes
 
   // Handle adding to wishlist
   const handleAddToWishlist = async (boatData: FirestoreListing, user: User) => {
@@ -123,7 +123,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, onAction, disabled, act
 
     setIsLoading(true);
     try {
-      const success = await removeWishlist(boatData.boatId, user.uid);
+      const success = await removeWishlist(boatData.docId, user.uid);
 
       if (success) {
         setIsWishlisted(false);

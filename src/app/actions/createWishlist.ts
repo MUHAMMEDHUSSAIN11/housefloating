@@ -6,7 +6,7 @@ import { firestore } from '@/app/firebase/clientApp';
 const createWishlist = async ( boatData: FirestoreListing, user: User ): Promise<boolean> => {
     try {
         const wishlistItem = {
-            BoatId: boatData.boatId,
+            BoatId: boatData.docId,
             BoatName: boatData.guestTitle,
             CreatedOn: new Date().toISOString(),
             UserEmail: user.email,

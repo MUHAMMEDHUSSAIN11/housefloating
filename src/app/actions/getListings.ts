@@ -1,7 +1,7 @@
 import { Timestamp, collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { firestore } from '../firebase/clientApp';
 
- interface Listing {
+export interface Listing {
   category: string,
   bathroomCount: number,
   guestCount: number,
@@ -12,22 +12,21 @@ import { firestore } from '../firebase/clientApp';
   reservations: any[],
   roomCount: number,
   title: string,
-  id:string,
+  id: string,  
+  docId: string, 
   guestTitle: string,
-  dayCruisePrice : number
+  dayCruisePrice: number,
+  adultAddonPrice: number,
+  childAddonPrice: number,
+  dayAdultAddOnPrice: number,
+  dayChildAddOnPrice: number,
 }
 
 export default async function getListings(): Promise<Listing[]> {
   try {
-    // const listingRef = collection(firestore, "Boats");
-    // const listingsQueryData = await getDocs(listingRef);
-
     const listingRef = collection(firestore, "Boats");
-    // Order the listings by price in increasing order
-    // const listingsQuery = query(listingRef, orderBy("price", "asc"));
     const listingsQueryData = await getDocs(listingRef);
     
-
     const listings = listingsQueryData.docs.map((doc) => {
       const data = doc.data() as Listing;
       // Convert Firestore Timestamp objects to plain JavaScript objects for specific fields
@@ -36,7 +35,8 @@ export default async function getListings(): Promise<Listing[]> {
         nanoseconds: timestamp.nanoseconds,
       }));
       
-      return { boatId: doc.id, ...data, reservations };
+      // Spread data first, then add docId and reservations to ensure they're not overwritten
+      return { ...data, docId: doc.id, reservations };
     });
     return listings;
   } catch (error) {

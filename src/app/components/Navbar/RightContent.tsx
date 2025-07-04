@@ -84,6 +84,9 @@ const RightContent = () => {
                                 <UserMenuItem onClick={() => router.push('/admin')} label="Reservations" />
                                 <hr />
                                 <UserMenuItem onClick={onRent} label="Add Listing" />
+                                <hr />
+                                <UserMenuItem onClick={() => router.push('/manageListings')} label="Manage Listings" />
+
                             </>
                         )}
                     </div>
