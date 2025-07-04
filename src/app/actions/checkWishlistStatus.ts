@@ -11,7 +11,6 @@ const checkWishlistStatus = async (user: User | null | undefined, data: Firestor
                 where('BoatId', '==', data.boatId),
                 where('UserId', '==', user?.uid)
             );
-            console.log("query boatId",data.boatId);
             const querySnapshot = await getDocs(q);
             return querySnapshot;
         } catch (error) {

@@ -27,6 +27,8 @@ enum STEPS {
     PRICE = 8,
     ADULT_ADD_PRICE = 9,
     CHILD_ADD_PRICE = 10,
+    DAY_ADULT_ADD_PRICE = 11,
+    DAY_CHILD_ADD_PRICE = 12,
 }
 
 const categories = [
@@ -51,7 +53,8 @@ const RentModal = () => {
         {
             defaultValues: {
                 category: '', guestCount: 1, roomCount: 1, bathroomCount: 1,
-                images: [], price: 6000, dayCruisePrice: 4500, adultAddonPrice: 500, childAddonPrice: 300,
+                images: [], price: 6000, dayCruisePrice: 4500, adultAddonPrice: 500,
+                dayAdultAddOnPrice: 500, childAddonPrice: 300, dayChildAddOnPrice: 500,
                 title: '', guestTitle: '', maxDayGuest: 0, maxNightGuest: 0
             }
         });
@@ -177,7 +180,7 @@ const RentModal = () => {
                 <Heading title="How would you describe your place?" subtitle="Short and sweet works best!" />
                 <Input id="title" label="Title" disabled={isLoading} register={register} errors={errors} required />
                 <hr />
-                <Input id="subTitle" label="Guest's Title" disabled={isLoading} register={register} errors={errors} required />
+                <Input id="guestTitle" label="Guest's Title" disabled={isLoading} register={register} errors={errors} required />
             </div>
         )
     }
@@ -257,8 +260,17 @@ const RentModal = () => {
     if (step === STEPS.ADULT_ADD_PRICE) {
         bodyContent = (
             <div className="flex flex-col gap-8">
-                <Heading title="Now, Additional Price for Adult" subtitle="How much do you charge per night?" />
-                <Input id="adultAddonPrice" label=" Additional Price for Adults" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+                <Heading title="Now, Additional Price for Adult in OverNight" subtitle="How much do you charge per night?" />
+                <Input id="adultAddonPrice" label=" Additional Price for Adults in OverNight" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+            </div>
+        )
+    }
+
+    if (step === STEPS.DAY_ADULT_ADD_PRICE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Now, Additional Price for Adult in DayCruise" subtitle="How much do you charge per night?" />
+                <Input id="dayAdultAddOnPrice" label=" Additional Price for Adults in DayCruise" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
             </div>
         )
     }
@@ -266,11 +278,22 @@ const RentModal = () => {
     if (step === STEPS.CHILD_ADD_PRICE) {
         bodyContent = (
             <div className="flex flex-col gap-8">
-                <Heading title="Now, Additional Price for Childrens" subtitle="How much do you charge per night?" />
-                <Input id="childAddonPrice" label=" Additional Price for Children" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+                <Heading title="Now, Additional Price for Child in OverNight" subtitle="How much do you charge per night?" />
+                <Input id="childAddonPrice" label=" Additional Price for Child in OverNight" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
             </div>
         )
     }
+
+    if (step === STEPS.DAY_CHILD_ADD_PRICE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Now, Additional Price for Child in DayCruise" subtitle="How much do you charge per night?" />
+                <Input id="dayChildAddOnPrice" label=" Additional Price for Children in DayCruise" formatPrice type="number" disabled={isLoading} register={register} errors={errors} required />
+            </div>
+        )
+    }
+
+
 
 
     return (
