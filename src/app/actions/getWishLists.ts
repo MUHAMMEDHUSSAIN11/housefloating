@@ -1,14 +1,15 @@
 import { Timestamp, collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { firestore } from '../firebase/clientApp';
 
-interface WishList {
+export interface WishList {
   BoatId: string,
   BoatName: string,
   CreatedOn: string,
   Image: string,
   Price: number,
   UserEmail: string,
-  UserId: string
+  UserId: string,
+  dayCruisePrice: number, 
 }
 
 export default async function getWishlists(userId: string | undefined): Promise<WishList[]> {
@@ -33,7 +34,8 @@ export default async function getWishlists(userId: string | undefined): Promise<
         Image: data.Image,
         Price: data.Price,
         UserEmail: data.UserEmail,
-        UserId: data.UserId
+        UserId: data.UserId,
+        dayCruisePrice: data.dayCruisePrice,
       } as WishList;
     });
     

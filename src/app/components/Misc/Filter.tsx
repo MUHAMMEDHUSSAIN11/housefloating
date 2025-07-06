@@ -26,6 +26,7 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
   const [selectedRoomCount, setSelectedRoomCount] = useState<number>(0);
   const [showMobileModal, setShowMobileModal] = useState<boolean>(false);
 
+  // Use the updated hook that returns toggleRef
   const categoryDropdown = useClickOutside(false);
   const roomDropdown = useClickOutside(false);
 
@@ -159,6 +160,7 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
           {/* Category Filter */}
           <div className="text-md flex-1 text-center relative mr-4 min-w-0">
             <button
+              ref={categoryDropdown.toggleRef} // Add toggleRef to the category button
               className="py-2 px-4 font-semibold bg-secondary text-black rounded-[5px] w-full flex items-center justify-between min-w-0"
               onClick={handleCategoryClick}
             >
@@ -202,6 +204,7 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
           {/* Room Count Filter */}
           <div className="text-md text-center relative flex-shrink-0">
             <button
+              ref={roomDropdown.toggleRef} // Add toggleRef to the room button
               onClick={handleRoomClick}
               className="py-2 px-4 font-semibold bg-secondary text-black rounded-[5px] w-full flex items-center justify-between whitespace-nowrap"
             >
@@ -288,6 +291,7 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
                 <label className="block text-sm font-semibold text-gray-700 mb-3">Category</label>
                 <div className="relative">
                   <button
+                    ref={categoryDropdown.toggleRef} // Add toggleRef to mobile category button
                     className="w-full py-3 px-4 font-semibold bg-secondary text-black rounded-[5px] flex items-center justify-between"
                     onClick={handleCategoryClick}
                   >
@@ -332,6 +336,7 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
                 <label className="block text-sm font-semibold text-gray-700 mb-3">Rooms</label>
                 <div className="relative">
                   <button
+                    ref={roomDropdown.toggleRef} // Add toggleRef to mobile room button
                     onClick={handleRoomClick}
                     className="w-full py-3 px-4 font-semibold bg-secondary text-black rounded-[5px] flex items-center justify-between"
                   >

@@ -1,4 +1,4 @@
-import { collection, getDocs, limit, query } from "firebase/firestore";
+import { collection, getDocs, limit, query, orderBy } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
 
 export interface HeroListing {
@@ -10,19 +10,19 @@ export interface HeroListing {
   dayCruisePrice: number;
 }
 
-
-
-
 export default async function GetHeroListings(): Promise<HeroListing[]> {
   try {
     const listingRef = collection(firestore, "Boats");
-    // Limit the query to only fetch 8 documents from Firebase
-    const limitedQuery = query(listingRef, limit(8));
+    // Order by dayCruisePrice in ascending order (lowest first) and limit to 8 documents
+    const limitedQuery = query(
+      listingRef, 
+      orderBy("dayCruisePrice", "asc"), 
+      limit(8)
+    );
     const listingsQueryData = await getDocs(limitedQuery);
-
     const listings = listingsQueryData.docs.map((doc) => {
       const data = doc.data();
-
+     
       return {
         id: doc.id,
         category: data.category || '',
@@ -33,19 +33,9 @@ export default async function GetHeroListings(): Promise<HeroListing[]> {
       } as HeroListing;
     });
     return listings;
+   
   } catch (error) {
     console.log(error);
     return [];
   }
 }
-
-// // Transform Firebase data to component format
-// export function TransformListingsToItems(listings: HeroListing[]): ListingItem[] {
-//   return listings.map(listing => ({
-//     id: listing.id,
-//     title: listing.guestTitle,
-//     price: `₹${listing.price.toLocaleString()}`, // Format price with Indian Rupee symbol and commas
-//     image: listing.images[0], // Use first image
-//     category: listing.category
-//   }));
-// }

@@ -12,7 +12,8 @@ const createWishlist = async ( boatData: FirestoreListing, user: User ): Promise
             UserEmail: user.email,
             UserId: user.uid,
             Image: boatData.images[0],
-            Price: boatData.price
+            Price: boatData.price,
+            dayCruisePrice: boatData.dayCruisePrice,
         };
         
         // Add to Firestore collection

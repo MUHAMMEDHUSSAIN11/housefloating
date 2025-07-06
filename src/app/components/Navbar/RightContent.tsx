@@ -12,46 +12,49 @@ import useRentModal from '@/app/hooks/useRentModal';
 import { useRouter } from 'next/navigation';
 import * as NProgress from 'nprogress';
 import isAuthority from '@/app/actions/checkAuthority';
-import useClickOutside from '@/app/hooks/useClickOutside'; // Import the hook
+import useClickOutside from '@/app/hooks/useClickOutside'; 
 
 const RightContent = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
     const rentModal = useRentModal();
-    
+
     // Use the custom hook instead of useState and useEffect
-    const { isOpen, setIsOpen, ref } = useClickOutside(false);
-    
+    const { isOpen, setIsOpen, ref, toggleRef } = useClickOutside(false);
     const [user, loading, error] = useAuthState(auth);
     const [signOut, signOutloading, Signerror] = useSignOut(auth);
     const router = useRouter();
-    
+
     const handlePush = () => {
         router.push('/cart');
         NProgress.start();
         NProgress.done();
     };
-    
+
     const handleLogout = () => {
         signOut();
     };
-    
+
     const toggleOpen = useCallback(() => {
         setIsOpen((value) => !value);
     }, [setIsOpen]);
-    
+
     const onRent = useCallback(() => {
         //open rent modal
         rentModal.onOpen();
     }, [rentModal])
-    
+
     return (
         <div className="relative">
             <div className="flex flex-row items-center gap-4 ">
                 {/* <div className="p-2 cursor-pointer hover:shadow-md transition rounded-full" onClick={()=>handlePush()}>
                     <GiSailboat size={33} />
                 </div> */}
-                <div onClick={toggleOpen} className="p-3 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition">
+                <div 
+                    ref={toggleRef} // Apply toggleRef to the toggle button
+                    onClick={toggleOpen} 
+                    className="p-3 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition"
+                >
                     <AiOutlineMenu />
                     <div className="hidden md:block gap-2">
                         <Avatar />
@@ -59,11 +62,11 @@ const RightContent = () => {
                 </div>
             </div>
             {isOpen &&
-               <div 
-                   ref={ref} // Add the ref to the dropdown
-                   className="absolute rounded-xl shadow-md w-[40vw] md:w-48 bg-white overflow-hidden right-0 top-12 text-sm z-[60]"
-               >
-               {/* <div className="absolute rounded-xl shadow-md w-[40vw] md:w-40 bg-white overflow-hidden right-0 top-12 text-sm min-w-[180px]"> */}
+                <div
+                    ref={ref} // Apply ref to the dropdown menu
+                    className="absolute rounded-xl shadow-md w-[40vw] md:w-48 bg-white overflow-hidden right-0 top-12 text-sm z-[60]"
+                >
+                    {/* <div className="absolute rounded-xl shadow-md w-[40vw] md:w-40 bg-white overflow-hidden right-0 top-12 text-sm min-w-[180px]"> */}
                     <div className="flex flex-col cursor-pointer">
                         {user && (
                             <>

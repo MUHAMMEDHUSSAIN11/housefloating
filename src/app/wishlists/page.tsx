@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Heart, } from 'lucide-react';
-import getWishlists from '../actions/getWishLists';
+import getWishlists, { WishList } from '../actions/getWishLists';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase/clientApp';
 import removeWishlist from '../actions/removeWishlist';
@@ -10,15 +10,6 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-interface WishList {
-  BoatId: string,
-  BoatName: string,
-  CreatedOn: string,
-  Image: string,
-  Price: number,
-  UserEmail: string,
-  UserId: string
-}
 
 const Page = () => {
   const [wishlistItems, setWishlistItems] = useState<WishList[]>([]);
@@ -184,8 +175,8 @@ const Page = () => {
                     </p>
 
                     <p className="text-gray-900">
-                      <span className="font-semibold">₹{item.Price}</span>
-                      <span className="text-gray-600 font-normal"> per night</span>
+                      <span className="font-semibold">₹{item.dayCruisePrice}</span>
+                      <span className="text-gray-600 font-normal"> per day</span>
                     </p>
                   </div>
                 </div>
