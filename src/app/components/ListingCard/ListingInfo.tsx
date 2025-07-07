@@ -21,6 +21,8 @@ interface ListingInfoProps {
   travelMode: string,
   dayGuestCountMax: number,
   nightGuestCountMax: number,
+  dayGuestCountMin: number,
+  nightGuestCountMin: number,
   title: string,
 }
 
@@ -29,13 +31,21 @@ const Map = dynamic(() => import('../Misc/Map'), {
 });
 
 
-const ListingInfo: React.FC<ListingInfoProps> = ({ title, dayGuestCountMax, nightGuestCountMax, travelMode, bathroomCount, description, guestCount, roomCount, setAdultCount, setChildCount, adultCount, childCount }) => {
+const ListingInfo: React.FC<ListingInfoProps> = ({ title, dayGuestCountMax, nightGuestCountMax, travelMode,
+  bathroomCount, description, guestCount, roomCount, setAdultCount,
+  setChildCount, adultCount, childCount, dayGuestCountMin, nightGuestCountMin }) => {
 
   let adultCounterMax = 0;
-  if (travelMode === TravelMode.DayCruise) {
-    adultCounterMax = dayGuestCountMax;
-  } else if (travelMode === TravelMode.OverNight) {
-    adultCounterMax = nightGuestCountMax;
+  let adultCounterMin = 0;
+
+  if (travelMode === TravelMode.DayCruise)
+  {
+        adultCounterMax = dayGuestCountMax;
+        adultCounterMin = dayGuestCountMin;
+  } else if (travelMode === TravelMode.OverNight) 
+  {
+        adultCounterMax = nightGuestCountMax;
+        adultCounterMin = nightGuestCountMin;
   }
 
   return (
@@ -52,7 +62,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ title, dayGuestCountMax, nigh
       </div>
       <hr />
       <div className=''>
-        <Counter onChange={(value) => setAdultCount(value)} min={guestCount} max={adultCounterMax} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
+        <Counter onChange={(value) => setAdultCount(value)} min={adultCounterMin} max={adultCounterMax} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
       </div>
       <div className=''>
         <Counter onChange={(value) => setChildCount(value)} value={childCount} max={roomCount} title="Number of Childrens" subtitle="Ages 5 to 11" />

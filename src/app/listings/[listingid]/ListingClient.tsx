@@ -103,6 +103,8 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               childCount={finalChildCount}
               dayGuestCountMax={listing.getboat.data()?.maxDayGuest}
               nightGuestCountMax={listing.getboat.data()?.maxNightGuest}
+              dayGuestCountMin={listing.getboat.data()?.minDayGuest}
+              nightGuestCountMin={listing.getboat.data()?.minNightGuest}
             />
             <div className=' mb-10 md:order-last md:col-span-3'>
               <ListingReservation

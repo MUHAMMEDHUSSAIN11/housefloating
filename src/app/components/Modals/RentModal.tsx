@@ -20,15 +20,16 @@ enum STEPS {
     INFO = 1,
     DESCRIPTION = 2,
     MAXGUESTCOUNT = 3,
-    MAINIMAGE = 4,
-    SUBIMAGE = 5,
-    SUBIMAGETWO = 6,
-    SUBIMAGETHREE = 7,
-    PRICE = 8,
-    ADULT_ADD_PRICE = 9,
-    CHILD_ADD_PRICE = 10,
-    DAY_ADULT_ADD_PRICE = 11,
-    DAY_CHILD_ADD_PRICE = 12,
+    MINGUESTCOUNT = 4,
+    MAINIMAGE = 5,
+    SUBIMAGE = 6,
+    SUBIMAGETWO = 7,
+    SUBIMAGETHREE = 8,
+    PRICE = 9,
+    ADULT_ADD_PRICE = 10,
+    CHILD_ADD_PRICE = 11,
+    DAY_ADULT_ADD_PRICE = 12,
+    DAY_CHILD_ADD_PRICE = 13,
 }
 
 const categories = [
@@ -55,7 +56,7 @@ const RentModal = () => {
                 category: '', guestCount: 1, roomCount: 1, bathroomCount: 1,
                 images: [], price: 6000, dayCruisePrice: 4500, adultAddonPrice: 500,
                 dayAdultAddOnPrice: 500, childAddonPrice: 300, dayChildAddOnPrice: 500,
-                title: '', guestTitle: '', maxDayGuest: 0, maxNightGuest: 0
+                title: '', guestTitle: '', maxDayGuest: 0, maxNightGuest: 0,minDayGuest: 0, minNightGuest: 0,
             }
         });
 
@@ -111,6 +112,8 @@ const RentModal = () => {
                 dayCruisePrice: parseFloat(data.dayCruisePrice),
                 maxDayGuest: parseInt(data.maxDayGuest),
                 maxNightGuest: parseInt(data.maxNightGuest),
+                minDayGuest: parseInt(data.minDayGuest),
+                minNightGuest: parseInt(data.minNightGuest),
                 reservations: [],
             };
 
@@ -192,6 +195,18 @@ const RentModal = () => {
                 <Input id="maxDayGuest" label="MaxDayGuestCount" disabled={isLoading} register={register} errors={errors} required />
                 <hr />
                 <Input id="maxNightGuest" label="MaxNightGuestCount" disabled={isLoading} register={register} errors={errors} required />
+            </div>
+        )
+    }
+
+    
+    if (step === STEPS.MINGUESTCOUNT) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading title="Min number of Guests you need?" subtitle="Gives clarity to the guest!." />
+                <Input id="minDayGuest" label="minDayGuestCount" disabled={isLoading} register={register} errors={errors} required />
+                <hr />
+                <Input id="minNightGuest" label="minNightGuestCount" disabled={isLoading} register={register} errors={errors} required />
             </div>
         )
     }

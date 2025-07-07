@@ -1,4 +1,4 @@
-import { Timestamp, collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { Timestamp, collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
 import { firestore } from '../firebase/clientApp';
 
 export interface Listing {
@@ -8,12 +8,14 @@ export interface Listing {
   images: string[],
   maxDayGuest: number,
   maxNightGuest: number,
+  minDayGuest: number,
+  minNightGuest: number,
   price: number,
   reservations: any[],
   roomCount: number,
   title: string,
-  id: string,  
-  docId: string, 
+  id: string,
+  docId: string,
   guestTitle: string,
   dayCruisePrice: number,
   adultAddonPrice: number,
@@ -25,8 +27,9 @@ export interface Listing {
 export default async function getListings(): Promise<Listing[]> {
   try {
     const listingRef = collection(firestore, "Boats");
-    const listingsQueryData = await getDocs(listingRef);
-    
+    const limitedQuery = query(listingRef,orderBy("dayCruisePrice", "asc"),limit(8));
+    const listingsQueryData = await getDocs(limitedQuery);
+
     const listings = listingsQueryData.docs.map((doc) => {
       const data = doc.data() as Listing;
       // Convert Firestore Timestamp objects to plain JavaScript objects for specific fields
@@ -34,7 +37,7 @@ export default async function getListings(): Promise<Listing[]> {
         seconds: timestamp.seconds,
         nanoseconds: timestamp.nanoseconds,
       }));
-      
+
       // Spread data first, then add docId and reservations to ensure they're not overwritten
       return { ...data, docId: doc.id, reservations };
     });

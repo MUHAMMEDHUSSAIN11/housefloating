@@ -52,6 +52,8 @@ interface ParsedData extends Record<string, any> {
   price: number;
   maxDayGuest: number;
   maxNightGuest: number;
+  minDayGuest: number;
+  minNightGuest: number;
   reservations: any[];
   dayCruisePrice: number;
 }
