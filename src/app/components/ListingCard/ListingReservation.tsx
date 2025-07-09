@@ -33,16 +33,19 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdult
       <div className="flex flex-row items-center gap-4 p-4 border-neutral-200">
         <div className="font-sans font-medium text-neutral-600">Select Option</div>
         <div className="flex items-center">
+
           <label className="inline-flex items-center ">
-            <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="Overnight"
-              checked={ModeStore.travelMode === 'Overnight'} onChange={() => changeTravelMode(TravelMode.OverNight)} />
-            <span className="ml-2">Overnight</span>
-          </label>
-          <label className="inline-flex items-center ml-4">
             <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="DayCruise"
               checked={ModeStore.travelMode === 'DayCruise'} onChange={() => changeTravelMode(TravelMode.DayCruise)} />
             <span className="ml-2">Day Cruise</span>
           </label>
+          
+          <label className="inline-flex items-center ml-4">
+            <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="Overnight"
+              checked={ModeStore.travelMode === 'Overnight'} onChange={() => changeTravelMode(TravelMode.OverNight)} />
+            <span className="ml-2">Overnight</span>
+          </label>
+          
         </div>
       </div>
       <hr />

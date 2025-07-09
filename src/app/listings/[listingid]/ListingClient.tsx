@@ -108,7 +108,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
             />
             <div className=' mb-10 md:order-last md:col-span-3'>
               <ListingReservation
-                price={listing.getboat.data()?.price}
+                price={listing.getboat.data()?.dayCruisePrice}
                 totalPrice={totalPrice}
                 onChangeDate={(value) => setBookingdate(value)}
                 onSubmit={onCreateReservation}

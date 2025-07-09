@@ -75,7 +75,9 @@ const Page = () => {
               }}
             />
           </div>
-          <div className="pt-12 md:pt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-8">
+          {/* <div className="pt-12 md:pt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-8"> */}
+            {/* <div className="pt-12 md:pt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"> */}
+          <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
             {filteredListings.length > 0 ? (
               filteredListings.map((listing: any) => (
                 <ListingCard key={listing.boatId} data={listing} />

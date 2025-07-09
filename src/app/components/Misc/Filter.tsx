@@ -17,7 +17,7 @@ const getCategoryDisplayName = (category: string): string => {
     'Premium Houseboats': 'Premium',
     'Luxury Houseboats': 'Luxury',
   };
-  
+
   return displayMap[category] || category;
 };
 
@@ -78,12 +78,12 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
   return (
     <>
       <div className="pt-9">
-        {/* Mobile Filter - Same Design as Desktop */}
-        <div className="lg:hidden flex justify-center">
-          <div className="flex flex-row items-center justify-center font-sans bg-white w-auto py-2 rounded-full shadow-lg transition cursor-pointer gap-4 max-w-4xl mx-auto">
+        {/* Mobile Filter - Fixed Design */}
+        <div className="lg:hidden px-4"> {/* Added horizontal padding */}
+          <div className="flex flex-row items-center justify-center font-sans bg-white w-full py-2 rounded-full shadow-lg transition cursor-pointer gap-1">
             <button
               onClick={() => setShowMobileModal(true)}
-              className="p-2 ml-3 bg-blue-500 rounded-full text-white flex items-center justify-center relative"
+              className="p-2 ml-3 bg-blue-500 rounded-full text-white flex items-center justify-center relative flex-shrink-0"
             >
               <HiAdjustmentsHorizontal size={24} />
               {hasActiveFilters && (
@@ -92,18 +92,18 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
             </button>
 
             {/* Category Filter Display */}
-            <div className="text-md flex-1 text-center relative mr-4 min-w-0">
+            <div className="text-md flex-1 text-center relative min-w-0 mr-1">
               <button
-                className="py-2 px-4 font-semibold bg-secondary text-black rounded-[5px] w-full flex items-center justify-between min-w-0"
+                className="py-2 px-2 font-semibold bg-secondary text-black rounded-[5px] w-full flex items-center justify-between min-w-0"
                 onClick={() => setShowMobileModal(true)}
               >
-                <span className="font-semibold truncate">
+                <span className="font-semibold truncate text-sm">
                   {getDisplayText(selectedCategory)}
                 </span>
-                <span className="pl-4 flex-shrink-0">
+                <span className="pl-2 flex-shrink-0">
                   <svg
-                    width={20}
-                    height={20}
+                    width={16}
+                    height={16}
                     viewBox="0 0 20 20"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -119,15 +119,15 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
             <div className="text-md text-center relative flex-shrink-0">
               <button
                 onClick={() => setShowMobileModal(true)}
-                className="py-2 px-4 font-semibold bg-secondary text-black rounded-[5px] w-full flex items-center justify-between whitespace-nowrap"
+                className="py-2 px-2 font-semibold bg-secondary text-black rounded-[5px] flex items-center justify-between whitespace-nowrap"
               >
-                <span className="font-semibold">
-                  {selectedRoomCount === 0 ? 'All Rooms' : `${selectedRoomCount} Room${selectedRoomCount > 1 ? 's' : ''}`}
+                <span className="font-semibold text-sm">
+                  {selectedRoomCount === 0 ? 'All' : `${selectedRoomCount}Rooms`}
                 </span>
-                <span className="pl-4">
+                <span className="pl-2">
                   <svg
-                    width={20}
-                    height={20}
+                    width={16}
+                    height={16}
                     viewBox="0 0 20 20"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +143,7 @@ const Filter: React.FC<FilterProps> = ({ setFilteredListings }) => {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="py-2 px-4 mr-3 font-semibold bg-gray-200 hover:bg-gray-300 text-black rounded-[5px] text-sm transition-colors"
+                className="py-2 px-2 mr-3 font-semibold bg-gray-200 hover:bg-gray-300 text-black rounded-[5px] text-xs transition-colors flex-shrink-0"
               >
                 Clear
               </button>

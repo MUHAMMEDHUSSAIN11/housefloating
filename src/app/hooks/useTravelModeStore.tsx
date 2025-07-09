@@ -7,7 +7,7 @@ interface travelModeStore {
 }
 
 const useTravelModeStore =  create<travelModeStore>((set) => ({
-    travelMode : 'Overnight',
+    travelMode : 'DayCruise',
     setTravelMode : (Mode) => set({travelMode : Mode })
 }));
 

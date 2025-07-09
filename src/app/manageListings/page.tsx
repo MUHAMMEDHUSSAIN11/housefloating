@@ -8,6 +8,7 @@ import getListings, { Listing } from '../actions/getListings';
 import { updateListing } from '../actions/updateListings';
 import { deleteListing } from '../actions/deleteListing';
 import isAuthority from '../actions/checkAuthority';
+import toast from 'react-hot-toast';
 
 
 
@@ -43,13 +44,13 @@ const ListingPage = () => {
       if (success) {
         setEditingListing(null);
         mutate(); // Refresh the data
-        alert('Listing updated successfully!');
+        toast.success('Listing updated successfully!');
       } else {
-        alert('Failed to update listing');
+             toast.error('Failed to update listing');
       }
     } catch (error) {
       console.error('Error updating listing:', error);
-      alert('Error updating listing');
+      toast.error('Error updating listing');
     } finally {
       setIsSubmitting(false);
     }
@@ -62,13 +63,13 @@ const ListingPage = () => {
       if (success) {
         setShowDeleteConfirm(null);
         mutate(); // Refresh the data
-        alert('Listing deleted successfully!');
+        toast.success('Listing deleted successfully!');
       } else {
-        alert('Failed to delete listing');
+        toast.error('Failed to delete listing');
       }
     } catch (error) {
       console.error('Error deleting listing:', error);
-      alert('Error deleting listing');
+      toast.error('Error deleting listing');
     } finally {
       setIsSubmitting(false);
     }

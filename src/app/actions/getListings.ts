@@ -27,7 +27,7 @@ export interface Listing {
 export default async function getListings(): Promise<Listing[]> {
   try {
     const listingRef = collection(firestore, "Boats");
-    const limitedQuery = query(listingRef,orderBy("dayCruisePrice", "asc"),limit(8));
+    const limitedQuery = query(listingRef,orderBy("dayCruisePrice", "asc"));
     const listingsQueryData = await getDocs(limitedQuery);
 
     const listings = listingsQueryData.docs.map((doc) => {
