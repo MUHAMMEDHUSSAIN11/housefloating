@@ -1,21 +1,23 @@
 'use client'
-
 import BoatsEmptyState from '@/app/houseBoats/BoatsEmptyState';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import ListingCard from '../ListingCard/ListingCard';
+import ListingCardSkeleton from '../ListingCard/ListingCardSkeleton';
 
 interface VirtualizedListingGridProps {
   filteredListings: any[];
   itemHeight: number;
   containerHeight: number;
   itemsPerRow: number;
+  loading?: boolean; // Add loading prop
 }
 
 const VirtualizedListingGrid: React.FC<VirtualizedListingGridProps> = ({
   filteredListings,
   itemHeight = 300,
   containerHeight = 600,
-  itemsPerRow = 3
+  itemsPerRow = 3,
+  loading = false
 }) => {
   const [scrollTop, setScrollTop] = useState(0);
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
@@ -28,7 +30,6 @@ const VirtualizedListingGrid: React.FC<VirtualizedListingGridProps> = ({
       startRow + Math.ceil(containerHeight / itemHeight) + 1,
       totalRows
     );
-
     const items = [];
     for (let row = startRow; row < endRow; row++) {
       for (let col = 0; col < itemsPerRow; col++) {
@@ -52,7 +53,7 @@ const VirtualizedListingGrid: React.FC<VirtualizedListingGridProps> = ({
 
   const totalHeight = Math.ceil(filteredListings.length / itemsPerRow) * itemHeight;
 
-  if (filteredListings.length === 0) {
+  if (filteredListings.length === 0 && !loading) {
     return <BoatsEmptyState showReset={true} />;
   }
 
@@ -76,7 +77,11 @@ const VirtualizedListingGrid: React.FC<VirtualizedListingGridProps> = ({
               padding: '8px'
             }}
           >
-            <ListingCard data={data} />
+            {loading ? (
+              <ListingCardSkeleton />
+            ) : (
+              <ListingCard data={data} />
+            )}
           </div>
         ))}
       </div>

@@ -9,6 +9,7 @@ import * as NProgress from "nprogress";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 const Page = () => {
@@ -18,12 +19,12 @@ const Page = () => {
   const router = useRouter();
 
 
-   const handlePush = (boatId:string) => {
-      //start done needs to be rechecked
-      router.push(`/listings/${boatId}`);
-      NProgress.start();
-      NProgress.done();
-    };
+  const handlePush = (boatId: string) => {
+    //start done needs to be rechecked
+    router.push(`/listings/${boatId}`);
+    NProgress.start();
+    NProgress.done();
+  };
 
 
   useEffect(() => {
@@ -61,7 +62,9 @@ const Page = () => {
       const success = await removeWishlist(boatId, user?.uid);
 
       if (success) {
-        toast.success('Removed from wishlist!'); // Uncomment if you have toast
+        toast('Removed from wishlist', {
+          icon: '💔',
+        });
       } else {
         // Revert the optimistic update on failure
         const userWishlists = await getWishlists(user?.uid);
@@ -99,7 +102,7 @@ const Page = () => {
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                </div>              
+                </div>
               ))}
             </div>
           </div>
@@ -141,7 +144,7 @@ const Page = () => {
                 <div className="relative mb-3">
                   {/* Image Container */}
                   <div className="relative h-64 w-full overflow-hidden rounded-xl bg-gray-100">
-                    <img
+                    <Image
                       src={item.Image}
                       alt={item.BoatName}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

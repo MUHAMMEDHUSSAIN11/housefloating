@@ -9,6 +9,7 @@ import { updateListing } from '../actions/updateListings';
 import { deleteListing } from '../actions/deleteListing';
 import isAuthority from '../actions/checkAuthority';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 
 
@@ -129,7 +130,7 @@ const ListingPage = () => {
           {listings?.map((listing) => (
             <div key={listing.id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="aspect-w-16 aspect-h-9">
-                <img
+                <Image
                   src={listing.images[0] || '/placeholder-image.jpg'}
                   alt={listing.title}
                   className="w-full h-48 object-cover"

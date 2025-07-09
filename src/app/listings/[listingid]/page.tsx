@@ -8,6 +8,7 @@ import useSWR from 'swr';
 
 import Spinner from '@/app/components/Misc/Spinner';
 import getBoatbyId from '@/app/actions/getBoatbyId';
+import ListingSkeleton from './ListingSkeleton';
 
 interface Iparams {
   listingid?: string;
@@ -27,7 +28,7 @@ const Listingpage = ({ params }: { params: Iparams }) => {
   return (
     isLoading ? (
       <div className='pt-44 md:pt-24 text-lg'>
-        <Spinner/>
+        <ListingSkeleton/>
       </div>
     ) : (
       !fetchedBoatData || error ? (
