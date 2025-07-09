@@ -10,6 +10,7 @@ import { deleteListing } from '../actions/deleteListing';
 import isAuthority from '../actions/checkAuthority';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+import Input from '../components/Inputs/Input';
 
 
 
@@ -290,7 +291,7 @@ const ListingPage = () => {
                       <input
                         type="number"
                         value={editingListing.minDayGuest}
-                        onChange={(e) => handleInputChange('maxDayGuest', parseInt(e.target.value))}
+                        onChange={(e) => handleInputChange('minDayGuest', parseInt(e.target.value))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -299,7 +300,7 @@ const ListingPage = () => {
                       <input
                         type="number"
                         value={editingListing.minNightGuest}
-                        onChange={(e) => handleInputChange('maxNightGuest', parseInt(e.target.value))}
+                        onChange={(e) => handleInputChange('minNightGuest', parseInt(e.target.value))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
