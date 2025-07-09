@@ -115,7 +115,7 @@ const RegisterModal = () => {
   }, [registerModal, loginModal])
 
   const bodyContent = (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <Heading title="Welcome to Housefloating" subtitle="Create an account!" />
       <Input id="email" label="Email" type="email" disabled={isLoading} register={register} errors={errors} required />
       <Input id="password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required />
@@ -125,7 +125,7 @@ const RegisterModal = () => {
   );
 
   const footerContent = (
-    <div className="flex flex-col gap-3 mt-1">
+    <div className="flex flex-col gap-2  mb-16 md:mb-0">
       <hr />
       <Button outline label="Continue with Google" icon={FcGoogle} onClick={handleGoogleSign} />
       {/* <Button outline label="Continue with Facebook" icon={AiFillFacebook} onClick={handleFbSign} /> */}
