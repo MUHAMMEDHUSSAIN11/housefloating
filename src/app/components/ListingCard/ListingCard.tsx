@@ -48,7 +48,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data, onAction, di
   const debouncedWishlistOperation = useDebouncedWishlist(300); // 300ms debounce
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
-  const offerPrice = useMemo(() => data.price, [data.price]);
+  const offerPrice = useMemo(() => data.dayCruisePrice, [data.dayCruisePrice]);
 
   const handleCancel: any = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
