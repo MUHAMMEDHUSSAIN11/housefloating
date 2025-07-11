@@ -38,14 +38,12 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ title, dayGuestCountMax, nigh
   let adultCounterMax = 0;
   let adultCounterMin = 0;
 
-  if (travelMode === TravelMode.DayCruise)
-  {
-        adultCounterMax = dayGuestCountMax;
-        adultCounterMin = dayGuestCountMin;
-  } else if (travelMode === TravelMode.OverNight) 
-  {
-        adultCounterMax = nightGuestCountMax;
-        adultCounterMin = nightGuestCountMin;
+  if (travelMode === TravelMode.DayCruise) {
+    adultCounterMax = dayGuestCountMax;
+    adultCounterMin = dayGuestCountMin;
+  } else if (travelMode === TravelMode.OverNight) {
+    adultCounterMax = nightGuestCountMax;
+    adultCounterMin = nightGuestCountMin;
   }
 
   return (
@@ -59,19 +57,17 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ title, dayGuestCountMax, nigh
       </div>
       <hr />
       <div className=''>
-        <Counter onChange={(value) => setAdultCount(value)} min={adultCounterMin} max={adultCounterMax} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
+        <Counter onChange={(value) => setAdultCount(value)} min={2} max={adultCounterMax} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
       </div>
       <div className=''>
         <Counter onChange={(value) => setChildCount(value)} value={childCount} max={roomCount} title="Number of Childrens" subtitle="Ages 5 to 11" />
       </div>
       <hr />
-      {/* <div className='sm:hidden md:block'> */}
       <div className="hidden md:block">
         <Map center={coordinates} />
       </div>
       <hr />
     </div>
-
   )
 }
 
