@@ -56,6 +56,8 @@ interface ParsedData extends Record<string, any> {
   minNightGuest: number;
   reservations: any[];
   dayCruisePrice: number;
+  phoneNumber: number;
+
 }
 
 const generateBoatId = (timestamp: number, prefix = 'HF') => {
@@ -66,11 +68,11 @@ const generateBoatId = (timestamp: number, prefix = 'HF') => {
 
 export default async function createBoat(boatDetails: ParsedData): Promise<DocumentReference> {
   const customId = generateBoatId(Date.now());
-  
+
   const boatWithId = {
     ...boatDetails,
     id: customId
   };
-  
+
   return await addDoc(collection(firestore, "Boats"), boatWithId);
 }

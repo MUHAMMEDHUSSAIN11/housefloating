@@ -166,7 +166,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 Category: listing.getboat.data()?.category,
                 Status: BookingStatus.Requested,
                 Image: listing.getboat.data()?.images[0],
-                CreatedOn: Timestamp.fromDate(new Date())
+                CreatedOn: Timestamp.fromDate(new Date()),
+                BoatOwnerPhoneNumber: listing.getboat.data()?.phoneNumber,
             };
 
             await RequestBooking(reservationData)

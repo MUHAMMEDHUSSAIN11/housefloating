@@ -30,6 +30,7 @@ enum STEPS {
     CHILD_ADD_PRICE = 11,
     DAY_ADULT_ADD_PRICE = 12,
     DAY_CHILD_ADD_PRICE = 13,
+    PHONE = 14
 }
 
 const categories = [
@@ -56,7 +57,8 @@ const RentModal = () => {
                 category: '', guestCount: 1, roomCount: 1, bathroomCount: 1,
                 images: [], price: 6000, dayCruisePrice: 4500, adultAddonPrice: 500,
                 dayAdultAddOnPrice: 500, childAddonPrice: 300, dayChildAddOnPrice: 500,
-                title: '', guestTitle: '', maxDayGuest: 0, maxNightGuest: 0,minDayGuest: 0, minNightGuest: 0,
+                title: '', guestTitle: '', maxDayGuest: 0, maxNightGuest: 0, minDayGuest: 0, minNightGuest: 0,
+                phoneNumber: 0,
             }
         });
 
@@ -71,6 +73,7 @@ const RentModal = () => {
     const childAddonPrice = watch('childAddonPrice');
     const adultAddonPrice = watch('adultAddonPrice');
     const guestTitle = watch('subTitle');
+    const phoneNumber = watch('phoneNumber');
 
     const setCustomValue = (id: string, value: any) => {
         if (id === 'images') {
@@ -115,6 +118,7 @@ const RentModal = () => {
                 minDayGuest: parseInt(data.minDayGuest),
                 minNightGuest: parseInt(data.minNightGuest),
                 reservations: [],
+                phoneNumber: parseInt(data.phoneNumber)
             };
 
             createBoat(parsedData)
@@ -199,7 +203,7 @@ const RentModal = () => {
         )
     }
 
-    
+
     if (step === STEPS.MINGUESTCOUNT) {
         bodyContent = (
             <div className="flex flex-col gap-8">
@@ -307,9 +311,25 @@ const RentModal = () => {
             </div>
         )
     }
-
-
-
+    if (step === STEPS.PHONE) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading
+                    title="Add your contact number"
+                    subtitle="Your phone number will be visible to guests"
+                />
+                <Input
+                    id="phoneNumber"
+                    label="Phone Number"
+                    disabled={isLoading}
+                    register={register}
+                    errors={errors}
+                    required
+                    type="number"
+                />
+            </div>
+        )
+    }
 
     return (
         <Modal
