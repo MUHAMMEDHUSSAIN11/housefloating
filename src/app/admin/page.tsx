@@ -85,7 +85,8 @@ const AdminPage = () => {
     const matchesSearch = !searchTerm || 
       data.BoatName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       data.Contactnumber?.includes(searchTerm) ||
-      data.BoatOwnerPhoneNumber?.includes(searchTerm);
+      data.BoatOwnerPhoneNumber?.includes(searchTerm) ||
+      data.CruiseType?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || data.Status === statusFilter;
     
@@ -93,7 +94,7 @@ const AdminPage = () => {
   }) || [];
 
   const getStatusCounts = () => {
-    if (!reservations?.docs) return { total: 0, requested: 0, approved: 0, cancelled: 0 };
+    if (!reservations?.docs) return { total: 0, requested: 0, approved: 0, confirmed: 0, cancelled: 0 };
     
     const counts = reservations.docs.reduce((acc, listing) => {
       const status = listing.data().Status;
@@ -106,10 +107,11 @@ const AdminPage = () => {
       }
       
       return acc;
-    }, { total: 0, requested: 0, approved: 0, cancelled: 0 });
+    }, { total: 0, requested: 0, approved: 0, confirmed: 0, cancelled: 0 });
     
     return counts;
   };
+
   if (!user) {
     return <EmptyState title='Not logged in !!' subtitle='Please Log in as Administrator' />;
   }
@@ -133,7 +135,7 @@ const AdminPage = () => {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="pt-36 md:pt-36 min-h-screen bg-gray-50">
+    <div className="pt-28 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -142,7 +144,7 @@ const AdminPage = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <div className="bg-white p-4 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
@@ -179,6 +181,17 @@ const AdminPage = () => {
           <div className="bg-white p-4 rounded-lg shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
+                <p className="text-sm text-gray-600">Confirmed</p>
+                <p className="text-2xl font-bold text-blue-600">{statusCounts.confirmed}</p>
+              </div>
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-blue-600" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-gray-600">Cancelled</p>
                 <p className="text-2xl font-bold text-red-600">{statusCounts.cancelled}</p>
               </div>
@@ -197,7 +210,7 @@ const AdminPage = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search by boat name, contact number, or owner phone..."
+                  placeholder="Search by boat name, contact number, owner phone, or cruise type..."
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -214,6 +227,7 @@ const AdminPage = () => {
                 <option value="all">All Status</option>
                 <option value={BookingStatus.Requested}>Requested</option>
                 <option value={BookingStatus.Approved}>Approved</option>
+                <option value={BookingStatus.Confirmed}>Confirmed</option>
                 <option value={BookingStatus.Cancelled}>Cancelled</option>
               </select>
             </div>
@@ -235,6 +249,7 @@ const AdminPage = () => {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Boat Details</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Cruise Type</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Customer Contact</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Owner Contact</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Adults</th>
@@ -242,13 +257,14 @@ const AdminPage = () => {
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Price</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Status</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Booking Date</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Requested Date</th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredReservations.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={11} className="px-4 py-8 text-center text-gray-500">
                       No reservations found matching your criteria.
                     </td>
                   </tr>
@@ -280,3 +296,4 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+

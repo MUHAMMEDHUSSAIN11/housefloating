@@ -11,6 +11,7 @@ import * as NProgress from "nprogress";
 import { Timestamp } from 'firebase/firestore';
 import calculateAdvance from '../actions/advanceCalculate';
 import CheckIsDateOver from '../actions/checkDateOver';
+import Link from 'next/link';
 
 // this component is used to display items in Cart page
 
@@ -51,13 +52,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
 
   const advanceDetails = calculateAdvance(details.Price);
 
-  const handlePush = () => {
-    router.push(`/listings/${details.BoatId}`);
-    NProgress.start();
-    NProgress.done();
-  };
-
-  const IsDateOver = CheckIsDateOver(formatDate(details.BookingDate));
+  const IsDateOver = CheckIsDateOver(details.BookingDate.toDate());
 
   const handleCancel: any = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -86,7 +81,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
     <div className='bg-white shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100'>
       <div className="flex flex-col lg:flex-row">
         {/* Image Section */}
-        <div onClick={() => handlePush()} className="relative lg:w-2/5 h-64 lg:h-auto overflow-hidden cursor-pointer group">
+        <Link href={`/listings/${details.BoatId}`} className="relative lg:w-2/5 h-64 lg:h-auto overflow-hidden cursor-pointer group block">
           <Image
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -94,24 +89,22 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             alt="Listing"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
           {/* Status Badge */}
           <div className="absolute top-4 left-4">
             <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusStyle(details.Status)}`}>
               {details.Status}
             </span>
           </div>
-
           {/* Payment Badge */}
           <div className="absolute top-4 right-4">
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${details.Payment
-                ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                : 'bg-orange-100 text-orange-800 border border-orange-200'
+              ? 'bg-blue-100 text-blue-800 border border-blue-200'
+              : 'bg-orange-100 text-orange-800 border border-orange-200'
               }`}>
               {details.Payment ? 'Paid' : 'Pending Payment'}
             </span>
           </div>
-        </div>
+        </Link>
 
         {/* Content Section */}
         <div className='flex flex-col lg:flex-row lg:w-4/5'>

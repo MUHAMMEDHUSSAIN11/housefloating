@@ -11,7 +11,6 @@ import OtpInput from 'react-otp-input';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/clientApp';
 import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore';
-import useTravelModeStore from '@/app/hooks/useTravelModeStore';
 import { useRouter } from 'next/navigation'
 import { BookingStatus } from '@/app/enums/enums';
 import * as NProgress from 'nprogress';
@@ -31,22 +30,21 @@ enum STEPS {
 
 interface confirmModalProps {
     listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> },
+    modeOfTravel: string,
     finalPrice: number,
     finalHeadCount: number,
     finalBookingDate: Date,
-    finalMinorCount: number,
-    modeOfTravel: string,
+    finalMinorCount: number
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
     const [isLoading, setIsLoading] = useState(false);
     const [otp, setOtp] = useState('');
     const [user] = useAuthState(auth);
-    const travelMode = useTravelModeStore();
     const router = useRouter();
 
     const handlePush = () => {
@@ -161,13 +159,14 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                 BoatName: listing.getboat.data()?.title,
                 BoatTitle: listing.getboat.data()?.guestTitle,
                 MinorCount: finalMinorCount,
-                Mode: travelMode.travelMode,
+                Mode: modeOfTravel,
                 Payment: false,
                 Category: listing.getboat.data()?.category,
                 Status: BookingStatus.Requested,
                 Image: listing.getboat.data()?.images[0],
                 CreatedOn: Timestamp.fromDate(new Date()),
                 BoatOwnerPhoneNumber: listing.getboat.data()?.phoneNumber,
+                CruiseType: modeOfTravel
             };
 
             await RequestBooking(reservationData)
@@ -182,7 +181,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, finalPrice, finalH
                     setStep(STEPS.PHONENUMBER);
                     handlePush();
                     SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber,
-                        travelMode.travelMode,listing.getboat.data()?.title, listing.getboat.data()?.category,listing.getboat.data()?.roomCount,
+                        modeOfTravel, listing.getboat.data()?.title, listing.getboat.data()?.category, listing.getboat.data()?.roomCount,
                         listing.getboat.data()?.phoneNumber);
                 })
                 .catch((error) => {

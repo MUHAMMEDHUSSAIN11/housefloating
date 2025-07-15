@@ -58,6 +58,8 @@ const CartPage = () => {
     if (user) {
       setIsLoading(true);
       fetchReservations();
+      console.log('Fetching reservations for user:', user.email);
+      console.log(reservations);
     }
   }, [user]);
 
