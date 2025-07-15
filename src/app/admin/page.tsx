@@ -135,7 +135,7 @@ const AdminPage = () => {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="pt-36 md:pt-28 min-h-screen bg-gray-50">
+    <div className="pt-40 md:pt-32 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -284,7 +284,7 @@ const AdminPage = () => {
         </div>
 
         {/* Results count */}
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="my-2 text-sm text-gray-600">
           Showing {filteredReservations.length} of {reservations?.docs?.length || 0} reservations
         </div>
       </div>
