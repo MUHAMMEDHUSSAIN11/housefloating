@@ -85,8 +85,7 @@ const AdminPage = () => {
     const matchesSearch = !searchTerm || 
       data.BoatName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       data.Contactnumber?.includes(searchTerm) ||
-      data.BoatOwnerPhoneNumber?.includes(searchTerm) ||
-      data.CruiseType?.toLowerCase().includes(searchTerm.toLowerCase());
+      data.Mode?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || data.Status === statusFilter;
     
