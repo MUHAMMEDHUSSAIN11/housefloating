@@ -56,7 +56,7 @@ const ReservationRow: React.FC<ReservationRowProps> = ({ reservation, reservatio
         <div className="text-sm text-gray-500">{reservation.Category}</div>
       </td>
       <td className="px-4 py-3">
-        <div className="text-gray-900">{reservation.CruiseType || 'N/A'}</div>
+        <div className="text-gray-900">{reservation.Mode  || 'N/A'}</div>
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ const ReservationRow: React.FC<ReservationRowProps> = ({ reservation, reservatio
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-900">{reservation.BookingRequestedDate ? formatDate(reservation.BookingRequestedDate) : 'N/A'}</span>
+          <span className="text-gray-900">{reservation.CreatedOn ? formatDate(reservation.CreatedOn) : 'N/A'}</span>
         </div>
       </td>
       <td className="px-4 py-3">

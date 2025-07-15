@@ -135,7 +135,7 @@ const AdminPage = () => {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="pt-28 min-h-screen bg-gray-50">
+    <div className="pt-36 md:pt-28 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
