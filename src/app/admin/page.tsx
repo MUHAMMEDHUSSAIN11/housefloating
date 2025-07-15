@@ -134,8 +134,8 @@ const AdminPage = () => {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="pt-40 md:pt-32 min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="pt-48 md:pt-32 min-h-screen bg-gray-50">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Reservations Management</h1>
