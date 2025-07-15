@@ -65,7 +65,7 @@ const CartPage = () => {
 
 
   return (
-    <div className="pt-28">
+    <div className="pt-56 md:pt-32 ">
       {isLoading ? (<Spinner />) : user && reservations ? (
         <ClientOnly>
           <TripsClient reservations={reservations} />

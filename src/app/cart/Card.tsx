@@ -3,11 +3,9 @@
 import React, { useCallback } from 'react';
 import Image from 'next/image';
 import Button from '../components/Misc/Button';
-import { useRouter } from 'next/navigation';
-import { IoBoat, IoCalendarNumberSharp, IoCard, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
+import { IoBoat, IoCalendarNumberSharp, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
 import { BookingStatus, amount } from '../enums/enums';
 import MakeStripe from '../actions/MakeStripe';
-import * as NProgress from "nprogress";
 import { Timestamp } from 'firebase/firestore';
 import calculateAdvance from '../actions/advanceCalculate';
 import CheckIsDateOver from '../actions/checkDateOver';
@@ -43,7 +41,6 @@ interface CardListingProps {
 }
 
 const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionId = '', actionLabel }) => {
-  const router = useRouter();
 
   function formatDate(date: any) {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -196,7 +193,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             </div>
 
             {/* Action Buttons */}
-            <div className='space-y-3 mt-6'>
+            <div className='space-y-3 mt-6 pb-9 md:pb-0'>
               <Button
                 disabled={details.Status !== BookingStatus.Approved}
                 label={"Proceed to Payment"}
@@ -205,7 +202,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
 
               {onAction && actionLabel && (
                 <Button
-                  disabled={details.Status === BookingStatus.Cancelled || IsDateOver}
+                  disabled={details.Status === BookingStatus.Cancelled || !IsDateOver}
                   outline
                   small
                   label={actionLabel}
