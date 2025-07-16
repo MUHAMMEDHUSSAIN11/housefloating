@@ -10,12 +10,11 @@ import TripsClient from './TripsClient';
 import { Timestamp } from 'firebase/firestore';
 import Spinner from '../components/Misc/Spinner';
 
-
-interface Reservation {
+export interface Reservation {
   ReservationId: string;
   BoatId: string;
   BoatName: string;
-  BoatTitle: string; 
+  BoatTitle: string;
   BookingDate: Timestamp;
   Contactnumber: string;
   Email: string;
@@ -28,7 +27,10 @@ interface Reservation {
   Status: string;
   Image: string;
   UserId: string;
-};
+  BoatOwnerPhoneNumber?: string; 
+  CreatedOn?: Timestamp;
+}
+
 
 const CartPage = () => {
   const [user] = useAuthState(auth);
