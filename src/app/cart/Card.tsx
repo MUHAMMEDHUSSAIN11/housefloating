@@ -4,36 +4,18 @@ import React, { useCallback } from 'react';
 import Image from 'next/image';
 import Button from '../components/Misc/Button';
 import { IoBoat, IoCalendarNumberSharp, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
-import { BookingStatus, amount } from '../enums/enums';
+import { BookingStatus } from '../enums/enums';
 import MakeStripe from '../actions/MakeStripe';
-import { Timestamp } from 'firebase/firestore';
 import calculateAdvance from '../actions/advanceCalculate';
 import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
+import { Reservation } from './page';
 
 // this component is used to display items in Cart page
 
-interface FirestoreListing {
-  ReservationId: string;
-  BoatId: string;
-  BoatName: string;
-  BoatTitle: string;
-  BookingDate: Timestamp;
-  Contactnumber: string;
-  Email: string;
-  HeadCount: number;
-  MinorCount: number;
-  Mode: string;
-  Price: number;
-  Payment: boolean;
-  Category: string;
-  Status: string;
-  Image: string;
-  UserId: string;
-}
 
 interface CardListingProps {
-  details: FirestoreListing;
+  details: Reservation;
   onAction?: (id: string) => void;
   disabled?: boolean;
   actionLabel?: string;
