@@ -24,27 +24,14 @@ const ListingHero: React.FC = () => {
 
 
   const GridSection: React.FC<GridSectionProps> = ({ title, items, path }) => (
-    <div className="mb-12">
+    <div className="mb-5">
       {/* Section Title */}
       <div className="px-4 sm:px-6 lg:px-8 mb-6">
-        <Link href={`/${path}`}
-          className="inline-flex items-center text-xl sm:text-2xl text-black font-medium hover:text-blue-600 transition-colors duration-300 group"
+        <div
+          className="inline-flex items-center text-xl sm:text-2xl text-black font-medium transition-colors duration-300 group"
         >
           <h2 className="mr-3">{title}</h2>
-          <svg
-            className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </Link>
+        </div>
       </div>
 
       {/* Scrollable Grid - Hidden scrollbar on mobile */}
@@ -157,10 +144,11 @@ const ListingHero: React.FC = () => {
 
   return (
     <section className="bg-gray-50 h-auto">
-      <div className="pt-56 md:pt-40 ">
+      <div className="pt-40 md:pt-24 ">
 
         {/* Houseboats Section */}
-        <GridSection title="Houseboats" items={listings} path="houseBoats" />
+        <GridSection title="Today Hot Deals Individual" items={listings} path="houseBoats" />
+        <GridSection title="Today Hot Deals Sharing" items={listings} path="houseBoats" />
 
         {/* Shikara Section */}
         {/* <GridSection title="Shikara" items={shikaras} path="shikara" /> */}

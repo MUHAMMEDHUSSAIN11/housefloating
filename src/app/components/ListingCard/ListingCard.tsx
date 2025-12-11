@@ -15,6 +15,7 @@ import createWishlist from '@/app/actions/createWishlist'
 import toast from 'react-hot-toast'
 import removeWishlist from '@/app/actions/removeWishlist'
 import { useDebouncedWishlist } from '@/app/hooks/useDebouncedWishlist' // Import the hook
+import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
 
 export interface FirestoreListing {
   id: string,
@@ -155,7 +156,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data, onAction, di
       </div>
 
       <Link href={`/listings/${data.docId}`} className="block cursor-pointer">
-        <div className="flex flex-col gap-1.5 w-full">
+        <div className="flex flex-col w-full">
           {/* Smaller aspect ratio for more compact cards */}
           <div className="aspect-[4/3] w-full relative overflow-hidden rounded-lg">
             <Image
@@ -169,21 +170,19 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data, onAction, di
           </div>
 
           {/* Smaller text and spacing */}
-          <div className="font-semibold text-md">
-            {data.guestTitle},{data.roomCount} Bedrooms
+          <div className="font-semibold text-sm md:text-md">
+            Premium,1 Bedroom
           </div>
 
-          <div className='flex flex-row items-center gap-1'>
-            <div className='font-medium text-sm text-gray-600'>{data.category}</div>
-          </div>
 
-          <div className="flex flex-row items-center gap-1">
-            <div className="font-light text-sm">Starting From</div>
-            <div className="text-gray-500 line-through text-xs">₹ {strikeThroughPrice} /-</div>
-          </div>
-
-          <div className='flex flex-row items-center gap-1'>
-            <div className="font-semibold text-md">₹ {offerPrice} /-</div>
+          <div className='flex flex-col  gap-1'>
+            <div className="text-gray-700 text-xs items-center justify-center">
+              2 Adult <span className=''>.</span> Overnight
+            </div>
+            <div className='flex gap-1'>
+            <div className="text-gray-500 line-through text-sm">₹{FormatIndianCurrency(strikeThroughPrice)}</div>
+            <div className="font-semibold text-gray-700 text-sm"><span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}</div>
+            </div>
           </div>
         </div>
       </Link>

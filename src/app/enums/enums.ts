@@ -46,4 +46,15 @@ export enum TravelMode
     OverNight = "Overnight"
 }
 
+export enum BookingType {
+    private = 'Private',
+    sharing = 'Sharing'
+}
+
+export enum BoatCruises {
+    dayCruise = 'Day Cruise',
+    overNightCruise = 'OverNight Cruise',
+    nightStay = 'NightStay'
+}
+
 export const coordinates: [number, number] = [9.5008, 76.3443];
