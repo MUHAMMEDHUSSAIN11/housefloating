@@ -1,28 +1,24 @@
 'use client'
 
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import Container from '../Misc/Container';
 import Logo from './Logo';
 import RightContent from './RightContent';
-import NewMiddleContent from './NewMiddleContent';
-import { usePathname } from 'next/navigation';
+import SearchBar from './SearchBar';
 import NavbarIcons from './NavbarIcons';
-
 const Navbar = () => {
-  const pathname = usePathname();
-  const isMainPage = pathname === '/boats';
-  
+   
   return (
     <div className="fixed w-full bg-white z-50 shadow-sm">
       <div className=" border-b-[1px]">
         <Container>
           {/* Desktop Layout */}
-          <div className="hidden md:flex flex-row items-center justify-between gap-3">
+          <div className="hidden md:flex flex-row items-center justify-between gap-1">
             <Logo />
-            <div >
-              <NewMiddleContent />
+            <div className='hidden md:block flex-1 max-w-2xl mx-1'>
+              <SearchBar/>
             </div>
-            <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-row items-center gap-1">
               <NavbarIcons />
               <RightContent />
             </div>
@@ -31,14 +27,14 @@ const Navbar = () => {
           {/* Mobile Layout */}
           <div className="md:hidden">
             {/* Top row: Logo and Right Content */}
-            <div className="flex flex-row items-center justify-between mb-4">
+            <div className="flex flex-row items-center justify-between mb-1">
               <Logo />
               <RightContent />
             </div>
             
             {/* Bottom row: Middle Content */}
-            <div className="flex justify-center">
-              <NewMiddleContent />
+            <div className="md:hidden pb-1">
+              <SearchBar/>
             </div>
           </div>
         </Container>
