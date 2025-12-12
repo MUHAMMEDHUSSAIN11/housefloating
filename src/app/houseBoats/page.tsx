@@ -66,7 +66,7 @@ const Page = () => {
   return (
     <>
       <Container>
-        <div className="pb-20 pt-28 md:pt-20">
+        <div className="pb-20 pt-36 md:pt-24">
           <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
             {filteredListings.length > 0 ? (
               filteredListings.map((listing: any) => (

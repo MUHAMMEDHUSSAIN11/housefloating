@@ -144,7 +144,7 @@ const ListingHero: React.FC = () => {
 
   return (
     <section className="bg-gray-50 h-auto">
-      <div className="pt-40 md:pt-24 ">
+      <div className="pt-48 md:pt-32 ">
 
         {/* Houseboats Section */}
         <GridSection title="Today Hot Deals Individual" items={listings} path="houseBoats" />

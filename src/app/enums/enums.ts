@@ -47,8 +47,8 @@ export enum TravelMode
 }
 
 export enum BookingType {
-    private = 'Private',
-    sharing = 'Sharing'
+    private = 1,
+    sharing = 2
 }
 
 export enum BoatCruises {

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Ship, Calendar, Users, ChevronDown, User, Plus, Minus, Send } from 'lucide-react';
+import { Ship, Calendar, Users, ChevronDown, User, Plus, Minus, Send, Search } from 'lucide-react';
 import DateSelector from './DateSelector';
 import { format } from 'date-fns';
 import { BookingType, BoatCruises, Categories } from '@/app/enums/enums';
@@ -12,14 +12,14 @@ interface DateRange {
 
 const categoryOptions = [
   { id: 'allCategory', label: 'All Category' },
-  { id: Categories.Deluxe, label: Categories.Deluxe },
+  { id: Categories.Deluxe, label: 'Delux' },
   { id: Categories.Premium, label: 'Premium'},
   { id: Categories.Luxury, label: 'Luxury' },
 ];
 
 const typeOptions = [
-  { id: BookingType.private, label: BookingType.private, icon: <User/> },
-  { id: BookingType.sharing, label: BookingType.sharing, icon: <Users/> },
+  { id: BookingType.private, label: 'Private', icon: <User/> },
+  { id: BookingType.sharing, label: 'Sharing', icon: <Users/> },
 ];
 
 const SearchBar = () => {
@@ -33,6 +33,13 @@ const SearchBar = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [roomCount, setRoomCount] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
+
+  const [errors, setErrors] = useState({
+    type: false,
+    category: false,
+    date: false,
+  });
+  const [showErrors, setShowErrors] = useState(false);
 
   const typeRef = useRef<HTMLDivElement>(null);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -69,8 +76,45 @@ const SearchBar = () => {
     };
   }, [activeSection, showFilter]);
 
+  useEffect(() => {
+    if (selectedType && errors.type) {
+      setErrors(prev => ({ ...prev, type: false }));
+    }
+  }, [selectedType]);
+
+  useEffect(() => {
+    if (selectedCategory && errors.category) {
+      setErrors(prev => ({ ...prev, category: false }));
+    }
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const isDateValid = selectedDateRange.startDate && 
+      (selectedCruise !== BoatCruises.overNightCruise || selectedDateRange.endDate);
+    
+    if (isDateValid && errors.date) {
+      setErrors(prev => ({ ...prev, date: false }));
+    }
+  }, [selectedDateRange, selectedCruise]);
+
+  const validateFields = () => {
+    const newErrors = {
+      type: !selectedType,
+      category: !selectedCategory ,
+      date: !selectedDateRange.startDate || 
+            (selectedCruise === BoatCruises.overNightCruise && !selectedDateRange.endDate),
+    };
+
+    setErrors(newErrors);
+    setShowErrors(true);
+
+    return !Object.values(newErrors).some(error => error);
+  };
+
   const handleSearch = async () => {
-    if (!selectedType || !selectedDateRange.startDate) return;
+    if (!validateFields()) {
+      return;
+    }
 
     try {
       // const params = new URLSearchParams({
@@ -102,7 +146,7 @@ const SearchBar = () => {
   };
 
   const getDateDisplayText = () => {
-    if (!selectedDateRange.startDate) return 'Select date';
+    if(!selectedDateRange.startDate) return
     
     if (selectedCruise === BoatCruises.overNightCruise && selectedDateRange.endDate) {
       return `${format(selectedDateRange.startDate, 'MMM d')} - ${format(selectedDateRange.endDate, 'MMM d, yyyy')}`;
@@ -111,32 +155,34 @@ const SearchBar = () => {
     return format(selectedDateRange.startDate, 'MMM d, yyyy');
   };
 
-  const isSearchReady = selectedType && 
-                        selectedCategory && 
-                        roomCount && 
-                        selectedDateRange.startDate && 
-                        selectedCruise &&
-                        (selectedCruise !== BoatCruises.overNightCruise || selectedDateRange.endDate);
-
   return (
-    <div className="relative w-full my-3">
-      <div className="flex w-full justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
+    <div className="relative w-full my-6 md:my-8">
+      <div className="flex w-full gap-1 px-1 py-1 justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
         <div className='w-full'>
           <div className='w-full grid grid-cols-3'>
             {/* Type Selector */}
             <div ref={typeRef} className="flex-1 min-w-0">
               <button
                 onClick={() => setActiveSection(activeSection === 'type' ? null : 'type')}
-                className={`w-full px-1 sm:px-4 py-3 sm:py-4 rounded-full text-left transition-colors duration-200 hover:bg-blue-500 hover:text-white text-gray-500`}
+                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${
+                  showErrors && errors.type
+                    ? 'border-2 border-red-500 bg-red-50'
+                    : 'hover:bg-blue-500 hover:text-white'
+                } ${selectedType ? 'font-bold' : ''} text-black`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
-                  <Users className="w-2 lg:w-4 h-2 lg:h-4 flex-shrink-0" />
+                  {selectedType === BookingType.private
+                  ?<User className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />
+                  :<Users className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />}
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs truncate">
+                    <p className={`hidden sm:block text-sm truncate ${showErrors && errors.type ? 'text-red-500 font-semibold' : ''}`}>
                       {selectedType ? getSelectedLabel(selectedType) : 'Select Type'}
                     </p>
+                    <p className={`sm:hidden truncate ${showErrors && errors.type ? 'text-red-500 font-semibold' : ''}`}>
+                      {selectedType ? getSelectedLabel(selectedType) : 'Type'}
+                    </p>
                   </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'type' ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'type' ? 'rotate-180' : ''} ${showErrors && errors.type ? 'text-red-500' : ''}`} />
                 </div>
               </button>
 
@@ -167,16 +213,20 @@ const SearchBar = () => {
             <div ref={categoryRef} className="flex-1 min-w-0">
               <button
                 onClick={() => setActiveSection(activeSection === 'category' ? null : 'category')}
-                className={`w-full px-1 sm:px-4 py-3 sm:py-4 rounded-full text-left transition-colors duration-200 hover:bg-blue-500 hover:text-white text-gray-500`}
+                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${
+                  showErrors && errors.category
+                    ? 'border-2 border-red-500 bg-red-50'
+                    : 'hover:bg-blue-500 hover:text-white'
+                } text-black font-bold`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
-                  <Ship className="w-2 lg:w-4 h-2 lg:h-4 flex-shrink-0" />
+                  <Ship className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.category ? 'text-red-500' : ''}`} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs truncate">
+                    <p className={`truncate ${showErrors && errors.category ? 'text-red-500 font-semibold' : ''}`}>
                       {selectedCategory ? getCategoryLabel(selectedCategory) : 'Select category'}
                     </p>
                   </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'category' ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'category' ? 'rotate-180' : ''} ${showErrors && errors.category ? 'text-red-500' : ''}`} />
                 </div>
               </button>
 
@@ -225,16 +275,23 @@ const SearchBar = () => {
             <div ref={datesRef} className="flex-1 min-w-0">
               <button
                 onClick={() => setActiveSection(activeSection === 'date' ? null : 'date')}
-                className={`w-full px-1 sm:px-4 py-3 sm:py-4 text-left transition-colors duration-200 rounded-full text-gray-500 hover:text-white hover:bg-blue-500`}
+                className={`w-full px-1 sm:px-4 py-5 sm:py-4 text-left transition-colors duration-200 rounded-full ${
+                  showErrors && errors.date
+                    ? 'border-2 border-red-500 bg-red-50 text-red-500'
+                    : 'text-black hover:text-white hover:bg-blue-500'
+                } ${selectedDateRange.startDate ? 'font-bold' : ''}`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
-                  <Calendar className="w-2 lg:w-4 h-2 lg:h-4 flex-shrink-0" />
+                  <Calendar className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.date ? 'text-red-500' : ''}`} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs truncate">
-                      {getDateDisplayText()}
+                    <p className={`hidden sm:block truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
+                      {!selectedDateRange.startDate?'Select Date': getDateDisplayText()}
+                    </p>
+                    <p className={`sm:hidden text-sm truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
+                      {!selectedDateRange.startDate?'Date': getDateDisplayText()}
                     </p>
                   </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'date' ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'date' ? 'rotate-180' : ''} ${showErrors && errors.date ? 'text-red-500' : ''}`} />
                 </div>
               </button>
 
@@ -252,15 +309,10 @@ const SearchBar = () => {
         </div>
 
         <button
-          onClick={() => {handleSearch()}}
-          className={`mx-2 p-2 lg:p-1.5 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:scale-110 active:scale-95 flex-shrink-0
-            transition-all duration-500 ease-out
-            ${isSearchReady 
-              ? 'opacity-100 translate-x-0 scale-100 pointer-events-auto' 
-              : 'opacity-0 translate-x-4 scale-75 pointer-events-none absolute'
-            }`}
+          onClick={handleSearch}
+          className="p-3 flex items-center justify-center gap-1 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:scale-110 active:scale-95 flex-shrink-0 transition-all duration-200"
         >
-          <Send className="w-2 h-2 sm:w-3 sm:h-3"/>
+          <div className='hidden sm:block'>Search</div><Search className="w-5 h-5 sm:w-4 sm:h-4"/>
         </button>
       </div>
     </div>

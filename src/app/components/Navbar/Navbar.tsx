@@ -13,9 +13,9 @@ const Navbar = () => {
       <div className=" border-b-[1px]">
         <Container>
           {/* Desktop Layout */}
-          <div className="hidden md:flex flex-row items-center justify-between gap-1">
+          <div className="hidden lg:flex flex-row items-center justify-between gap-1">
             <Logo />
-            <div className='hidden md:block flex-1 max-w-2xl mx-1'>
+            <div className='hidden lg:block flex-1 max-w-2xl mx-1'>
               <SearchBar/>
             </div>
             <div className="flex flex-row items-center gap-1">
@@ -25,7 +25,7 @@ const Navbar = () => {
           </div>
           
           {/* Mobile Layout */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             {/* Top row: Logo and Right Content */}
             <div className="flex flex-row items-center justify-between mb-1">
               <Logo />
@@ -33,7 +33,7 @@ const Navbar = () => {
             </div>
             
             {/* Bottom row: Middle Content */}
-            <div className="md:hidden pb-1">
+            <div className="lg:hidden pb-1">
               <SearchBar/>
             </div>
           </div>

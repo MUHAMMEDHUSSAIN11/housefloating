@@ -215,7 +215,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
               onClick={() => handleDateClick(day)}
               disabled={isPast}
               className={`
-                h-9 w-full rounded-full text-sm font-medium transition-colors
+                h-12 w-12 rounded-full text-sm font-medium transition-colors
                 ${isSelected 
                   ? 'bg-blue-500 text-white' 
                   : inRange && !isSelected
