@@ -1,84 +1,114 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import Container from '../components/Misc/Container';
 import ListingCard from '../components/ListingCard/ListingCard';
 import EmptyState from '../components/Misc/EmptyState';
 import useSWR from 'swr';
-import getListings from '../actions/getListings';
 import BoatsEmptyState from './BoatsEmptyState';
 import ListingCardSkeleton from '../components/ListingCard/ListingCardSkeleton';
+import GetAvailableHouseBoats from '../actions/GetAvailableHouseBoats/GetAvailableHouseBoats';
 
 const Page = () => {
-  const [filteredListings, setFilteredListings] = useState<any[]>([]);
-  const [filterCriteria, setFilterCriteria] = useState<{ category: string; roomCount: number }>({
-    category: '',
-    roomCount: 0, // Changed to 0 to show all by default
-  });
+  const searchParams = useSearchParams();
 
-  const { data: listings, error, isValidating, isLoading } = useSWR('actions', getListings, {
-    refreshInterval: 25 * 60 * 1000,
-  });
+  const categoryFromUrl = Number(searchParams?.get('category')) || 0;
+  const roomCountFromUrl = Number(searchParams?.get('rooms')) || 0;
+  const typeFromUrl = Number(searchParams?.get('type')) || 0;
+  const startDateFromUrl = searchParams?.get('startDate');
+  const endDateFromUrl = searchParams?.get('endDate');
+  const cruiseFromUrl = Number(searchParams?.get('cruise')) || 0;
+  
+  const startDate = startDateFromUrl ? new Date(startDateFromUrl) : null;
+  const endDate = endDateFromUrl ? new Date(endDateFromUrl) : null;
 
-  const filterListings = (category: string, roomCount: number) => {
-    if (!listings) return;
-
-    let filtered = [...listings];
-
-    // Filter by category if specified
-    if (category && category !== '') {
-      filtered = filtered.filter(listing => listing.category === category);
+  const HandleGetAvailableHouseBoats = async () => {
+    const data = await GetAvailableHouseBoats({
+      TripModeId: typeFromUrl,
+      CruiseTypeId: cruiseFromUrl,
+      BoatCategoryId: categoryFromUrl,
+      RoomCount: roomCountFromUrl,
+      CheckInDate: startDate,
+      CheckOutDate: endDate,
+      Skip: 0,
+      Take: 10,
+    });
+    
+    if (!data || data.length === 0) {
+      return [];
     }
-
-    // Filter by room count if specified (greater than 0)
-    if (roomCount > 0) {
-      filtered = filtered.filter(listing => {
-        const listingRoomCount = listing.roomCount || 0;
-        return listingRoomCount === roomCount;
-      });
-    }
-
-    setFilteredListings(filtered);
+    
+    // Add placeholder for boats without images
+    const processedData = data.map((boat: any) => ({
+      ...boat,
+      boatImage: boat.boatImage || '/placeholder-boat.jpg',
+    }));
+    
+    return processedData;
   };
 
-  useEffect(() => {
-    if (listings) {
-      setFilteredListings(listings); // Show all listings initially
+  const cacheKey = `boats-${categoryFromUrl}-${roomCountFromUrl}-${typeFromUrl}-${cruiseFromUrl}-${startDateFromUrl}-${endDateFromUrl}`;
+
+  const { data: listings, error, isLoading } = useSWR(
+    cacheKey,
+    HandleGetAvailableHouseBoats,
+    { 
+      refreshInterval: 25 * 60 * 1000,
+      revalidateOnFocus: false,
+      shouldRetryOnError: false,
     }
-  }, [listings]);
+  );
 
-  useEffect(() => {
-    filterListings(filterCriteria.category, filterCriteria.roomCount);
-  }, [filterCriteria, listings]);
-
-  if (isValidating || isLoading) {
+  if (isLoading) {
     return (
-      <div className="items-center">
-        <ListingCardSkeleton />
-      </div>
-    );
-  }
-
-  if (!listings || !Array.isArray(listings)) {
-    return <EmptyState showReset />;
-  }
-
-  return (
-    <>
       <Container>
-        <div className="pb-20 pt-36 md:pt-24">
-          <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
-            {filteredListings.length > 0 ? (
-              filteredListings.map((listing: any) => (
-                <ListingCard key={listing.boatId} data={listing} />
-              ))
-            ) : (
-              <BoatsEmptyState showReset={true} />
-            )}
+        <div className="pb-20 pt-40 lg:pt-28">
+          <div className="items-center">
+            <ListingCardSkeleton />
           </div>
         </div>
       </Container>
-    </>
+    );
+  }
+
+  if (error) {
+    console.error('Error loading boats:', error);
+    return (
+      <Container>
+        <div className="pb-20 pt-40 lg:pt-28">
+          <EmptyState 
+            showReset 
+            title="Something went wrong" 
+            subtitle="Please try again later" 
+          />
+        </div>
+      </Container>
+    );
+  }
+
+  if (!listings || !Array.isArray(listings) || listings.length === 0) {
+    return (
+      <Container>
+        <div className="pb-20 pt-40 lg:pt-28">
+          <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+            <BoatsEmptyState showReset={true} />
+          </div>
+        </div>
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <div className="pb-20 pt-40 lg:pt-28">
+        <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+          {listings.map((listing: any) => (
+            <ListingCard key={listing.boatId} data={listing} />
+          ))}
+        </div>
+      </div>
+    </Container>
   );
 };
 

@@ -11,7 +11,7 @@ interface DateRange {
 }
 
 const categoryOptions = [
-  { id: 'allCategory', label: 'All Category' },
+  { id: Categories.All, label: 'All Category' },
   { id: Categories.Deluxe, label: 'Delux' },
   { id: Categories.Premium, label: 'Premium'},
   { id: Categories.Luxury, label: 'Luxury' },
@@ -29,7 +29,7 @@ const SearchBar = () => {
   const [selectedCruise, setSelectedCruise] = useState<BoatCruises>(BoatCruises.overNightCruise);
   const [selectedType, setSelectedType] = useState<BookingType | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({ startDate: null, endDate: null });
-  const [selectedCategory, setSelectedCategory] = useState<Categories | 'allCategory'>('allCategory');
+  const [selectedCategory, setSelectedCategory] = useState<Categories>(Categories.All);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [roomCount, setRoomCount] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
@@ -117,25 +117,33 @@ const SearchBar = () => {
     }
 
     try {
-      // const params = new URLSearchParams({
-      //   type: selectedType,
-      //   cruise: selectedCruise,
-      //   startDate: selectedDateRange.startDate.toISOString(),
-      //   ...(selectedDateRange.endDate && { endDate: selectedDateRange.endDate.toISOString() }),
-      //   ...(selectedCategory !== 'allCategory' && { category: selectedCategory }),
-      //   rooms: roomCount.toString(),
-      // });
+      const params = new URLSearchParams();
+      
+      // Add required parameters
+      if (selectedType) params.append('type', selectedType.toString());
+      if (selectedCategory) {
+        params.append('category', selectedCategory.toString());
+      }
+      params.append('rooms', roomCount.toString());
+      
+      // Add date parameters
+      if (selectedDateRange.startDate) {
+        params.append('startDate', selectedDateRange.startDate.toISOString());
+      }
+      if (selectedDateRange.endDate) {
+        params.append('endDate', selectedDateRange.endDate.toISOString());
+      }
+      
+      // Add cruise type
+      params.append('cruise', selectedCruise.toString());
 
-      // const response = await fetch(`/api/boats?${params}`);
-      // const data = await response.json();
-
-      router.push(`/houseBoats`);
+      router.push(`/houseBoats?${params.toString()}`);
     } catch (error) {
-      console.error('Error fetching boats:', error);
+      console.error('Error during search:', error);
     }
   };
 
-  const getCategoryLabel = (type: Categories | 'allCategory') => {
+  const getCategoryLabel = (type: Categories) => {
     const option = categoryOptions.find(o => o.id === type);
     return option ? option.label : null;
   };
@@ -156,7 +164,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative w-full my-6 md:my-8">
+    <div className="relative w-full my-6 lg:my-8">
       <div className="flex w-full gap-1 px-1 py-1 justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
         <div className='w-full'>
           <div className='w-full grid grid-cols-3'>
@@ -255,7 +263,7 @@ const SearchBar = () => {
                     <button
                       key={option.id}
                       onClick={() => {
-                        setSelectedCategory(option.id as Categories | 'allCategory');
+                        setSelectedCategory(option.id);
                         setActiveSection(null);
                       }}
                       className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${
