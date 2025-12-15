@@ -1,14 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Container from '../components/Misc/Container';
 import ListingCard from '../components/ListingCard/ListingCard';
-import EmptyState from '../components/Misc/EmptyState';
-import useSWR from 'swr';
 import BoatsEmptyState from './BoatsEmptyState';
 import ListingCardSkeleton from '../components/ListingCard/ListingCardSkeleton';
 import GetAvailableHouseBoats from '../actions/GetAvailableHouseBoats/GetAvailableHouseBoats';
+import useSWR from 'swr';
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -23,8 +22,18 @@ const Page = () => {
   const startDate = startDateFromUrl ? new Date(startDateFromUrl) : null;
   const endDate = endDateFromUrl ? new Date(endDateFromUrl) : null;
 
-  const HandleGetAvailableHouseBoats = async () => {
-    const data = await GetAvailableHouseBoats({
+  const [paginationLoading, setPaginationLoading] = useState(false);
+  const [allListings, setAllListings] = useState<any[]>([]);
+  const [skip, setSkip] = useState(0);
+  const take = 18;
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  const isFetchingRef = useRef(false);
+
+  const cacheKey = `boats-${categoryFromUrl}-${roomCountFromUrl}-${typeFromUrl}-${cruiseFromUrl}-${startDateFromUrl}-${endDateFromUrl}`;
+
+  const fetchInitialBoats = async () => {
+    const result = await GetAvailableHouseBoats({
       TripModeId: typeFromUrl,
       CruiseTypeId: cruiseFromUrl,
       BoatCategoryId: categoryFromUrl,
@@ -32,40 +41,138 @@ const Page = () => {
       CheckInDate: startDate,
       CheckOutDate: endDate,
       Skip: 0,
-      Take: 10,
+      Take: take,
     });
-    
-    if (!data || data.length === 0) {
-      return [];
+
+    if (result && result.data && result.data.items && result.data.items.length > 0) {
+      const processedData = result.data.items.map((boat: any) => ({
+        ...boat,
+        boatImage: boat.boatImage || '/placeholder-boat.jpg',
+      }));
+
+      return {
+        items: processedData,
+        totalResults: result.data.totalResults,
+      };
     }
-    
-    // Add placeholder for boats without images
-    const processedData = data.map((boat: any) => ({
-      ...boat,
-      boatImage: boat.boatImage || '/placeholder-boat.jpg',
-    }));
-    
-    return processedData;
+
+    return { items: [], totalResults: 0 };
   };
 
-  const cacheKey = `boats-${categoryFromUrl}-${roomCountFromUrl}-${typeFromUrl}-${cruiseFromUrl}-${startDateFromUrl}-${endDateFromUrl}`;
-
-  const { data: listings, error, isLoading } = useSWR(
+  const { data: initialData, error, isLoading } = useSWR(
     cacheKey,
-    HandleGetAvailableHouseBoats,
-    { 
-      refreshInterval: 25 * 60 * 1000,
+    fetchInitialBoats,
+    {
       revalidateOnFocus: false,
-      shouldRetryOnError: false,
+      revalidateOnReconnect: false,
+      refreshInterval: 0,
+      dedupingInterval: 60000, 
     }
   );
+
+  useEffect(() => {
+    setAllListings([]);
+    setSkip(0);
+    setHasMore(true);
+    isFetchingRef.current = false;
+  }, [cacheKey]);
+
+  useEffect(() => {
+    if (initialData && initialData.items.length > 0) {
+      setAllListings(initialData.items);
+      setHasMore(initialData.items.length < initialData.totalResults);
+      setSkip(0);
+      isFetchingRef.current = false;
+    } else if (initialData && initialData.items.length === 0) {
+      setAllListings([]);
+      setHasMore(false);
+      setSkip(0);
+      isFetchingRef.current = false;
+    }
+  }, [initialData]);
+
+  useEffect(() => {
+    if (skip > 0 && hasMore && !isFetchingRef.current) {
+      const fetchData = async () => {
+        isFetchingRef.current = true;
+        setPaginationLoading(true);
+
+        try {
+          const result = await GetAvailableHouseBoats({
+            TripModeId: typeFromUrl,
+            CruiseTypeId: cruiseFromUrl,
+            BoatCategoryId: categoryFromUrl,
+            RoomCount: roomCountFromUrl,
+            CheckInDate: startDate,
+            CheckOutDate: endDate,
+            Skip: skip,
+            Take: take,
+          });
+
+          if (result && result.data && result.data.items && result.data.items.length > 0) {
+            const processedData = result.data.items.map((boat: any) => ({
+              ...boat,
+              boatImage: boat.boatImage || '/placeholder-boat.jpg',
+            }));
+
+            setAllListings((prev) => [...prev, ...processedData]);
+            
+            // Use functional update to get accurate count
+            setAllListings((current) => {
+              const currentTotal = current.length;
+              setHasMore(currentTotal < result.data.totalResults);
+              return current;
+            });
+          } else {
+            setHasMore(false);
+          }
+        } catch (error: any) {
+          console.error('Error loading more boats:', error);
+          setHasMore(false);
+        } finally {
+          setPaginationLoading(false);
+          isFetchingRef.current = false;
+        }
+      };
+
+      fetchData();
+    }
+  }, [skip, hasMore, categoryFromUrl, roomCountFromUrl, typeFromUrl, cruiseFromUrl, startDate, endDate, take]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (isLoading || paginationLoading || !hasMore || allListings.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && !paginationLoading && hasMore && !isFetchingRef.current) {
+          setSkip((prev) => prev + take);
+        }
+      },
+      {
+        root: null,
+        rootMargin: '100px',
+        threshold: 0.1,
+      }
+    );
+
+    const currentObserver = observerRef.current;
+    if (currentObserver) observer.observe(currentObserver);
+
+    return () => {
+      if (currentObserver) observer.unobserve(currentObserver);
+    };
+  }, [isLoading, paginationLoading, hasMore, allListings.length, take]);
 
   if (isLoading) {
     return (
       <Container>
         <div className="pb-20 pt-40 lg:pt-28">
-          <div className="items-center">
-            <ListingCardSkeleton />
+          <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <ListingCardSkeleton key={i} />
+            ))}
           </div>
         </div>
       </Container>
@@ -74,20 +181,9 @@ const Page = () => {
 
   if (error) {
     console.error('Error loading boats:', error);
-    return (
-      <Container>
-        <div className="pb-20 pt-40 lg:pt-28">
-          <EmptyState 
-            showReset 
-            title="Something went wrong" 
-            subtitle="Please try again later" 
-          />
-        </div>
-      </Container>
-    );
   }
 
-  if (!listings || !Array.isArray(listings) || listings.length === 0) {
+  if (!allListings || allListings.length === 0) {
     return (
       <Container>
         <div className="pb-20 pt-40 lg:pt-28">
@@ -103,10 +199,24 @@ const Page = () => {
     <Container>
       <div className="pb-20 pt-40 lg:pt-28">
         <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
-          {listings.map((listing: any) => (
+          {allListings.map((listing: any) => (
             <ListingCard key={listing.boatId} data={listing} />
           ))}
         </div>
+
+        {allListings.length > 0 && (
+          <div ref={observerRef} className="w-full">
+            {paginationLoading ? (
+              <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[...Array(3)].map((_, i) => (
+                  <ListingCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : !hasMore && allListings.length > 0 ? (
+              <div className="text-gray-400 w-full text-center py-8">No more boats available</div>
+            ) : null}
+          </div>
+        )}
       </div>
     </Container>
   );

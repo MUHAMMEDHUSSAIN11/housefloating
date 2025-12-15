@@ -12,7 +12,7 @@ interface DateRange {
 
 const categoryOptions = [
   { id: Categories.All, label: 'All Category' },
-  { id: Categories.Deluxe, label: 'Delux' },
+  { id: Categories.Deluxe, label: 'Deluxe' },
   { id: Categories.Premium, label: 'Premium'},
   { id: Categories.Luxury, label: 'Luxury' },
 ];

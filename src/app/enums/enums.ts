@@ -15,10 +15,10 @@ export enum BookingStatus
 
 export enum Categories
 {
-    Deluxe,
-    Premium,
-    Luxury,
-    All,
+    Deluxe = 1,
+    Premium = 2,
+    Luxury = 3,
+    All = 4,
 }
 
 export enum amount
@@ -53,9 +53,9 @@ export enum BookingType {
 }
 
 export enum BoatCruises {
-    dayCruise,
-    overNightCruise,
-    nightStay,
+    dayCruise = 1,
+    overNightCruise = 2,
+    nightStay = 3,
 }
 
 export const coordinates: [number, number] = [9.5008, 76.3443];
