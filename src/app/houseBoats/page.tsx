@@ -29,6 +29,7 @@ const Page = () => {
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<HTMLDivElement | null>(null);
   const isFetchingRef = useRef(false);
+  const isInitializedRef = useRef(false);
 
   const cacheKey = `boats-${categoryFromUrl}-${roomCountFromUrl}-${typeFromUrl}-${cruiseFromUrl}-${startDateFromUrl}-${endDateFromUrl}`;
 
@@ -75,24 +76,27 @@ const Page = () => {
     setSkip(0);
     setHasMore(true);
     isFetchingRef.current = false;
+    isInitializedRef.current = false;
   }, [cacheKey]);
 
   useEffect(() => {
-    if (initialData && initialData.items.length > 0) {
-      setAllListings(initialData.items);
-      setHasMore(initialData.items.length < initialData.totalResults);
-      setSkip(0);
+    if (initialData && !isInitializedRef.current) {
+      if (initialData.items.length > 0) {
+        setAllListings(initialData.items);
+        setHasMore(initialData.items.length < initialData.totalResults);
+        setSkip(take);
+      } else {
+        setAllListings([]);
+        setHasMore(false);
+        setSkip(0);
+      }
       isFetchingRef.current = false;
-    } else if (initialData && initialData.items.length === 0) {
-      setAllListings([]);
-      setHasMore(false);
-      setSkip(0);
-      isFetchingRef.current = false;
+      isInitializedRef.current = true;
     }
-  }, [initialData]);
+  }, [initialData, take]);
 
   useEffect(() => {
-    if (skip > 0 && hasMore && !isFetchingRef.current) {
+    if (skip > 0 && skip % take === 0 && hasMore && !isFetchingRef.current && isInitializedRef.current) {
       const fetchData = async () => {
         isFetchingRef.current = true;
         setPaginationLoading(true);
@@ -115,13 +119,10 @@ const Page = () => {
               boatImage: boat.boatImage || '/placeholder-boat.jpg',
             }));
 
-            setAllListings((prev) => [...prev, ...processedData]);
-            
-            // Use functional update to get accurate count
-            setAllListings((current) => {
-              const currentTotal = current.length;
-              setHasMore(currentTotal < result.data.totalResults);
-              return current;
+            setAllListings((prev) => {
+              const updated = [...prev, ...processedData];
+              setHasMore(updated.length < result.data.totalResults);
+              return updated;
             });
           } else {
             setHasMore(false);
@@ -137,9 +138,8 @@ const Page = () => {
 
       fetchData();
     }
-  }, [skip, hasMore, categoryFromUrl, roomCountFromUrl, typeFromUrl, cruiseFromUrl, startDate, endDate, take]);
+  }, [skip]);
 
-  // Intersection Observer for infinite scroll
   useEffect(() => {
     if (isLoading || paginationLoading || !hasMore || allListings.length === 0) return;
 
@@ -180,7 +180,17 @@ const Page = () => {
   }
 
   if (error) {
-    console.error('Error loading boats:', error);
+    return (
+      <Container>
+        <div className="pb-20 pt-40 lg:pt-28">
+          <div className="pt-12 md:pt-8">
+            <div className="text-red-500 text-center py-8">
+              Failed to load boats. Please try again.
+            </div>
+          </div>
+        </div>
+      </Container>
+    );
   }
 
   if (!allListings || allListings.length === 0) {
