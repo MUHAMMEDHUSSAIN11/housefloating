@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Container from '../components/Misc/Container';
 import ListingCard from '../components/ListingCard/ListingCard';
@@ -25,7 +25,7 @@ const Page = () => {
   const [paginationLoading, setPaginationLoading] = useState(false);
   const [allListings, setAllListings] = useState<any[]>([]);
   const [skip, setSkip] = useState(0);
-  const take = 18;
+  const take = 27;
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<HTMLDivElement | null>(null);
   const isFetchingRef = useRef(false);
@@ -66,7 +66,7 @@ const Page = () => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       refreshInterval: 0,
-      dedupingInterval: 60000, 
+      dedupingInterval: 5000, 
     }
   );
 
