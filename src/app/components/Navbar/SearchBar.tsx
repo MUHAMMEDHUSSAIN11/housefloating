@@ -4,6 +4,7 @@ import DateSelector from './DateSelector';
 import { format } from 'date-fns';
 import { BookingType, BoatCruises, Categories } from '@/app/enums/enums';
 import { usePathname, useRouter } from 'next/navigation';
+import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
 
 interface DateRange {
   startDate: Date | null;
@@ -128,10 +129,10 @@ const SearchBar = () => {
       
       // Add date parameters
       if (selectedDateRange.startDate) {
-        params.append('startDate', selectedDateRange.startDate.toISOString());
+        params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
       }
       if (selectedDateRange.endDate) {
-        params.append('endDate', selectedDateRange.endDate.toISOString());
+        params.append('endDate', FormatToLocalDateTime(selectedDateRange.endDate));
       }
       
       // Add cruise type
