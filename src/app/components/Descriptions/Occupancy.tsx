@@ -15,7 +15,7 @@ interface OccupancyProps {
 const Occupancy: React.FC<OccupancyProps> = (props) => {
     return (
         <div>
-            <h1 className="font-sans font-semibold text-2xl mb-5 p-2">{props.title}</h1>
+            <h1 className="font-sans font-semibold text-2xl p-2">{props.title}</h1>
             <div className="grid grid-cols-1/2 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 p-1">
                 <div className="p-4 rounded-lg shadow-md bg-white w-full">
                     <div>

@@ -80,7 +80,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   return (
     <>
       <ConfirmModal listing={listing} modeOfTravel={cruiseType.travelMode} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalBookingDate={bookingDate} finalMinorCount={finalChildCount} />
-      <div className='max-w-screen-lg mx-auto pt-36 md:pt-20'>
+      <div className='max-w-screen-xl mx-auto pt-36 md:pt-20'>
         <div className='flex flex-col gap-6'>
           <ListingHead
             title={listing.getboat.data()?.guestTitle}
@@ -88,7 +88,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
             category={listing.getboat.data()?.category}
             roomCount={listing.getboat.data()?.roomCount}
             id={listing.getboat.id} />
-          <div className='grid grid-cols-1 md:grid-cols-7 md:gap-10 mt-6'>
+          <div className='grid grid-cols-1 md:grid-cols-7 w-11/12 mx-auto md:gap-10 mt-2'>
             <ListingInfo
               title={listing.getboat.data()?.guestTitle}
               travelMode={cruiseType.travelMode}
@@ -106,7 +106,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               dayGuestCountMin={listing.getboat.data()?.minDayGuest}
               nightGuestCountMin={listing.getboat.data()?.minNightGuest}
             />
-            <div className=' mb-10 md:order-last md:col-span-3'>
+            <div className='md:order-last md:col-span-3'>
               <ListingReservation
                 price={listing.getboat.data()?.dayCruisePrice}
                 totalPrice={totalPrice}
@@ -121,51 +121,56 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
               />
             </div>
           </div>
-          <div className="block md:hidden">
-            <Map center={coordinates} />
-
+          <div className='w-11/12 mx-auto'>
+            {cruiseType.travelMode === "Overnight" ? (
+              <>
+                <Occupancy title={'Overnight Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxNightGuest} Count={listing.getboat.data()?.guestCount} adultAddonPrice={listing.getboat.data()?.adultAddonPrice} childAddonPrice={listing.getboat.data()?.childAddonPrice} />
+                <hr />
+                <NightSteps />
+              </>
+            ) : (
+              <>
+                <Occupancy title={'Day Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxDayGuest} Count={listing.getboat.data()?.guestCount} adultAddonPrice={listing.getboat.data()?.adultAddonPrice} childAddonPrice={listing.getboat.data()?.childAddonPrice} />
+                <hr />
+                <DayCruiseSteps />
+              </>
+            )}
+            <div className="hidden md:block">
+              <Map center={coordinates} />
+            </div>
+            <div className="block md:hidden">
+              <Map center={coordinates} />
+            </div>
+          
+            {
+              (() => {
+                if (listing.getboat.data()?.category === Categories.Deluxe) {
+                  return (
+                    <>
+                      <hr />
+                      <DeluxeFood bookingType={cruiseType.travelMode} />
+                    </>
+                  )
+                } else if (listing.getboat.data()?.category === Categories.Premium) {
+                  return (
+                    <>
+                      <hr />
+                      <PremiumFood bookingType={cruiseType.travelMode} />
+                    </>
+                  )
+                } else {
+                  return (
+                    <>
+                      <hr />
+                      <LuxuryFood bookingType={cruiseType.travelMode} />
+                    </>
+                  )
+                }
+              })()
+            }
+            <hr />
+            <HouseRules />
           </div>
-          {cruiseType.travelMode === "Overnight" ? (
-            <>
-              <Occupancy title={'Overnight Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxNightGuest} Count={listing.getboat.data()?.guestCount} adultAddonPrice={listing.getboat.data()?.adultAddonPrice} childAddonPrice={listing.getboat.data()?.childAddonPrice} />
-              <hr />
-              <NightSteps />
-            </>
-          ) : (
-            <>
-              <Occupancy title={'Day Cruise Occupancy'} category={listing.getboat.data()?.category} limit={listing.getboat.data()?.maxDayGuest} Count={listing.getboat.data()?.guestCount} adultAddonPrice={listing.getboat.data()?.adultAddonPrice} childAddonPrice={listing.getboat.data()?.childAddonPrice} />
-              <hr />
-              <DayCruiseSteps />
-            </>
-          )}
-          {
-            (() => {
-              if (listing.getboat.data()?.category === Categories.Deluxe) {
-                return (
-                  <>
-                    <hr />
-                    <DeluxeFood bookingType={cruiseType.travelMode} />
-                  </>
-                )
-              } else if (listing.getboat.data()?.category === Categories.Premium) {
-                return (
-                  <>
-                    <hr />
-                    <PremiumFood bookingType={cruiseType.travelMode} />
-                  </>
-                )
-              } else {
-                return (
-                  <>
-                    <hr />
-                    <LuxuryFood bookingType={cruiseType.travelMode} />
-                  </>
-                )
-              }
-            })()
-          }
-          <hr />
-          <HouseRules />
         </div>
       </div>
       <hr />

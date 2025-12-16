@@ -29,39 +29,42 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdult
 
 
   return (
-    <div className="bg-white rounded-xl border-[1px] border-neutral-200 overflow-hidden sm:pt-2 shadow-md">
-      <div className="flex flex-row items-center gap-4 p-4 border-neutral-200">
-        <div className="font-sans font-medium text-neutral-600">Select Option</div>
-        <div className="flex items-center">
+    <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-md">
+      <div className="flex flex-col items-center gap-4 p-4 border-neutral-200">
+        <div className="flex flex-row w-full gap-4">
+        <div className="font-semibold">DayCruise</div>
+          <div className="flex items-center">
+            <label className="inline-flex items-center ">
+              <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="DayCruise"
+                checked={ModeStore.travelMode === 'DayCruise'} onChange={() => changeTravelMode(TravelMode.DayCruise)} />
+              <span className="ml-2">Non-Veg</span>
+            </label>
+            <label className="inline-flex items-center ml-4">
+              <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="Overnight"
+                checked={ModeStore.travelMode === 'Overnight'} onChange={() => changeTravelMode(TravelMode.OverNight)} />
+              <span className="ml-2">Veg</span>
+            </label>
+          </div>
+        </div>
 
-          <label className="inline-flex items-center ">
-            <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="DayCruise"
-              checked={ModeStore.travelMode === 'DayCruise'} onChange={() => changeTravelMode(TravelMode.DayCruise)} />
-            <span className="ml-2">Day Cruise</span>
-          </label>
-          
-          <label className="inline-flex items-center ml-4">
-            <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="Overnight"
-              checked={ModeStore.travelMode === 'Overnight'} onChange={() => changeTravelMode(TravelMode.OverNight)} />
-            <span className="ml-2">Overnight</span>
-          </label>
-          
+        <div className="grid grid-cols-2 w-full justify-between text-start border rounded-lg p-4">
+          <div className="flex flex-col border-r-2 pl-4">
+            <div className="text-sm">CheckInTime</div>
+            <div className="text-black">9:30Am</div>
+          </div>
+          <div className="flex flex-col pl-4">
+            <div className="text-sm">CheckOutTime</div>
+            <div className="text-black">12:30Pm</div>
+          </div>
+          <div className="col-span-2 pt-2 pl-4 border-t-2">
+              <div className="text-xl font-semibold">₹{price}</div>
+              <div className="text-xs">per day cruise</div>
+          </div>
+        </div>
+        <div className="w-full">
+          <Button disabled={disabled} label="Book Reservation" onClick={onSubmit} />
         </div>
       </div>
-      <hr />
-      <Dayselector value={date} disabledDates={disabledDates} onChange={(value) => onChangeDate(value)} />
-      <hr />
-      <div className="p-4">
-        <Button disabled={disabled} label=" Request Reservation" onClick={onSubmit} />
-      </div>
-      <hr />
-      <div className="p-4 flex flex-col items-center">
-        <div className="flex flex-row justify-between items-center  font-semibold text-lg">
-          <div>₹{totalPrice}</div>
-        </div>
-        <div className="text-center text-xs mt-2">Please note that prices may change on weekends and holidays</div>
-      </div>
-
     </div>
   );
 }

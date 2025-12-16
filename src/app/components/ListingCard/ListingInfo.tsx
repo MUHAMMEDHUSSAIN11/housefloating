@@ -47,11 +47,12 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ title, dayGuestCountMax, nigh
   }
 
   return (
-    <div className='col-span-4 flex flex-col gap-8 px-1'>
+    <div className='col-span-4 flex flex-col gap-7 px-1'>
       <div className='flex flex-col gap-2'>
-        <div className="text-xl flex flex-row items-center gap-2">
-          <div>{guestCount} Guests</div>
-          <div>{roomCount} Bedrooms</div>
+        <div className="text-xl font-semibold">LuxuryHouseBoats,Alappey,India</div>
+        <div className="text-sm flex flex-row items-center gap-2">
+          <div>{guestCount} Guests</div>.
+          <div>{roomCount} Bedrooms</div>.
           <div>{bathroomCount} Bathrooms</div>
         </div>
       </div>
@@ -61,10 +62,6 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ title, dayGuestCountMax, nigh
       </div>
       <div className=''>
         <Counter onChange={(value) => setChildCount(value)} value={childCount} max={roomCount} title="Number of Childrens" subtitle="Ages 5 to 11" />
-      </div>
-      <hr />
-      <div className="hidden md:block">
-        <Map center={coordinates} />
       </div>
       <hr />
     </div>
