@@ -33,7 +33,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdult
       <div className="flex flex-col items-center gap-4 p-4 border-neutral-200">
         <div className="flex flex-row w-full gap-4">
         <div className="font-semibold">DayCruise</div>
-          <div className="flex items-center">
+          <div className="flex items-center ml-2 gap-2">
             <label className="inline-flex items-center ">
               <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="DayCruise"
                 checked={ModeStore.travelMode === 'DayCruise'} onChange={() => changeTravelMode(TravelMode.DayCruise)} />
