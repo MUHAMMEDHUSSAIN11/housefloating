@@ -30,8 +30,6 @@ export interface ListingClientProps {
   listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
 }
 
-
-
 const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   const [user] = useAuthState(auth);
   const loginModal = useLoginModal();
@@ -44,7 +42,6 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
 
   const cruiseType = useTravelModeStore();
 
-
   useEffect(() => {
     CalculatePrice(finalAdultCount, finalChildCount, bookingDate, listing, cruiseType.travelMode)
       .then((totalPrice) => {
@@ -55,8 +52,6 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
       });
   }, [finalAdultCount, finalChildCount, bookingDate, cruiseType]);
 
-
-
   const onCreateReservation = useCallback(() => {
     if (user) {
       if (cruiseType.travelMode == TravelMode.DayCruise && finalAdultCount <= listing.getboat.data()?.maxDayGuest) {
@@ -66,7 +61,6 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
       } else {
         toast.error("Maximum number of Guests exceeded!!")
       }
-
     } else {
       return loginModal.onOpen();
     }

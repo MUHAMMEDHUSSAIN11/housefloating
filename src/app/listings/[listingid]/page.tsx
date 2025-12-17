@@ -6,12 +6,14 @@ import ListingClient from './ListingClient';
 
 import useSWR from 'swr';
 
-import Spinner from '@/app/components/Misc/Spinner';
 import getBoatbyId from '@/app/actions/getBoatbyId';
 import ListingSkeleton from './ListingSkeleton';
+// import GetBoatById from '@/app/actions/GetBoatById/GetBoatById';
 
 interface Iparams {
   listingid?: string;
+  // Date: Date;
+  // CruiseTypeId: number;
 }
 
 const fetchBoatData = async (listingId: string ) => {
@@ -19,10 +21,22 @@ const fetchBoatData = async (listingId: string ) => {
   return fetchedBoatData;
 };
 
+// const fetchBoatData = async (listingId: string,Date: Date,CruiseTypeId: number ) => {
+//   const fetchedBoatData = await GetBoatById({
+//       BoatId: parseInt(listingId),
+//       Date: Date,
+//       CruiseTypeId: CruiseTypeId,
+//     });
+//   return fetchedBoatData;
+// };
+
 //maybe useParams can be implemented here.
 
 const Listingpage = ({ params }: { params: Iparams }) => {
   const listingId:any = params.listingid;
+  // const Date:Date = params.Date;
+  // const CruiseTypeId:number = params.CruiseTypeId;
+  // const { data: fetchedBoatData,error,isLoading } = useSWR(listingId, () => fetchBoatData(listingId,Date,CruiseTypeId));
   const { data: fetchedBoatData,error,isLoading } = useSWR(listingId, () => fetchBoatData(listingId));
 
   return (
