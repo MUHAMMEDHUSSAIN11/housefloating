@@ -24,11 +24,11 @@ const ListingHead: React.FC<ListingHeadProps> = ({id,imageSrc,title,roomCount,ca
   };
 
   return (
-    <div className='px-1 pt-28 md:pt-14'>
+    <div className='p-1 pt-28 md:pt-14'>
       <Heading title={title} subtitle={`${category} `} />
       <BreadCrumb/>
-      <div className="aspect-square w-full h-[60vh] overflow-hidden rounded-xl relative group">
-        <Image className="object-contain h-full w-full group-hover:scale-110 transition" src={imageSrc[currentIndex]} width={650} height={650} alt={title} />
+      <div className="aspect-square w-full h-[50vh] overflow-hidden rounded-xl relative group">
+        <Image className="object-contain h-full w-full transition" src={imageSrc[currentIndex]} width={650} height={650} alt={title} />
       </div>
       {/* Thumbnail Images */}
       <div className="flex top-4 justify-center py-2">

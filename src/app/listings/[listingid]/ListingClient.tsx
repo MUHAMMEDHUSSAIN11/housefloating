@@ -25,12 +25,30 @@ import { Categories, coordinates, TravelMode } from '@/app/enums/enums';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 
+interface BoatDetails {
+  boatId: number;
+  boatCategoryId: number;
+  boatCategory: string;
+  boatImages: string[] | null;
+  bedroomCount: number;
+  price: number;
+  boatCode: string;
+  guestCount: number | null;
+  cruiseTypeId: number;
+  cruiseType: string;
+  maxAdulCount:number;
+  minAdulCount:number;
+  maxChildCount:number;
+  bathroomCount:number;
+  boardingPoint:string;
+  aduldAddOnPrice:number;
+  childAddOnPrice:number;
+}
+
 
 export interface ListingClientProps {
   listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
 }
-
-
 
 const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   const [user] = useAuthState(auth);
@@ -80,7 +98,7 @@ const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
   return (
     <>
       <ConfirmModal listing={listing} modeOfTravel={cruiseType.travelMode} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalBookingDate={bookingDate} finalMinorCount={finalChildCount} />
-      <div className='max-w-screen-lg mx-auto pt-36 md:pt-20'>
+      <div className='max-w-screen-xl mx-auto pt-20 md:pt-16'>
         <div className='flex flex-col gap-6'>
           <ListingHead
             title={listing.getboat.data()?.guestTitle}
