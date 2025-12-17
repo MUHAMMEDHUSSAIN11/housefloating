@@ -25,6 +25,26 @@ import { Categories, coordinates, TravelMode } from '@/app/enums/enums';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 
+interface BoatDetails {
+  boatId: number;
+  boatCategoryId: number;
+  boatCategory: string;
+  boatImages: string[] | null;
+  bedroomCount: number;
+  price: number;
+  boatCode: string;
+  guestCount: number | null;
+  cruiseTypeId: number;
+  cruiseType: string;
+  maxAdulCount:number;
+  minAdulCount:number;
+  maxChildCount:number;
+  bathroomCount:number;
+  boardingPoint:string;
+  aduldAddOnPrice:number;
+  childAddOnPrice:number;
+}
+
 
 export interface ListingClientProps {
   listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> }
