@@ -19,9 +19,8 @@ const GetBoatById = async ({
                 CruiseTypeId
             },
         });
-        console.log("GetBoatById response:", response);
         if (response.status >= 200 && response.status < 300) {
-            return response.data
+            return response.data.data
         }
 
         return null;

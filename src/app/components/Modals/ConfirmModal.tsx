@@ -19,6 +19,7 @@ import validateOTP from '@/app/actions/validateOTP';
 import RequestBooking from '@/app/actions/RequestBooking';
 import { toast } from 'react-hot-toast';
 import SendRequestTelegram from '@/app/actions/SendRequestTelegram';
+import { BoatDetails } from '@/app/listings/[listingid]/page';
 
 
 
@@ -29,7 +30,7 @@ enum STEPS {
 }
 
 interface confirmModalProps {
-    listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> },
+    boatDetails: BoatDetails,
     modeOfTravel: string,
     finalPrice: number,
     finalHeadCount: number,
@@ -38,7 +39,7 @@ interface confirmModalProps {
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
@@ -155,17 +156,16 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
                 HeadCount: finalHeadCount,
                 Price: finalPrice as number,
                 Email: user?.email,
-                BoatId: listing.getboat.id,
-                BoatName: listing.getboat.data()?.title,
-                BoatTitle: listing.getboat.data()?.guestTitle,
+                BoatId: String(boatDetails.boatId),
+                BoatName: boatDetails.boatCode,
+                BoatTitle: boatDetails.boatCode,
                 MinorCount: finalMinorCount,
                 Mode: modeOfTravel,
                 Payment: false,
-                Category: listing.getboat.data()?.category,
+                Category: boatDetails.boatCategory,
                 Status: BookingStatus.Requested,
-                Image: listing.getboat.data()?.images[0],
+                Image: boatDetails.boatImages[0],
                 CreatedOn: Timestamp.fromDate(new Date()),
-                BoatOwnerPhoneNumber: listing.getboat.data()?.phoneNumber,
                 CruiseType: modeOfTravel
             };
 
@@ -181,8 +181,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
                     setStep(STEPS.PHONENUMBER);
                     handlePush();
                     SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber,
-                        modeOfTravel, listing.getboat.data()?.title, listing.getboat.data()?.category, listing.getboat.data()?.roomCount,
-                        listing.getboat.data()?.phoneNumber);
+                        modeOfTravel, boatDetails.boatCode, boatDetails.boatCategory, boatDetails.bedroomCount,
+                        );
                 })
                 .catch((error) => {
                     toast.error('something went wrong! Please contact our team');
@@ -220,8 +220,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
             <div className='flex flex-col gap-4 font-sans'>
                 <Heading title='Your Order Summary' />
                 <div className="bg-white p-4 rounded-lg shadow-md">
-                    <p className="text-lg font-semibold">{listing.getboat.data()?.guestTitle}</p>
-                    <p className="text-gray-900">{listing.getboat.data()?.roomCount} Bedroom, {listing.getboat.data()?.category}</p>
+                    <p className="text-lg font-semibold">{boatDetails.boatCode}</p>
+                    <p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>
                     <p className="text-gray-900">Booking Date: {finalBookingDate.toDateString()}</p>
                     <p className="text-gray-900">Total Price: {finalPrice}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>

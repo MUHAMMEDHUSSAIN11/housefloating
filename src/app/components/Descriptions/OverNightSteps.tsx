@@ -4,11 +4,9 @@ import React, { useState } from 'react';
 import AdditionalInfo from './AdditionalInfo';
 
 
-const NightSteps = () => {
-    // Initialize state to manage visibility--  this was added after Overnightsteps to reduce the screensize
+const OverNightSteps = () => {
     const [showMore, setShowMore] = useState(false);
 
-    // Function to toggle visibility
     const toggleShowMore = () => {
         setShowMore(!showMore);
     };
@@ -19,7 +17,7 @@ const NightSteps = () => {
                 <div className="container flex flex-wrap">
                     <div className="flex flex-wrap w-full">
                         <div className="lg:w-2/5 md:w-1/2 md:pr-10 md:py-6">
-                            <h1 className="font-sans font-semibold text-2xl text-gray-900 mb-5 ">Overnight Cruise Schedule</h1>
+                            <h1 className="font-sans font-semibold text-2xl text-gray-900 mb-5 ">Over Night Cruise Schedule</h1>
                             <div className="flex relative pb-12">
                                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
@@ -187,4 +185,4 @@ const NightSteps = () => {
     );
 };
 
-export default NightSteps;
+export default OverNightSteps;

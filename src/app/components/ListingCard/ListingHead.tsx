@@ -9,7 +9,7 @@ import Button from "../Misc/Button"
 import {Grid3x3, X, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface ListingHeadProps {
-  id: string
+  id: number
   imageSrc: string[]
   title: string
   roomCount: number

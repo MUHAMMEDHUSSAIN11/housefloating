@@ -1,32 +1,18 @@
 'use client';
 
 import { TravelMode } from "@/app/enums/enums";
-import Dayselector from "../Inputs/DaySelector";
 import Button from "../Misc/Button";
 import useTravelModeStore from "@/app/hooks/useTravelModeStore";
+import { useState } from "react";
 
 interface ListingReservationProps {
-  price: number;
-  date: Date,
   totalPrice: number;
-  onChangeDate: (value: any) => void;
   onSubmit: () => void;
-  setAdultCount: (value: number) => void,
-  setChildCount: (value: number) => void,
   disabled?: boolean;
-  disabledDates: Date[];
-  guestCount: number,
 }
 
-const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdultCount, setChildCount, totalPrice, date, onChangeDate, onSubmit, disabled, disabledDates, guestCount }) => {
-
-  const ModeStore = useTravelModeStore();
-
-  const changeTravelMode = (travelMode: TravelMode) => {
-    ModeStore.setTravelMode(travelMode);
-    setAdultCount(guestCount);
-  };
-
+const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onSubmit, disabled }) => {
+  const [isVeg, setIsVeg] = useState(false);
 
   return (
     <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-md">
@@ -36,12 +22,12 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdult
           <div className="flex items-center ml-2 gap-2">
             <label className="inline-flex items-center ">
               <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="DayCruise"
-                checked={ModeStore.travelMode === 'DayCruise'} onChange={() => changeTravelMode(TravelMode.DayCruise)} />
+                checked={!isVeg} onChange={() =>{setIsVeg(false)}} />
               <span className="ml-2">Non-Veg</span>
             </label>
             <label className="inline-flex items-center ml-4">
               <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="Overnight"
-                checked={ModeStore.travelMode === 'Overnight'} onChange={() => changeTravelMode(TravelMode.OverNight)} />
+                checked={isVeg} onChange={() =>{setIsVeg(true)}} />
               <span className="ml-2">Veg</span>
             </label>
           </div>
@@ -57,7 +43,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ price, setAdult
             <div className="text-black">12:30Pm</div>
           </div>
           <div className="col-span-2 pt-2 pl-4 border-t-2">
-              <div className="text-xl font-semibold">₹{price}</div>
+              <div className="text-xl font-semibold">₹{totalPrice}</div>
               <div className="text-xs">per day cruise</div>
           </div>
         </div>
