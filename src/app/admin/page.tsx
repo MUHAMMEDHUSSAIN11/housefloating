@@ -2,7 +2,6 @@
 
 import { DocumentData } from 'firebase/firestore';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { BookingStatus } from '../enums/enums';
 import useSWR from 'swr';
 import { confirmDialog } from 'primereact/confirmdialog';
@@ -12,25 +11,25 @@ import { toast } from 'react-hot-toast';
 import { Search, Filter, RefreshCw, CheckCircle, XCircle, Clock, Calendar } from 'lucide-react';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
-import { auth } from '../firebase/clientApp';
 import getReservations from '../actions/getReservations';
 import UpdateStatusToApprovedID from '../actions/UpdateStatusToApprovedID';
 import isAuthority from '../actions/checkAuthority';
 import EmptyState from '../components/Misc/EmptyState';
 import Spinner from '../components/Misc/Spinner';
 import ReservationRow from './ReservationRow';
+import useAuth from '../hooks/useAuth';
 
 
 const AdminPage = () => {
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const dtoast = useRef(null);
 
   const { data: reservations, error, isValidating, isLoading, mutate } = useSWR(
-    'actions', 
-    getReservations, 
+    'actions',
+    getReservations,
     {
       refreshInterval: 10 * 60 * 1000,
     }
@@ -49,7 +48,7 @@ const AdminPage = () => {
       toast.error('Reservation is already Cancelled');
       return;
     }
-    
+
     try {
       await UpdateStatusToApprovedID(reservation.id);
       toast.success('Reservation approved successfully!');
@@ -72,42 +71,42 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    if (user?.uid) {
-      setIsAdmin(isAuthority(user.uid));
+    if (user?.id) {
+      setIsAdmin(isAuthority(String(user.id)));
     } else {
       setIsAdmin(false);
     }
   }, [user]);
 
   // Filter reservations based on search and status
-  const filteredReservations = reservations?.docs?.filter((listing) => {
+  const filteredReservations = reservations?.docs?.filter((listing: any) => {
     const data = listing.data();
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       data.BoatName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       data.Contactnumber?.includes(searchTerm) ||
       data.Mode?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'all' || data.Status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   }) || [];
 
   const getStatusCounts = () => {
     if (!reservations?.docs) return { total: 0, requested: 0, approved: 0, confirmed: 0, cancelled: 0 };
-    
-    const counts = reservations.docs.reduce((acc, listing) => {
+
+    const counts = reservations.docs.reduce((acc: any, listing: any) => {
       const status = listing.data().Status;
       acc.total++;
-      
+
       // Type-safe status counting
       const statusKey = status.toLowerCase() as keyof typeof acc;
       if (statusKey in acc && statusKey !== 'total') {
         acc[statusKey] = (acc[statusKey] || 0) + 1;
       }
-      
+
       return acc;
     }, { total: 0, requested: 0, approved: 0, confirmed: 0, cancelled: 0 });
-    
+
     return counts;
   };
 
@@ -268,7 +267,7 @@ const AdminPage = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredReservations.map((listing) => (
+                  filteredReservations.map((listing: any) => (
                     <ReservationRow
                       key={listing.id}
                       reservation={listing.data()}
@@ -295,4 +294,3 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
-

@@ -1,8 +1,8 @@
 ﻿'use client';
 
-import { AiFillFacebook } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import useLoginModal from "@/app/hooks/useLoginModal";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
@@ -10,36 +10,39 @@ import Modal from "./Modal";
 import Input from "../Inputs/Input";
 import Heading from "../Misc/Heading";
 import Button from "../Misc/Button";
-import { FIREBASE_ERRORS } from "@/app/firebase/errors";
-import { useCreateUserWithEmailAndPassword, useSignInWithFacebook, useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { auth, firestore } from "@/app/firebase/clientApp";
-import { User } from "firebase/auth";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
-
+import axios from "axios";
+import useAuth from "@/app/hooks/useAuth";
 
 const RegisterModal = () => {
+  const router = useRouter();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth(); // Use custom auth hook
 
-  const [createUserWithEmailAndPassword,userCred,loading,userError] = useCreateUserWithEmailAndPassword(auth);
-  const [signInWithGoogle,googleUserCred,googleLoading,googleerror] = useSignInWithGoogle(auth);
-  const [SignInWithFacebook,fbUserCred,fbLoading,fberror] = useSignInWithFacebook(auth);
-
-  const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { email: '', password: '' }, });
-
+  const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      userName: '',
+      mobileNumber: ''
+    },
+  });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
-    if (userError) {
-      const userError = null;
+    const { email, password, confirmPassword, userName, mobileNumber } = data;
+
+    if (!userName || userName.trim() === '') {
+      toast.error("Name is required");
+      setIsLoading(false);
+      return;
     }
 
-    const { email, password, confirmPassword } = data;
-
-    if (password.length < 6) {
-      toast.error("Password should be at least 6 characters long");
+    if (!mobileNumber || mobileNumber.trim() === '') {
+      toast.error("Mobile Number is required");
       setIsLoading(false);
       return;
     }
@@ -49,65 +52,54 @@ const RegisterModal = () => {
       setIsLoading(false);
       return;
     }
-    const result = await createUserWithEmailAndPassword(email, password);
-    setIsLoading(false);
-    if (result) {
-      registerModal.onClose();
-      toast.success("User Created Succesfully");
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    if (!passwordRegex.test(password)) {
+      toast.error("Password must be at least 6 characters long and contain at least one letter and one number");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API;
+      if (!apiUrl) {
+        throw new Error("API URL is not defined");
+      }
+
+      const response = await axios.post(`${apiUrl}/api/Auth/guestSignUp`, {
+        email,
+        password,
+        userName,
+        mobileNumber
+      });
+
+      if (response.status === 200 && response.data) {
+        const { user, accessToken } = response.data.data;
+
+        if (user && accessToken) {
+          login(user, accessToken);
+          toast.success("User Created Successfully");
+          registerModal.onClose();
+          router.refresh();
+        } else {
+          console.error("Missing user or accessToken in response", response.data);
+          toast.error("Signup succeeded but invalid response structure");
+        }
+      } else {
+        toast.error("Registration failed");
+      }
+    } catch (error: any) {
+      console.error("Signup error", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   const handleGoogleSign = async () => {
-    const isGooglesignSuccess = await signInWithGoogle()
-    if (isGooglesignSuccess) {
-      registerModal.onClose();
-      toast.success("Logged in")
-    }
+    // Placeholder for Google Login integration
+    toast.error("Google Login not yet implemented with new API");
   }
-  const handleFbSign = async () => {
-    const isFBsignSuccess = await SignInWithFacebook()
-    if (isFBsignSuccess) {
-      registerModal.onClose();
-      toast.success("Logged in")
-    }
-  }
-
-  // Create UserDocument in Database if user is created
-  const createUserDocument = async (user: User) => {
-    await addDoc(collection(firestore, "Users"), JSON.parse(JSON.stringify(user)))
-    setIsLoading(false);
-    registerModal.onClose();
-  }
-  useEffect(() => {
-    if (userCred) {
-      createUserDocument(userCred?.user)
-    }
-  }, [userCred])
-
-
-//create user document when the google is used for login
-  const createGoogleUserDocument = async (user: User) => {
-    const userDocRef = doc(firestore, 'Users', user.uid)
-    await setDoc(userDocRef, JSON.parse(JSON.stringify(user)))
-  }
-  useEffect(() => {
-    if (googleUserCred) {
-      createGoogleUserDocument(googleUserCred?.user)
-    }
-  }, [googleUserCred])
-
-
-
-  const createFbUserDocument = async (user: User) => {
-    const userDocRef = doc(firestore, 'Users', user.uid)
-    await setDoc(userDocRef, JSON.parse(JSON.stringify(user)))
-  }
-  useEffect(() => {
-    if (fbUserCred) {
-      createFbUserDocument(fbUserCred?.user)
-    }
-  }, [fbUserCred])
-
 
   const onToggle = useCallback(() => {
     registerModal.onClose();
@@ -117,10 +109,11 @@ const RegisterModal = () => {
   const bodyContent = (
     <div className="flex flex-col gap-2">
       <Heading title="Welcome to Housefloating" subtitle="Create an account!" />
+      <Input id="userName" label="Name" type="text" disabled={isLoading} register={register} errors={errors} required />
       <Input id="email" label="Email" type="email" disabled={isLoading} register={register} errors={errors} required />
+      <Input id="mobileNumber" label="Mobile Number" type="tel" disabled={isLoading} register={register} errors={errors} required />
       <Input id="password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required />
       <Input id="confirmPassword" label="Confirm Password" type="password" disabled={isLoading} register={register} errors={errors} required />
-      {(userError || googleerror || fberror) && (<p className="text-center text-red-500 text-xs">{FIREBASE_ERRORS['Firebase: Error (auth/email-already-in-use).']}</p>)}
     </div>
   );
 
@@ -128,7 +121,6 @@ const RegisterModal = () => {
     <div className="flex flex-col gap-2  mb-16 md:mb-0">
       <hr />
       <Button outline label="Continue with Google" icon={FcGoogle} onClick={handleGoogleSign} />
-      {/* <Button outline label="Continue with Facebook" icon={AiFillFacebook} onClick={handleFbSign} /> */}
       <div className="text-neutral-500 text-center mt-4 font-light">
         <p>Already have an account?
           <span onClick={onToggle} className="text-neutral-800 cursor-pointer hover:underline">Log in</span>
@@ -152,4 +144,3 @@ const RegisterModal = () => {
 }
 
 export default RegisterModal;
-

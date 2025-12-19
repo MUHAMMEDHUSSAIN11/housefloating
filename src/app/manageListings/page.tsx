@@ -1,21 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import useSWR from 'swr';
-import { auth } from '../firebase/clientApp';
 import getListings, { Listing } from '../actions/getListings';
 import { updateListing } from '../actions/updateListings';
 import { deleteListing } from '../actions/deleteListing';
 import isAuthority from '../actions/checkAuthority';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
-import Input from '../components/Inputs/Input';
+import useAuth from '../hooks/useAuth';
 
 
 
 const ListingPage = () => {
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
@@ -26,8 +24,8 @@ const ListingPage = () => {
   });
 
   useEffect(() => {
-    if (user?.uid) {
-      setIsAdmin(isAuthority(user.uid));
+    if (user?.id) {
+      setIsAdmin(isAuthority(String(user.id)));
     } else {
       setIsAdmin(false);
     }
@@ -48,7 +46,7 @@ const ListingPage = () => {
         mutate(); // Refresh the data
         toast.success('Listing updated successfully!');
       } else {
-             toast.error('Failed to update listing');
+        toast.error('Failed to update listing');
       }
     } catch (error) {
       console.error('Error updating listing:', error);
@@ -285,7 +283,7 @@ const ListingPage = () => {
                     </div>
                   </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Min Day Guests</label>
                       <input

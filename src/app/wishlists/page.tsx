@@ -2,20 +2,19 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, } from 'lucide-react';
 import getWishlists, { WishList } from '../actions/getWishLists';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase/clientApp';
 import removeWishlist from '../actions/removeWishlist';
 import * as NProgress from "nprogress";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import useAuth from '../hooks/useAuth';
 
 
 const Page = () => {
   const [wishlistItems, setWishlistItems] = useState<WishList[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const router = useRouter();
 
 
@@ -32,7 +31,7 @@ const Page = () => {
       const fetchWishlistData = async () => {
         try {
           setLoading(true);
-          const userWishlists = await getWishlists(user.uid);
+          const userWishlists = await getWishlists(String(user.id));
           setWishlistItems(userWishlists);
         } catch (error) {
           console.error('Error fetching wishlist:', error);
@@ -59,7 +58,7 @@ const Page = () => {
       setWishlistItems(prev => prev.filter(item => item.BoatId !== boatId));
 
       // Then make the API call
-      const success = await removeWishlist(boatId, user?.uid);
+      const success = await removeWishlist(boatId, user?.id ? String(user.id) : undefined);
 
       if (success) {
         toast('Removed from wishlist', {
@@ -67,14 +66,14 @@ const Page = () => {
         });
       } else {
         // Revert the optimistic update on failure
-        const userWishlists = await getWishlists(user?.uid);
+        const userWishlists = await getWishlists(user?.id ? String(user.id) : undefined);
         setWishlistItems(userWishlists);
         // toast.error('Failed to remove from wishlist. Please try again.');
       }
     } catch (error) {
       console.error('Error in handleRemoveFromWishlist:', error);
       // Revert the optimistic update on error
-      const userWishlists = await getWishlists(user?.uid);
+      const userWishlists = await getWishlists(user?.id ? String(user.id) : undefined);
       setWishlistItems(userWishlists);
       // toast.error('Failed to remove from wishlist. Please try again.');
     }

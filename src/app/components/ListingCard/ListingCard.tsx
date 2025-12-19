@@ -5,10 +5,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { amount } from '@/app/enums/enums'
 import { Heart } from 'lucide-react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '@/app/firebase/clientApp'
 import useLoginModal from '@/app/hooks/useLoginModal'
 import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
+import useAuth from '@/app/hooks/useAuth'
 
 interface BoatCardDetails {
   boatId: number;
@@ -29,28 +28,28 @@ interface ListingCardProps {
 
 const ListingCard: React.FC<ListingCardProps> = React.memo(({ data }) => {
   const loginModal = useLoginModal();
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
   const offerPrice = useMemo(() => data.price, [data.price]);
-  
+
   // Handle null/invalid images
-  const imageUrl = !imageError && data.boatImage 
-    ? data.boatImage 
+  const imageUrl = !imageError && data.boatImage
+    ? data.boatImage
     : '/placeholder-boat.jpg';
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!user) {
       loginModal.onOpen();
       return;
     }
-    
+
     // TODO: Implement wishlist functionality
     setIsWishlisted(!isWishlisted);
   };
@@ -64,11 +63,10 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data }) => {
       >
         <Heart
           size={16}
-          className={`transition ${
-            isWishlisted
+          className={`transition ${isWishlisted
               ? 'text-red-500 fill-red-500'
               : 'text-gray-700 hover:text-red-500'
-          }`}
+            }`}
         />
       </div>
 

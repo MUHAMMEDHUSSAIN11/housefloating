@@ -8,8 +8,6 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import OtpInput from 'react-otp-input';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '@/app/firebase/clientApp';
 import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation'
 import { BookingStatus } from '@/app/enums/enums';
@@ -19,6 +17,7 @@ import validateOTP from '@/app/actions/validateOTP';
 import RequestBooking from '@/app/actions/RequestBooking';
 import { toast } from 'react-hot-toast';
 import SendRequestTelegram from '@/app/actions/SendRequestTelegram';
+import useAuth from '@/app/hooks/useAuth';
 
 
 
@@ -44,7 +43,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
     const [step, setStep] = useState(STEPS.PHONENUMBER);
     const [isLoading, setIsLoading] = useState(false);
     const [otp, setOtp] = useState('');
-    const [user] = useAuthState(auth);
+    const { user } = useAuth();
     const router = useRouter();
 
     const handlePush = () => {
@@ -53,11 +52,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
         NProgress.done();
     };
 
-    //need to redesign this as inputs are custom react npm's..
     const { register, handleSubmit, setValue, watch, formState: { errors, }, } = useForm<FieldValues>();
 
     const phonenumber = watch('phonenumber');
-    // const otp = watch('otp');
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -86,8 +83,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
 
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const cleanedPhoneNumber = data.phonenumber.replace(/-/g, ''); // Remove hyphens
-        //sending OTP
+        const cleanedPhoneNumber = data.phonenumber.replace(/-/g, '');
         if (step === STEPS.PHONENUMBER) {
             if (cleanedPhoneNumber.length < 8) {
                 toast.error("Invalid phonenumber");
@@ -136,7 +132,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
                         toast.error('OTP verification failed');
                     }
                 } else {
-                    // API call failed
                     toast.error('Error verifying OTP');
                 }
             } catch (error) {
@@ -145,10 +140,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
             }
         }
 
-        //Raising the request for booking
         if (step === STEPS.SUMMARY) {
-            setIsLoading(true);
-            // Create a new reservation document
+            setIsLoading(true)
             const reservationData = {
                 Contactnumber: data.phonenumber,
                 BookingDate: finalBookingDate,
@@ -172,7 +165,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
             await RequestBooking(reservationData)
                 .then(() => {
                     setIsLoading(false);
-                    // toast.success('Boat enquiry raised successfully.');
                     toast('Boat enquiry raised successfully! Confirmation will be received once booking is Approved!.', {
                         icon: '👏',
                         duration: 6000,

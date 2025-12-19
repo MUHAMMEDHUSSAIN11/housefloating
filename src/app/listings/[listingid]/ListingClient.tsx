@@ -5,8 +5,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import ListingHead from '../../components/ListingCard/ListingHead'
 import ListingInfo from '../../components/ListingCard/ListingInfo';
 import useLoginModal from '../../hooks/useLoginModal';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../firebase/clientApp';
 import useBookingConfirmModal from '../../hooks/useBookingConfirmModal';
 import ListingReservation from '../../components/ListingCard/ListingReservation';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
@@ -24,6 +22,7 @@ import CalculatePrice from '@/app/actions/calculatePrice';
 import { Categories, coordinates, TravelMode } from '@/app/enums/enums';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
+import useAuth from '@/app/hooks/useAuth';
 
 interface BoatDetails {
   boatId: number;
@@ -36,13 +35,13 @@ interface BoatDetails {
   guestCount: number | null;
   cruiseTypeId: number;
   cruiseType: string;
-  maxAdulCount:number;
-  minAdulCount:number;
-  maxChildCount:number;
-  bathroomCount:number;
-  boardingPoint:string;
-  aduldAddOnPrice:number;
-  childAddOnPrice:number;
+  maxAdulCount: number;
+  minAdulCount: number;
+  maxChildCount: number;
+  bathroomCount: number;
+  boardingPoint: string;
+  aduldAddOnPrice: number;
+  childAddOnPrice: number;
 }
 
 
@@ -51,7 +50,7 @@ export interface ListingClientProps {
 }
 
 const ListingClient: React.FC<ListingClientProps> = ({ listing }) => {
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
