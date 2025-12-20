@@ -1,32 +1,35 @@
 'use client';
 
-import { TravelMode } from "@/app/enums/enums";
+import { BoatCruises } from "@/app/enums/enums";
 import Button from "../Misc/Button";
-import useTravelModeStore from "@/app/hooks/useTravelModeStore";
 import { useState } from "react";
 
 interface ListingReservationProps {
   totalPrice: number;
   onSubmit: () => void;
+  cruiseTypeId?: number;
   disabled?: boolean;
 }
 
-const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onSubmit, disabled }) => {
+const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onSubmit, cruiseTypeId, disabled }) => {
   const [isVeg, setIsVeg] = useState(false);
+  const cruiseType = cruiseTypeId === BoatCruises.dayCruise ? "Day Cruise"
+                    : cruiseTypeId === BoatCruises.overNightCruise ? "Overnight Cruise"
+                    : "Night Stay Cruise";
 
   return (
     <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-md">
       <div className="flex flex-col items-center gap-4 p-4 border-neutral-200">
         <div className="flex flex-row w-full gap-4">
-        <div className="font-semibold">DayCruise</div>
+        <div className="font-semibold">{cruiseType}</div>
           <div className="flex items-center ml-2 gap-2">
             <label className="inline-flex items-center ">
-              <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="DayCruise"
+              <input type="radio" className="form-radio h-5 w-5 text-blue-600"
                 checked={!isVeg} onChange={() =>{setIsVeg(false)}} />
               <span className="ml-2">Non-Veg</span>
             </label>
             <label className="inline-flex items-center ml-4">
-              <input type="radio" className="form-radio h-5 w-5 text-blue-600" value="Overnight"
+              <input type="radio" className="form-radio h-5 w-5 text-blue-600"
                 checked={isVeg} onChange={() =>{setIsVeg(true)}} />
               <span className="ml-2">Veg</span>
             </label>

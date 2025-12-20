@@ -6,7 +6,7 @@ import Heading from "../Misc/Heading"
 import BreadCrumb from "../Misc/BreadCrumb"
 import Image from "next/image"
 import Button from "../Misc/Button"
-import {Grid3x3, X, ChevronLeft, ChevronRight } from "lucide-react"
+import {Grid3x3, X, ChevronLeft, ChevronRight, CropIcon } from "lucide-react"
 
 interface ListingHeadProps {
   id: number
@@ -174,7 +174,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
             <div className="max-w-5xl mx-auto">
               <div className="flex items-center justify-between mb-8 sticky top-0 bg-black py-4">
                 <h2 className="text-white text-xl font-semibold">All Photos</h2>
-                <Button label="Close" onClick={() => setShowAllPhotos(false)} />
+                <div className="w-1/4"><Button label="Close" onClick={() => setShowAllPhotos(false)} /></div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {imageSrc.map((img, index) => (

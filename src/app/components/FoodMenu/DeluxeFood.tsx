@@ -28,7 +28,7 @@ const DeluxeFood: React.FC<FoodProps> = ({ bookingType }) => {
             </div>
             <div className="text-left list-inline mt-4">
                 <div className="flex">
-                    {bookingType === BoatCruises.dayCruise && (
+                    {bookingType === BoatCruises.dayCruise ? (
                     <div className="w-1/2 pr-4"> {/* Left Side */}
                         {isVeg ? (
                             // Content for Veg Menu (breakfast to evening)
@@ -82,9 +82,8 @@ const DeluxeFood: React.FC<FoodProps> = ({ bookingType }) => {
                                 </ul>
                             </>
                         )}
-                    </div>)}
-                    {bookingType === BoatCruises.nightStay && (
-                        <div className="w-1/2 pl-4"> {/* Right Side */}
+                    </div>):
+                    (<div className="w-1/2 pl-4"> {/* Right Side */}
                             {isVeg ? (
                                 // Content for Veg Menu (dinner and next breakfast)
                                 <>

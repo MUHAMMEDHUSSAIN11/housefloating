@@ -1,7 +1,7 @@
 'use client';
 
 import { Baby, User, UserPlus, Users } from 'lucide-react';
-import React, { Children } from 'react';
+import React from 'react';
 
 interface OccupancyProps {
     Count: number,
@@ -21,7 +21,7 @@ const Occupancy: React.FC<OccupancyProps> = (props) => {
                 <div className="p-6 rounded-2xl shadow-lg border border-gray-200">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-medium mb-1">Current Guests</p>
+                            <p className="text-sm font-medium mb-1">Normal Guest</p>
                             <p className="text-4xl font-bold">{props.Count}</p>
                             <p className="text-xs mt-1">Standard occupancy</p>
                         </div>

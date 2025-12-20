@@ -98,7 +98,7 @@ const Listingpage = ({ params }: { params: Iparams }) => {
       <EmptyState showReset />
     </div>
   ) : (
-    <ListingClient boatDetails={fetchedBoatData} date={date} cruiseTypeId={cruiseTypeId}/>
+    <ListingClient boatDetails={fetchedBoatData} date={date} cruiseTypeId={cruiseTypeId} />
   );
 };
 

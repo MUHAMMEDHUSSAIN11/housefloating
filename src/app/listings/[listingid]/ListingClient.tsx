@@ -22,6 +22,7 @@ import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
 import OverNightSteps from '../../components/Descriptions/OverNightSteps';
+import NightStaySteps from '@/app/components/Descriptions/NightStaySteps';
 
 export interface ListingClientProps {
   boatDetails: BoatDetails;
@@ -108,6 +109,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             <div className='md:order-last md:col-span-3'>
               <ListingReservation
                 totalPrice={totalPrice}
+                cruiseTypeId={cruiseTypeId}
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
               />
@@ -124,7 +126,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               <>
                 <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdulCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />
                 <hr />
-                <OverNightSteps />
+                <NightStaySteps />
               </>
             ) : (
               <>
