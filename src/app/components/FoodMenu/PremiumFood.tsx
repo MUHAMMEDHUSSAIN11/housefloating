@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { FoodProps } from './DeluxeFood';
-import { TravelMode } from '@/app/enums/enums';
+import { BoatCruises, TravelMode } from '@/app/enums/enums';
 
 const PremiumFood: React.FC<FoodProps> = ({ bookingType }) => {
 
@@ -26,6 +26,7 @@ const PremiumFood: React.FC<FoodProps> = ({ bookingType }) => {
             </div>
             <div className="text-left list-inline mt-4">
                 <div className="flex">
+                    {(bookingType === BoatCruises.dayCruise) && (
                     <div className="w-1/2 pr-4"> {/* Left Side */}
                         {isVeg ? (
                             // Content for Veg Menu (breakfast to evening)
@@ -84,8 +85,8 @@ const PremiumFood: React.FC<FoodProps> = ({ bookingType }) => {
                                 </ul>
                             </>
                         )}
-                    </div>
-                    {bookingType == TravelMode.OverNight && (
+                    </div>)}
+                    {bookingType == BoatCruises.nightStay && (
                         <div className="w-1/2 pl-4"> {/* Right Side */}
                             {isVeg ? (
                                 // Content for Veg Menu (dinner and next breakfast)

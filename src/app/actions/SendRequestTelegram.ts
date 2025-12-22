@@ -4,7 +4,7 @@ import { Telegram } from "../enums/enums";
 
 export default async function SendRequestTelegram(finalBookingDate: Date, finalHeadCount: number, 
     finalMinorCount: number, finalPrice: number, phonenumber: String, travelMode: string,
-     boatTitle: string, boatCategory: string, boatRoomCount: number,BoatPhoneNumber: number) {
+     boatTitle: string, boatCategory: string, boatRoomCount: number,) {
     const formattedDate = dayjs(Date.now()).format('dddd, MMMM D, YYYY h:mm A');
 
     const apiUrl = `https://api.telegram.org/bot${Telegram.botToken}/sendMessage`;
@@ -31,8 +31,6 @@ export default async function SendRequestTelegram(finalBookingDate: Date, finalH
     - Boat Category: ${boatCategory}
     
     - Requested Date: ${formattedDate}
-
-    - Boat Phone Number: ${BoatPhoneNumber}
   `;
     // Send a Telegram message
    await fetch(apiUrl, {
