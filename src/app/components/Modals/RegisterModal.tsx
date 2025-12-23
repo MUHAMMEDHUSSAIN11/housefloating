@@ -11,15 +11,15 @@ import Input from "../Inputs/Input";
 import Heading from "../Misc/Heading";
 import Button from "../Misc/Button";
 import toast from "react-hot-toast";
-import axios from "axios";
 import useAuth from "@/app/hooks/useAuth";
+import SignUp from "@/app/actions/SignUp/SignUp";
 
 const RegisterModal = () => {
   const router = useRouter();
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth(); // Use custom auth hook
+  const { login } = useAuth();
 
   const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({
     defaultValues: {
@@ -61,19 +61,15 @@ const RegisterModal = () => {
     }
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API;
-      if (!apiUrl) {
-        throw new Error("API URL is not defined");
-      }
 
-      const response = await axios.post(`${apiUrl}/api/Auth/guestSignUp`, {
+      const response = await SignUp({
         email,
         password,
         userName,
         mobileNumber
       });
 
-      if (response.status === 200 && response.data) {
+      if (response && response.status === 200 && response.data) {
         const { user, accessToken } = response.data.data;
 
         if (user && accessToken) {

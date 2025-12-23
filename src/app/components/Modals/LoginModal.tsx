@@ -11,13 +11,14 @@ import Heading from "../Misc/Heading";
 import Button from "../Misc/Button";
 import toast from "react-hot-toast";
 import useAuth from "@/app/hooks/useAuth";
-// import axios from "axios"; 
+import Login from "@/app/actions/Login/Login";
+import { useRouter } from "next/navigation";
 
 const LoginModal = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const router = useRouter();
 
     const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { Email: '', Password: '' }, });
 
@@ -26,13 +27,25 @@ const LoginModal = () => {
         setIsLoading(true);
 
         try {
-            // TODO: Replace with actual Login API Endpoint
-            // const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/api/Auth/login`, { ... });
-            // if (response.status === 200) { login(response.data.user, response.data.accessToken); ... }
+            const response = await Login({
+                email: Email,
+                password: Password,
+            });
 
-            toast.error("Login API integration pending");
-            console.log("Login data:", Email, Password);
+            if (response && response.status === 200 && response.data) {
+                const { user, accessToken } = response.data.data;
 
+                if (user && accessToken) {
+                toast.success("User Created Successfully");
+                loginModal.onClose();
+                router.refresh();
+                } else {
+                console.error("Missing user or accessToken in response", response.data);
+                toast.error("Signin succeeded but invalid response structure");
+                }
+            } else {
+                toast.error("Login failed");
+            }
         } catch (error) {
             console.log(error);
             toast.error("Login failed");
