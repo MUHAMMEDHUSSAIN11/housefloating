@@ -24,9 +24,17 @@ interface BoatCardDetails {
 
 interface ListingCardProps {
   data: BoatCardDetails;
+  startDate?: string | null;
+  endDate?: string | null;
+  cruiseTypeId?: number;
 }
 
-const ListingCard: React.FC<ListingCardProps> = React.memo(({ data }) => {
+const ListingCard: React.FC<ListingCardProps> = React.memo(({ 
+  data, 
+  startDate, 
+  endDate, 
+  cruiseTypeId 
+}) => {
   const loginModal = useLoginModal();
   const { user } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -35,11 +43,20 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data }) => {
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
   const offerPrice = useMemo(() => data.price, [data.price]);
-
-  // Handle null/invalid images
-  const imageUrl = !imageError && data.boatImage
-    ? data.boatImage
+  
+  const imageUrl = !imageError && data.boatImage 
+    ? data.boatImage 
     : '/placeholder-boat.jpg';
+
+  const listingUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    
+    if (startDate) params.append('startDate', startDate);
+    if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
+    
+    const queryString = params.toString();
+    return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
+  }, [data.boatId, startDate, cruiseTypeId]);
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,14 +66,12 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data }) => {
       loginModal.onOpen();
       return;
     }
-
-    // TODO: Implement wishlist functionality
+    
     setIsWishlisted(!isWishlisted);
   };
 
   return (
     <div className="col-span-1 group relative">
-      {/* Heart Icon */}
       <div
         className={`absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 hover:bg-white transition cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleHeartClick}
@@ -70,9 +85,8 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data }) => {
         />
       </div>
 
-      <Link href={`/listings/${data.boatId}`} className="block cursor-pointer">
+      <Link href={listingUrl} className="block cursor-pointer">
         <div className="flex flex-col w-full">
-          {/* Image Container */}
           <div className="aspect-[4/3] w-full relative overflow-hidden rounded-lg bg-gray-200">
             <Image
               fill
@@ -85,7 +99,6 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data }) => {
             />
           </div>
 
-          {/* Boat Details */}
           <div className="font-semibold text-sm md:text-md mt-2">
             {data.boatCategory}, {data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}
           </div>

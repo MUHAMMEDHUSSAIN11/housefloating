@@ -18,7 +18,7 @@ interface Data {
     Status: any,
     Image: any,
     CreatedOn: Timestamp,
-    BoatOwnerPhoneNumber: number,
+    CruiseType: string,
 };
 
 export default async function RequestBooking(reservationData: Data) {
