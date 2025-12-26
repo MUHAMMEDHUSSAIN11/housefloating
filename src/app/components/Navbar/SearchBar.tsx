@@ -165,8 +165,8 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative w-full my-6 lg:my-8">
-      <div className="flex w-full gap-1 px-1 py-1 justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
+    <div className="relative w-full mb-2 lg:mb:0 lg:my-8">
+      <div className="flex w-full gap-1 px-1 lg:py-1 justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
         <div className='w-full'>
           <div className='w-full grid grid-cols-3'>
             {/* Type Selector */}
