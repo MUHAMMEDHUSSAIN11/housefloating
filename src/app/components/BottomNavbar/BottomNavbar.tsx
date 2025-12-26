@@ -1,14 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter, usePathname } from 'next/navigation';
-import { auth } from '@/app/firebase/clientApp';
 import useLoginModal from '@/app/hooks/useLoginModal';
 import NProgress from 'nprogress';
+import useAuth from '@/app/hooks/useAuth';
 
 const BottomNavbar = () => {
-    const [user] = useAuthState(auth);
+    const { user } = useAuth();
     const [pendingNavigation, setPendingNavigation] = useState('');
     const router = useRouter();
     const pathname = usePathname();
@@ -79,7 +78,7 @@ const BottomNavbar = () => {
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
-                    
+
                     return (
                         <button
                             key={tab.id}

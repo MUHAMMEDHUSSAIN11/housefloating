@@ -5,10 +5,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { amount } from '@/app/enums/enums'
 import { Heart } from 'lucide-react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '@/app/firebase/clientApp'
 import useLoginModal from '@/app/hooks/useLoginModal'
 import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
+import useAuth from '@/app/hooks/useAuth'
 
 interface BoatCardDetails {
   boatId: number;
@@ -37,7 +36,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   cruiseTypeId 
 }) => {
   const loginModal = useLoginModal();
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -62,7 +61,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!user) {
       loginModal.onOpen();
       return;
@@ -79,11 +78,10 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
       >
         <Heart
           size={16}
-          className={`transition ${
-            isWishlisted
+          className={`transition ${isWishlisted
               ? 'text-red-500 fill-red-500'
               : 'text-gray-700 hover:text-red-500'
-          }`}
+            }`}
         />
       </div>
 

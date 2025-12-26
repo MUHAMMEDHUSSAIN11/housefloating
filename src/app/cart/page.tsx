@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase/clientApp';
 import getReservationById from '../actions/getReservationById';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import TripsClient from './TripsClient';
 import { Timestamp } from 'firebase/firestore';
 import Spinner from '../components/Misc/Spinner';
+import useAuth from '../hooks/useAuth';
 
 export interface Reservation {
   ReservationId: string;
@@ -27,13 +26,13 @@ export interface Reservation {
   Status: string;
   Image: string;
   UserId: string;
-  BoatOwnerPhoneNumber?: string; 
+  BoatOwnerPhoneNumber?: string;
   CreatedOn?: Timestamp;
 }
 
 
 const CartPage = () => {
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const [reservations, setReservations] = useState<Reservation[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,7 +42,7 @@ const CartPage = () => {
         const reservationsData = await getReservationById(user.email);
         const updatedReservations = reservationsData?.map(reservation => ({
           ...reservation,
-          UserId: user.uid, // Include user.uid in each reservation
+          UserId: String(user.id), // Include user.id in each reservation
         }));
         setReservations(updatedReservations || []);
       } else {

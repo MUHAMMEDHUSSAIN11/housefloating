@@ -3,8 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import ListingHead from '../../components/ListingCard/ListingHead'
 import ListingInfo from '../../components/ListingCard/ListingInfo';
 import useLoginModal from '../../hooks/useLoginModal';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../firebase/clientApp';
 import useBookingConfirmModal from '../../hooks/useBookingConfirmModal';
 import ListingReservation from '../../components/ListingCard/ListingReservation';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
@@ -23,6 +21,7 @@ import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
 import OverNightSteps from '../../components/Descriptions/OverNightSteps';
 import NightStaySteps from '@/app/components/Descriptions/NightStaySteps';
+import useAuth from '@/app/hooks/useAuth';
 
 export interface ListingClientProps {
   boatDetails: BoatDetails;
@@ -35,7 +34,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   date,
   cruiseTypeId,
  }) => {
-  const [user] = useAuthState(auth);
+  const {user} = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);

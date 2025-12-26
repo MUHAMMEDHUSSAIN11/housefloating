@@ -22,6 +22,8 @@ export const metadata = {
   description: "Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
 }
 
+import StoreProvider from './StoreProvider';
+
 export default async function RootLayout({ children, }: { children: React.ReactNode }) {
 
   return (
@@ -58,14 +60,16 @@ export default async function RootLayout({ children, }: { children: React.ReactN
           position="top-center"
           reverseOrder={false}
         />
-        <Navbar />
-        <LoginModal />
-        <RegisterModal />
-        <RentModal />
-        <NextTopLoader color="#3b82f6" height={4} showSpinner={false} />
-        <ScrollToTopButton />
-        <BottomNavbar/>
-        {children}
+        <StoreProvider>
+          <Navbar />
+          <LoginModal />
+          <RegisterModal />
+          <RentModal />
+          <NextTopLoader color="#3b82f6" height={4} showSpinner={false} />
+          <ScrollToTopButton />
+          <BottomNavbar />
+          {children}
+        </StoreProvider>
       </body>
     </html>
   )
