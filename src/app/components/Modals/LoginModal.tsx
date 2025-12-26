@@ -10,15 +10,16 @@ import Input from "../Inputs/Input";
 import Heading from "../Misc/Heading";
 import Button from "../Misc/Button";
 import toast from "react-hot-toast";
-import useAuth from "@/app/hooks/useAuth";
 import Login from "@/app/actions/Login/Login";
 import { useRouter } from "next/navigation";
+import useAuth from "@/app/hooks/useAuth";
 
 const LoginModal = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const { login } = useAuth();
 
     const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { Email: '', Password: '' }, });
 
@@ -36,6 +37,7 @@ const LoginModal = () => {
                 const { user, accessToken } = response.data.data;
 
                 if (user && accessToken) {
+                login(user, accessToken);
                 toast.success("User Created Successfully");
                 loginModal.onClose();
                 router.refresh();
