@@ -18,7 +18,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onS
                     : "Night Stay Cruise";
 
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-md">
+    <div className="bg-white rounded-xl border border-neutral-200 sticky top-36 shadow-md">
       <div className="flex flex-col items-center gap-4 p-4 border-neutral-200">
         <div className="flex flex-row w-full gap-4">
         <div className="font-semibold">{cruiseType}</div>
