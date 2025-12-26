@@ -21,6 +21,7 @@ import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
 import OverNightSteps from '../../components/Descriptions/OverNightSteps';
 import NightStaySteps from '@/app/components/Descriptions/NightStaySteps';
+import useAuth from '@/app/hooks/useAuth';
 
 export interface ListingClientProps {
   boatDetails: BoatDetails;
@@ -33,7 +34,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   date,
   cruiseTypeId,
  }) => {
-  const [user] = useAuthState(auth);
+  const {user} = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
