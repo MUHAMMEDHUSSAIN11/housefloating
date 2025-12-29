@@ -80,7 +80,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   return (
     <>
       <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? 'Day Cruise' : cruiseTypeId == 2 ? 'Overnight Cruise' : 'Night Stay'} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalBookingDate={date} finalMinorCount={finalChildCount} />
-      <div className='max-w-screen-xl mx-auto pt-20 md:pt-24'>
+      <div className='max-w-screen-xl mx-auto pt-20 md:pt-24 pb-24 md:pb-0'>
         <div className='flex flex-col gap-6'>
           <ListingHead
             title={boatDetails.boatCode}

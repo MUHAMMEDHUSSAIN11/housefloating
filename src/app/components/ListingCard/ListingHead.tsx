@@ -70,8 +70,8 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
 
   return (
      <>
-      <div className="pt-28 md:pt-14 w-11/12 mx-auto">
-        <div className="flex items-start justify-between mb-6">
+      <div className="pt-20 md:pt-14 w-11/12 mx-auto">
+        <div className="flex items-start justify-between">
           <div className="flex  flex-col flex-1 gap-2">
             <BreadCrumb />
             <Heading title={title} />
@@ -79,7 +79,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
         </div>
 
         <div className="relative">
-          <div className="grid grid-cols-4 gap-2 rounded-xl overflow-hidden h-[350px] md:h-[500px]">
+          <div className="grid grid-cols-4 gap-2 rounded-xl mb-2 overflow-hidden h-[350px] md:h-[500px]">
             <div
               className="col-span-4 md:col-span-2 row-span-1 relative group cursor-pointer overflow-hidden"
               onClick={() => setCurrentImageIndex(mobileMainImageIndex)}

@@ -36,7 +36,7 @@ const Occupancy: React.FC<OccupancyProps> = (props) => {
                     <div className="flex items-start justify-between">
                         <div>
                             <p className="text-sm font-medium mb-1">Maximum Capacity</p>
-                            <div className='flex gap-5 items-center'>
+                            <div className='flex gap-9 items-center'>
                                 <div className='flex items-center'>
                                     <User className='text-blue-400'/><p className="text-3xl font-semibold">{props.adult}</p>
                                 </div>

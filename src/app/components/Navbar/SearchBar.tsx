@@ -14,19 +14,19 @@ interface DateRange {
 const categoryOptions = [
   { id: Categories.All, label: 'All Category' },
   { id: Categories.Deluxe, label: 'Deluxe' },
-  { id: Categories.Premium, label: 'Premium'},
+  { id: Categories.Premium, label: 'Premium' },
   { id: Categories.Luxury, label: 'Luxury' },
 ];
 
 const typeOptions = [
-  { id: BookingType.private, label: 'Private', icon: <User/> },
-  { id: BookingType.sharing, label: 'Sharing', icon: <Users/> },
+  { id: BookingType.private, label: 'Private', icon: <User /> },
+  { id: BookingType.sharing, label: 'Sharing', icon: <Users /> },
 ];
 
 const SearchBar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  
+
   const [selectedCruise, setSelectedCruise] = useState<BoatCruisesId>(BoatCruisesId.overNightCruise);
   const [selectedType, setSelectedType] = useState<BookingType | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({ startDate: null, endDate: null });
@@ -63,7 +63,7 @@ const SearchBar = () => {
       if (activeSection) {
         setActiveSection(null);
       }
-      if(showFilter) {
+      if (showFilter) {
         setShowFilter(false)
       }
     };
@@ -90,9 +90,9 @@ const SearchBar = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    const isDateValid = selectedDateRange.startDate && 
+    const isDateValid = selectedDateRange.startDate &&
       (selectedCruise !== BoatCruisesId.overNightCruise || selectedDateRange.endDate);
-    
+
     if (isDateValid && errors.date) {
       setErrors(prev => ({ ...prev, date: false }));
     }
@@ -101,9 +101,9 @@ const SearchBar = () => {
   const validateFields = () => {
     const newErrors = {
       type: !selectedType,
-      category: !selectedCategory ,
-      date: !selectedDateRange.startDate || 
-            (selectedCruise === BoatCruisesId.overNightCruise && !selectedDateRange.endDate),
+      category: !selectedCategory,
+      date: !selectedDateRange.startDate ||
+        (selectedCruise === BoatCruisesId.overNightCruise && !selectedDateRange.endDate),
     };
 
     setErrors(newErrors);
@@ -119,14 +119,14 @@ const SearchBar = () => {
 
     try {
       const params = new URLSearchParams();
-      
+
       // Add required parameters
       if (selectedType) params.append('type', selectedType.toString());
       if (selectedCategory) {
         params.append('category', selectedCategory.toString());
       }
       params.append('rooms', roomCount.toString());
-      
+
       // Add date parameters
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
@@ -134,7 +134,7 @@ const SearchBar = () => {
       if (selectedDateRange.endDate) {
         params.append('endDate', FormatToLocalDateTime(selectedDateRange.endDate));
       }
-      
+
       // Add cruise type
       params.append('cruise', selectedCruise.toString());
 
@@ -155,17 +155,17 @@ const SearchBar = () => {
   };
 
   const getDateDisplayText = () => {
-    if(!selectedDateRange.startDate) return
-    
+    if (!selectedDateRange.startDate) return
+
     if (selectedCruise === BoatCruisesId.overNightCruise && selectedDateRange.endDate) {
       return `${format(selectedDateRange.startDate, 'MMM d')} - ${format(selectedDateRange.endDate, 'MMM d, yyyy')}`;
     }
-    
+
     return format(selectedDateRange.startDate, 'MMM d, yyyy');
   };
 
   return (
-    <div className="hidden md:block relative w-full mb-2 lg:mb:0 lg:my-8">
+    <div className="relative w-full mb-2 lg:mb:0 lg:my-8">
       <div className="flex w-full gap-1 px-1 lg:py-1 justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
         <div className='w-full'>
           <div className='w-full grid grid-cols-3'>
@@ -173,16 +173,15 @@ const SearchBar = () => {
             <div ref={typeRef} className="flex-1 min-w-0">
               <button
                 onClick={() => setActiveSection(activeSection === 'type' ? null : 'type')}
-                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${
-                  showErrors && errors.type
+                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${showErrors && errors.type
                     ? 'border-2 border-red-500 bg-red-50'
                     : 'hover:bg-blue-500 hover:text-white'
-                } ${selectedType ? 'font-bold' : ''} text-black`}
+                  } ${selectedType ? 'font-bold' : ''} text-black`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
                   {selectedType === BookingType.private
-                  ?<User className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />
-                  :<Users className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />}
+                    ? <User className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />
+                    : <Users className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />}
                   <div className="min-w-0 flex-1">
                     <p className={`hidden sm:block text-sm truncate ${showErrors && errors.type ? 'text-red-500 font-semibold' : ''}`}>
                       {selectedType ? getSelectedLabel(selectedType) : 'Select Type'}
@@ -204,11 +203,10 @@ const SearchBar = () => {
                         setSelectedType(option.id);
                         setActiveSection(null);
                       }}
-                      className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${
-                        selectedType === option.id
+                      className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${selectedType === option.id
                           ? 'bg-blue-100 text-blue-600'
                           : 'hover:bg-blue-100 text-gray-900'
-                      }`}
+                        }`}
                     >
                       <span className="text-xl">{option.icon}</span>
                       <span className="font-medium text-sm">{option.label}</span>
@@ -222,11 +220,10 @@ const SearchBar = () => {
             <div ref={categoryRef} className="flex-1 min-w-0">
               <button
                 onClick={() => setActiveSection(activeSection === 'category' ? null : 'category')}
-                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${
-                  showErrors && errors.category
+                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${showErrors && errors.category
                     ? 'border-2 border-red-500 bg-red-50'
                     : 'hover:bg-blue-500 hover:text-white'
-                } text-black font-bold`}
+                  } text-black font-bold`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
                   <Ship className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.category ? 'text-red-500' : ''}`} />
@@ -239,7 +236,7 @@ const SearchBar = () => {
                 </div>
               </button>
 
-              {activeSection === 'category' && (       
+              {activeSection === 'category' && (
                 <div className="absolute top-full mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50">
                   <div className="flex items-center justify-between gap-4 my-2">
                     <span className="text-sm text-gray-600">Rooms</span>
@@ -259,7 +256,7 @@ const SearchBar = () => {
                       </button>
                     </div>
                   </div>
-                  <hr/>
+                  <hr />
                   {categoryOptions.map((option) => (
                     <button
                       key={option.id}
@@ -267,11 +264,10 @@ const SearchBar = () => {
                         setSelectedCategory(option.id);
                         setActiveSection(null);
                       }}
-                      className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${
-                        selectedCategory === option.id
+                      className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${selectedCategory === option.id
                           ? 'bg-blue-100 text-blue-600'
                           : 'hover:bg-blue-100 text-gray-900'
-                      }`}
+                        }`}
                     >
                       <span className="font-medium text-sm">{option.label}</span>
                     </button>
@@ -284,20 +280,19 @@ const SearchBar = () => {
             <div ref={datesRef} className="flex-1 min-w-0">
               <button
                 onClick={() => setActiveSection(activeSection === 'date' ? null : 'date')}
-                className={`w-full px-1 sm:px-4 py-5 sm:py-4 text-left transition-colors duration-200 rounded-full ${
-                  showErrors && errors.date
+                className={`w-full px-1 sm:px-4 py-5 sm:py-4 text-left transition-colors duration-200 rounded-full ${showErrors && errors.date
                     ? 'border-2 border-red-500 bg-red-50 text-red-500'
                     : 'text-black hover:text-white hover:bg-blue-500'
-                } ${selectedDateRange.startDate ? 'font-bold' : ''}`}
+                  } ${selectedDateRange.startDate ? 'font-bold' : ''}`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
                   <Calendar className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.date ? 'text-red-500' : ''}`} />
                   <div className="min-w-0 flex-1">
                     <p className={`hidden sm:block truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
-                      {!selectedDateRange.startDate?'Select Date': getDateDisplayText()}
+                      {!selectedDateRange.startDate ? 'Select Date' : getDateDisplayText()}
                     </p>
                     <p className={`sm:hidden text-sm truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
-                      {!selectedDateRange.startDate?'Date': getDateDisplayText()}
+                      {!selectedDateRange.startDate ? 'Date' : getDateDisplayText()}
                     </p>
                   </div>
                   <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'date' ? 'rotate-180' : ''} ${showErrors && errors.date ? 'text-red-500' : ''}`} />
@@ -321,7 +316,7 @@ const SearchBar = () => {
           onClick={handleSearch}
           className="p-3 flex items-center justify-center gap-1 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:scale-110 active:scale-95 flex-shrink-0 transition-all duration-200"
         >
-          <div className='hidden sm:block'>Search</div><Search className="w-5 h-5 sm:w-4 sm:h-4"/>
+          <div className='hidden sm:block'>Search</div><Search className="w-5 h-5 sm:w-4 sm:h-4" />
         </button>
       </div>
     </div>
