@@ -1,6 +1,6 @@
 'use client';
 
-import { BoatCruises } from "@/app/enums/enums";
+import { BoatCruisesId } from "@/app/enums/enums";
 import Button from "../Misc/Button";
 import { useState } from "react";
 
@@ -13,8 +13,8 @@ interface ListingReservationProps {
 
 const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onSubmit, cruiseTypeId, disabled }) => {
   const [isVeg, setIsVeg] = useState(false);
-  const cruiseType = cruiseTypeId === BoatCruises.dayCruise ? "Day Cruise"
-                    : cruiseTypeId === BoatCruises.overNightCruise ? "Overnight Cruise"
+  const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? "Day Cruise"
+                    : cruiseTypeId === BoatCruisesId.overNightCruise ? "Overnight Cruise"
                     : "Night Stay Cruise";
 
   return (

@@ -1,5 +1,5 @@
 'use client';
-import { BoatCruises } from '@/app/enums/enums';
+import { BoatCruisesId } from '@/app/enums/enums';
 import React, { useState } from 'react';
 
 export interface FoodProps {
@@ -28,7 +28,7 @@ const DeluxeFood: React.FC<FoodProps> = ({ bookingType }) => {
             </div>
             <div className="text-left list-inline mt-4">
                 <div className="flex">
-                    {bookingType === BoatCruises.dayCruise ? (
+                    {bookingType === BoatCruisesId.dayCruise ? (
                     <div className="w-1/2 pr-4"> {/* Left Side */}
                         {isVeg ? (
                             // Content for Veg Menu (breakfast to evening)

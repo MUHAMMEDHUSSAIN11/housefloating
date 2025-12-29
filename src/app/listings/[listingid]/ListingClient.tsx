@@ -15,7 +15,7 @@ import PremiumFood from '../../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
 import HouseRules from '../../components/Descriptions/HouseRules';
 import CalculatePrice from '@/app/actions/calculatePrice';
-import { BoatCruises, Categories, coordinates } from '@/app/enums/enums';
+import { BoatCruisesId, Categories, coordinates } from '@/app/enums/enums';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
@@ -41,11 +41,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
   const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.guestCount);
   const [finalChildCount, setFinalChildCount] = useState(0);
-  const adultAddonPrice = cruiseTypeId === BoatCruises.dayCruise ? boatDetails.prices.adultAddOnDayPrice
-    : cruiseTypeId === BoatCruises.overNightCruise ? boatDetails.prices.adultAddonDayNightPrice
+  const adultAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.adultAddOnDayPrice
+    : cruiseTypeId === BoatCruisesId.overNightCruise ? boatDetails.prices.adultAddonDayNightPrice
       : boatDetails.prices.adultAddonNightStayPrice;
-  const childAddonPrice = cruiseTypeId === BoatCruises.dayCruise ? boatDetails.prices.childAddOnDayPrice
-    : cruiseTypeId === BoatCruises.overNightCruise ? boatDetails.prices.childAddonDayNightPrice
+  const childAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.childAddOnDayPrice
+    : cruiseTypeId === BoatCruisesId.overNightCruise ? boatDetails.prices.childAddonDayNightPrice
       : boatDetails.prices.childAddonNightStayPrice;
 
   useEffect(() => {
@@ -107,13 +107,13 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 minAdultCount={boatDetails.minAdulCount}
               />
               <div className='w-full'>
-                {cruiseTypeId === BoatCruises.overNightCruise ? (
+                {cruiseTypeId === BoatCruisesId.overNightCruise ? (
                   <>
                     <Occupancy title={'Overnight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdulCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />
                     <hr />
                     <OverNightSteps />
                   </>
-                ) : cruiseTypeId === BoatCruises.nightStay ? (
+                ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
                     <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdulCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />
                     <hr />

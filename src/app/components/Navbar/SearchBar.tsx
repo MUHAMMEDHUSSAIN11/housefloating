@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Ship, Calendar, Users, ChevronDown, User, Plus, Minus, Send, Search } from 'lucide-react';
 import DateSelector from './DateSelector';
 import { format } from 'date-fns';
-import { BookingType, BoatCruises, Categories } from '@/app/enums/enums';
+import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
 import { usePathname, useRouter } from 'next/navigation';
 import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
 
@@ -27,7 +27,7 @@ const SearchBar = () => {
   const pathname = usePathname();
   const router = useRouter();
   
-  const [selectedCruise, setSelectedCruise] = useState<BoatCruises>(BoatCruises.overNightCruise);
+  const [selectedCruise, setSelectedCruise] = useState<BoatCruisesId>(BoatCruisesId.overNightCruise);
   const [selectedType, setSelectedType] = useState<BookingType | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({ startDate: null, endDate: null });
   const [selectedCategory, setSelectedCategory] = useState<Categories>(Categories.All);
@@ -91,7 +91,7 @@ const SearchBar = () => {
 
   useEffect(() => {
     const isDateValid = selectedDateRange.startDate && 
-      (selectedCruise !== BoatCruises.overNightCruise || selectedDateRange.endDate);
+      (selectedCruise !== BoatCruisesId.overNightCruise || selectedDateRange.endDate);
     
     if (isDateValid && errors.date) {
       setErrors(prev => ({ ...prev, date: false }));
@@ -103,7 +103,7 @@ const SearchBar = () => {
       type: !selectedType,
       category: !selectedCategory ,
       date: !selectedDateRange.startDate || 
-            (selectedCruise === BoatCruises.overNightCruise && !selectedDateRange.endDate),
+            (selectedCruise === BoatCruisesId.overNightCruise && !selectedDateRange.endDate),
     };
 
     setErrors(newErrors);
@@ -157,7 +157,7 @@ const SearchBar = () => {
   const getDateDisplayText = () => {
     if(!selectedDateRange.startDate) return
     
-    if (selectedCruise === BoatCruises.overNightCruise && selectedDateRange.endDate) {
+    if (selectedCruise === BoatCruisesId.overNightCruise && selectedDateRange.endDate) {
       return `${format(selectedDateRange.startDate, 'MMM d')} - ${format(selectedDateRange.endDate, 'MMM d, yyyy')}`;
     }
     
@@ -165,7 +165,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="relative w-full mb-2 lg:mb:0 lg:my-8">
+    <div className="hidden md:block relative w-full mb-2 lg:mb:0 lg:my-8">
       <div className="flex w-full gap-1 px-1 lg:py-1 justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
         <div className='w-full'>
           <div className='w-full grid grid-cols-3'>

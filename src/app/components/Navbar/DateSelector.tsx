@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, X, Check } from 'lucide-react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, startOfDay, isAfter, differenceInDays } from 'date-fns';
-import { BoatCruises } from '@/app/enums/enums';
+import { BoatCruises, BoatCruisesId } from '@/app/enums/enums';
 
 interface DateRange {
   startDate: Date | null;
@@ -10,8 +10,8 @@ interface DateRange {
 
 interface DateSelectorProps {
   selected: DateRange;
-  selectedCruise: BoatCruises;
-  setSelectedCruise: React.Dispatch<React.SetStateAction<BoatCruises>>;
+  selectedCruise: BoatCruisesId;
+  setSelectedCruise: React.Dispatch<React.SetStateAction<BoatCruisesId>>;
   onSelect: (dateRange: DateRange) => void;
   onClose: () => void;
 }
@@ -38,7 +38,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   const handleDateClick = (day: Date) => {
     if (isBefore(day, today)) return;
 
-    if (selectedCruise === BoatCruises.dayCruise || selectedCruise === BoatCruises.nightStay) {
+    if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay) {
       setTempStartDate(day);
       setTempEndDate(null);
       onSelect({ startDate: day, endDate: null });
@@ -46,7 +46,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
       return;
     }
 
-    if (selectedCruise === BoatCruises.overNightCruise) {
+    if (selectedCruise === BoatCruisesId.overNightCruise) {
       if (!tempStartDate || (tempStartDate && tempEndDate)) {
         setTempStartDate(day);
         setTempEndDate(null);
@@ -72,7 +72,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     }
   };
 
-  const handleCruiseChange = (cruise: BoatCruises) => {
+  const handleCruiseChange = (cruise: BoatCruisesId) => {
     setSelectedCruise(cruise);
     setTempStartDate(null);
     setTempEndDate(null);
@@ -91,7 +91,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   };
 
   const getDayCount = (): number => {
-    if (selectedCruise === BoatCruises.dayCruise || selectedCruise === BoatCruises.nightStay) {
+    if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay) {
       return tempStartDate ? 1 : 0;
     }
     
@@ -105,7 +105,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   const isDateInRange = (day: Date): boolean => {
     if (!tempStartDate) return false;
     
-    if (selectedCruise === BoatCruises.overNightCruise && tempEndDate) {
+    if (selectedCruise === BoatCruisesId.overNightCruise && tempEndDate) {
       return (
         (isAfter(day, tempStartDate) && isBefore(day, tempEndDate)) ||
         isSameDay(day, tempStartDate) ||
@@ -117,7 +117,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   };
 
   const isDateSelected = (day: Date): boolean => {
-    if (selectedCruise === BoatCruises.overNightCruise) {
+    if (selectedCruise === BoatCruisesId.overNightCruise) {
       return Boolean(
         (tempStartDate && isSameDay(day, tempStartDate)) ||
         (tempEndDate && isSameDay(day, tempEndDate))
@@ -127,7 +127,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   };
 
   const dayCount = getDayCount();
-  const canConfirm = selectedCruise === BoatCruises.overNightCruise 
+  const canConfirm = selectedCruise === BoatCruisesId.overNightCruise 
     ? Boolean(tempStartDate && tempEndDate)
     : Boolean(tempStartDate);
 
@@ -139,8 +139,8 @@ const DateSelector: React.FC<DateSelectorProps> = ({
           <input 
             type="radio" 
             className="form-radio h-3 w-3 text-blue-600"
-            checked={selectedCruise === BoatCruises.dayCruise} 
-            onChange={() => handleCruiseChange(BoatCruises.dayCruise)} 
+            checked={selectedCruise === BoatCruisesId.dayCruise} 
+            onChange={() => handleCruiseChange(BoatCruisesId.dayCruise)} 
           />
           <span className="ml-1 text-xs">{BoatCruises.dayCruise}</span>
         </label>
@@ -149,8 +149,8 @@ const DateSelector: React.FC<DateSelectorProps> = ({
           <input 
             type="radio" 
             className="form-radio h-3 w-3 text-blue-600"
-            checked={selectedCruise === BoatCruises.overNightCruise} 
-            onChange={() => handleCruiseChange(BoatCruises.overNightCruise)} 
+            checked={selectedCruise === BoatCruisesId.overNightCruise} 
+            onChange={() => handleCruiseChange(BoatCruisesId.overNightCruise)} 
           />
           <span className="ml-1 text-xs">{BoatCruises.overNightCruise}</span>
         </label>
@@ -159,8 +159,8 @@ const DateSelector: React.FC<DateSelectorProps> = ({
           <input 
             type="radio" 
             className="form-radio h-3 w-3 text-blue-600"
-            checked={selectedCruise === BoatCruises.nightStay} 
-            onChange={() => handleCruiseChange(BoatCruises.nightStay)} 
+            checked={selectedCruise === BoatCruisesId.nightStay} 
+            onChange={() => handleCruiseChange(BoatCruisesId.nightStay)} 
           />
           <span className="ml-1 text-xs">{BoatCruises.nightStay}</span>
         </label>
@@ -235,7 +235,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
       </div>
 
       {/* Action Buttons - Only for Overnight Cruise */}
-      {selectedCruise === BoatCruises.overNightCruise && (
+      {selectedCruise === BoatCruisesId.overNightCruise && (
         <div className="flex gap-2 mt-4">
           <button
             onClick={handleClear}
