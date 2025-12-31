@@ -46,6 +46,24 @@ const SearchBar = () => {
   const categoryRef = useRef<HTMLDivElement>(null);
   const datesRef = useRef<HTMLDivElement>(null);
 
+  const isOpeningRef = useRef(false);
+
+  useEffect(() => {
+    if (activeSection || showFilter) {
+      document.body.style.overflow = 'hidden';
+      isOpeningRef.current = true;
+      setTimeout(() => {
+        isOpeningRef.current = false;
+      }, 300); // 300ms buffer to allow layout shifts to settle
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [activeSection, showFilter]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (activeSection === 'type' && typeRef.current && !typeRef.current.contains(event.target as Node)) {
@@ -59,12 +77,28 @@ const SearchBar = () => {
       }
     };
 
-    const handleScroll = () => {
+    const handleScroll = (event: Event) => {
+      // Ignore scroll events during the opening "settling" phase to prevent flickering
+      if (isOpeningRef.current) {
+        return;
+      }
+
+      // If we're scrolling inside a scrollable container in our active section, don't close
+      if (activeSection === 'date' && datesRef.current && datesRef.current.contains(event.target as Node)) {
+        return;
+      }
+      if (activeSection === 'category' && categoryRef.current && categoryRef.current.contains(event.target as Node)) {
+        return;
+      }
+      if (activeSection === 'type' && typeRef.current && typeRef.current.contains(event.target as Node)) {
+        return;
+      }
+
       if (activeSection) {
         setActiveSection(null);
       }
       if (showFilter) {
-        setShowFilter(false)
+        setShowFilter(false);
       }
     };
 
@@ -174,8 +208,8 @@ const SearchBar = () => {
               <button
                 onClick={() => setActiveSection(activeSection === 'type' ? null : 'type')}
                 className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${showErrors && errors.type
-                    ? 'border-2 border-red-500 bg-red-50'
-                    : 'hover:bg-blue-500 hover:text-white'
+                  ? 'border-2 border-red-500 bg-red-50'
+                  : 'hover:bg-blue-500 hover:text-white'
                   } ${selectedType ? 'font-bold' : ''} text-black`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
@@ -204,8 +238,8 @@ const SearchBar = () => {
                         setActiveSection(null);
                       }}
                       className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${selectedType === option.id
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'hover:bg-blue-100 text-gray-900'
+                        ? 'bg-blue-100 text-blue-600'
+                        : 'hover:bg-blue-100 text-gray-900'
                         }`}
                     >
                       <span className="text-xl">{option.icon}</span>
@@ -221,8 +255,8 @@ const SearchBar = () => {
               <button
                 onClick={() => setActiveSection(activeSection === 'category' ? null : 'category')}
                 className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${showErrors && errors.category
-                    ? 'border-2 border-red-500 bg-red-50'
-                    : 'hover:bg-blue-500 hover:text-white'
+                  ? 'border-2 border-red-500 bg-red-50'
+                  : 'hover:bg-blue-500 hover:text-white'
                   } text-black font-bold`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">
@@ -265,8 +299,8 @@ const SearchBar = () => {
                         setActiveSection(null);
                       }}
                       className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${selectedCategory === option.id
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'hover:bg-blue-100 text-gray-900'
+                        ? 'bg-blue-100 text-blue-600'
+                        : 'hover:bg-blue-100 text-gray-900'
                         }`}
                     >
                       <span className="font-medium text-sm">{option.label}</span>
@@ -281,8 +315,8 @@ const SearchBar = () => {
               <button
                 onClick={() => setActiveSection(activeSection === 'date' ? null : 'date')}
                 className={`w-full px-1 sm:px-4 py-5 sm:py-4 text-left transition-colors duration-200 rounded-full ${showErrors && errors.date
-                    ? 'border-2 border-red-500 bg-red-50 text-red-500'
-                    : 'text-black hover:text-white hover:bg-blue-500'
+                  ? 'border-2 border-red-500 bg-red-50 text-red-500'
+                  : 'text-black hover:text-white hover:bg-blue-500'
                   } ${selectedDateRange.startDate ? 'font-bold' : ''}`}
               >
                 <div className="flex items-center gap-1 lg:gap-2">

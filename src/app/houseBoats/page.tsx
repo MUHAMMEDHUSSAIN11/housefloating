@@ -196,8 +196,8 @@ const Page = () => {
   if (!allListings || allListings.length === 0) {
     return (
       <Container>
-        <div className="pb-20 pt-40 lg:pt-28">
-          <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="w-full h-screen">
+          <div className="w-full h-full flex justify-center items-center">
             <BoatsEmptyState showReset={true} />
           </div>
         </div>
