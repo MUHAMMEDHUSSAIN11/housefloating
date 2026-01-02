@@ -13,6 +13,7 @@ import Button from "../Misc/Button";
 import toast from "react-hot-toast";
 import useAuth from "@/app/hooks/useAuth";
 import SignUp from "@/app/actions/SignUp/SignUp";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegisterModal = () => {
   const router = useRouter();
@@ -20,8 +21,10 @@ const RegisterModal = () => {
   const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({
+  const { register, handleSubmit, watch, setValue, formState: { errors, }, } = useForm<FieldValues>({
     defaultValues: {
       email: '',
       password: '',
@@ -31,34 +34,14 @@ const RegisterModal = () => {
     },
   });
 
+  const passwordValue = watch("password");
+  const confirmPasswordValue = watch("confirmPassword");
+  const isPasswordEmpty = !passwordValue;
+  const isConfirmPasswordEmpty = !confirmPasswordValue;
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setIsLoading(true);
-    const { email, password, confirmPassword, userName, mobileNumber } = data;
-
-    if (!userName || userName.trim() === '') {
-      toast.error("Name is required");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!mobileNumber || mobileNumber.trim() === '') {
-      toast.error("Mobile Number is required");
-      setIsLoading(false);
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
-    if (!passwordRegex.test(password)) {
-      toast.error("Password must be at least 6 characters long and contain at least one letter and one number");
-      setIsLoading(false);
-      return;
-    }
+    const { email, password, userName, mobileNumber } = data;
 
     try {
 
@@ -105,11 +88,88 @@ const RegisterModal = () => {
   const bodyContent = (
     <div className="flex flex-col gap-2">
       <Heading title="Welcome to Housefloating" subtitle="Create an account!" />
-      <Input id="userName" label="Name" type="text" disabled={isLoading} register={register} errors={errors} required />
-      <Input id="email" label="Email" type="email" disabled={isLoading} register={register} errors={errors} required />
-      <Input id="mobileNumber" label="Mobile Number" type="tel" disabled={isLoading} register={register} errors={errors} required />
-      <Input id="password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required />
-      <Input id="confirmPassword" label="Confirm Password" type="password" disabled={isLoading} register={register} errors={errors} required />
+        <Input
+          id="userName"
+          label="Name"
+          type="text"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          validation={{
+            required: "Name is required",
+            minLength: { value: 3, message: "Name must be at least 3 characters" },
+          }}
+        />
+
+        <Input
+          id="email"
+          label="Email Id"
+          type="email"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          validation={{
+            required: "Email is required",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Enter a valid email address",
+            },
+          }}
+        />
+        <div className="relative">
+          <Input
+            id="password"
+            label="Password"
+            disabled={isLoading}
+            type={showPassword ? "text" : "password"}
+            register={register}
+            errors={errors}
+            validation={{
+              required: "Password is required",
+              minLength: { value: 6, message: "Password must be at least 6 characters" },
+              pattern: { value: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/, message: "Password must contain at least one letter and one number" },
+            }}
+          />
+          {!isPasswordEmpty && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className={`absolute top-7 right-5 hover:cursor-pointer`}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </button>
+          )}
+        </div>
+        <div className="relative">
+            <Input
+              id="confirmPassword"
+              label="Confirm Password"
+              disabled={isLoading}
+              type={showConfirmPassword ? "text" : "password"}
+              register={register}
+              errors={errors}
+              validation={{
+                required: "Confirm password is required",
+                validate: (value: string) =>
+                  value === passwordValue || "Passwords do not match",
+              }}
+            />
+            {!isConfirmPasswordEmpty && (
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className={`absolute top-7 right-5 hover:cursor-pointer`}
+              >
+                {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+              </button>
+            )}
+          </div>
+          <Input id="mobileNumber" label="Mobile Number" disabled={isLoading} register={register} errors={errors} validation={{
+            pattern: {
+              value: /^[0-9]{10}$/,
+              message: "Enter a valid 10-digit mobile number",
+            },
+          }} />
     </div>
   );
 

@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 import Login from "@/app/actions/Login/Login";
 import { useRouter } from "next/navigation";
 import useAuth from "@/app/hooks/useAuth";
+import { watch } from "fs/promises";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginModal = () => {
     const loginModal = useLoginModal();
@@ -20,9 +22,12 @@ const LoginModal = () => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const { login } = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
 
-    const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { Email: '', Password: '' }, });
+    const { register, handleSubmit, watch, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { Email: '', Password: '' }, });
 
+    const passwordValue = watch("password");
+    const isPasswordEmpty = !passwordValue;
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
         const { Email, Password } = data;
         setIsLoading(true);
@@ -68,8 +73,43 @@ const LoginModal = () => {
     const bodyContent = (
         <div className="flex flex-col gap-4">
             <Heading title="Welcome back" subtitle="Login to your account!" />
-            <Input id="Email" label="Email" type="email" disabled={isLoading} register={register} errors={errors} required />
-            <Input id="Password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required />
+             <Input
+                id="email"
+                label="Email Id"
+                type="email"
+                disabled={isLoading}
+                register={register}
+                errors={errors}
+                validation={{
+                    required: "Email is required",
+                    pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Enter a valid email address",
+                    },
+                }}
+                />
+            <div className="relative">
+            <Input
+                id="password"
+                label="Password"
+                disabled={isLoading}
+                type={showPassword ? "text" : "password"}
+                register={register}
+                errors={errors}
+                validation={{
+                required: "Password is required",
+                }}
+            />
+            {!isPasswordEmpty && (
+                <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={`absolute top-7 right-5 hover:cursor-pointer`}
+                >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+                </button>
+            )}
+            </div>
         </div>
     );
 
