@@ -6,7 +6,8 @@ import Heading from "../Misc/Heading"
 import BreadCrumb from "../Misc/BreadCrumb"
 import Image from "next/image"
 import Button from "../Misc/Button"
-import {Grid3x3, X, ChevronLeft, ChevronRight, CropIcon } from "lucide-react"
+import { Grid3x3, X, ChevronLeft, ChevronRight, CropIcon, Share, ArrowLeft } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface ListingHeadProps {
   id: number
@@ -17,6 +18,7 @@ interface ListingHeadProps {
 }
 
 const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
+  const router = useRouter();
   const [showAllPhotos, setShowAllPhotos] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState<number | null>(null)
   const [mobileMainImageIndex, setMobileMainImageIndex] = useState(0)
@@ -66,19 +68,36 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
     setMobileMainImageIndex(index)
   }
 
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: title,
+          url: window.location.href
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
+
   const gridImages = imageSrc.slice(1, 5)
 
   return (
-     <>
-      <div className="pt-20 md:pt-14 w-11/12 mx-auto">
-        <div className="flex items-start justify-between">
+    <>
+      <div className="pt-14 w-11/12 mx-auto">
+        <div className="hidden md:flex items-start justify-between">
           <div className="flex  flex-col flex-1 gap-2">
             <BreadCrumb />
             <Heading title={title} />
           </div>
         </div>
 
-        <div className="relative">
+        <div className="relative mt-2 md:mt-0">
           <div className="grid grid-cols-4 gap-2 rounded-xl mb-2 overflow-hidden h-[350px] md:h-[500px]">
             <div
               className="col-span-4 md:col-span-2 row-span-1 relative group cursor-pointer overflow-hidden"
@@ -90,6 +109,24 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
                 fill
                 className="object-cover md:group-hover:scale-105 transition-transform duration-300"
               />
+
+              <div className="md:hidden">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.back();
+                  }}
+                  className="absolute left-4 top-8 bg-white/90 p-2 rounded-full shadow-md z-20 hover:bg-white transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 text-gray-700" />
+                </button>
+                <button
+                  onClick={handleShare}
+                  className="absolute right-4 top-8 bg-white/90 p-2 rounded-full shadow-md z-20 hover:bg-white transition-colors"
+                >
+                  <Share className="w-5 h-5 text-gray-700" />
+                </button>
+              </div>
 
               <div className="md:hidden">
                 {mobileMainImageIndex > 0 && (
@@ -153,9 +190,8 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
           {imageSrc.map((img, index) => (
             <div
               key={index}
-              className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer transition-all ${
-                mobileMainImageIndex === index ? "ring-2 ring-blue-400" : ""
-              }`}
+              className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer transition-all ${mobileMainImageIndex === index ? "ring-2 ring-blue-400" : ""
+                }`}
               onClick={() => handleThumbnailClick(index)}
             >
               <Image
@@ -169,87 +205,87 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
         </div>
 
         {showAllPhotos && (
-        <div className="fixed inset-0 bg-black z-50 overflow-y-auto">
-          <div className="min-h-screen p-8">
-            <div className="max-w-5xl mx-auto">
-              <div className="flex items-center justify-between mb-8 sticky top-0 bg-black py-4">
-                <h2 className="text-white text-xl font-semibold">All Photos</h2>
-                <div className="w-1/4"><Button label="Close" onClick={() => setShowAllPhotos(false)} /></div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {imageSrc.map((img, index) => (
-                  <div key={index} className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                    <Image
-                      src={img || "/placeholder.svg"}
-                      alt={`${title} photo ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      priority
-                    />
-                  </div>
-                ))}
+          <div className="fixed inset-0 bg-black z-50 overflow-y-auto">
+            <div className="min-h-screen p-8">
+              <div className="max-w-5xl mx-auto">
+                <div className="flex items-center justify-between mb-8 sticky top-0 bg-black py-4">
+                  <h2 className="text-white text-xl font-semibold">All Photos</h2>
+                  <div className="w-1/4"><Button label="Close" onClick={() => setShowAllPhotos(false)} /></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {imageSrc.map((img, index) => (
+                    <div key={index} className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                      <Image
+                        src={img || "/placeholder.svg"}
+                        alt={`${title} photo ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        priority
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {currentImageIndex !== null && (
-        <div
-          className="fixed inset-10 inset-y-40 lg:inset-40 bg-black z-50 flex items-center justify-center p-4"
-          onClick={() => setCurrentImageIndex(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white hover:bg-white/10 p-2 rounded-full z-10"
-            onClick={(e) => {
-              e.stopPropagation()
-              setCurrentImageIndex(null)
-            }}
+        {currentImageIndex !== null && (
+          <div
+            className="fixed inset-10 inset-y-40 lg:inset-40 bg-black z-50 flex items-center justify-center p-4"
+            onClick={() => setCurrentImageIndex(null)}
           >
-            <X className="h-6 w-6" />
-          </button>
-
-          {currentImageIndex > 0 && (
             <button
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-2 rounded-full z-10"
+              className="absolute top-4 right-4 text-white hover:bg-white/10 p-2 rounded-full z-10"
               onClick={(e) => {
                 e.stopPropagation()
-                goToPrevious()
+                setCurrentImageIndex(null)
               }}
             >
-              <ChevronLeft className="h-8 w-8" />
+              <X className="h-6 w-6" />
             </button>
-          )}
 
-          {currentImageIndex < imageSrc.length - 1 && (
-            <button
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-2 rounded-full z-10"
-              onClick={(e) => {
-                e.stopPropagation()
-                goToNext()
-              }}
-            >
-              <ChevronRight className="h-8 w-8" />
-            </button>
-          )}
+            {currentImageIndex > 0 && (
+              <button
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-2 rounded-full z-10"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goToPrevious()
+                }}
+              >
+                <ChevronLeft className="h-8 w-8" />
+              </button>
+            )}
 
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full z-10">
-            {currentImageIndex + 1} / {imageSrc.length}
+            {currentImageIndex < imageSrc.length - 1 && (
+              <button
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-2 rounded-full z-10"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  goToNext()
+                }}
+              >
+                <ChevronRight className="h-8 w-8" />
+              </button>
+            )}
+
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full z-10">
+              {currentImageIndex + 1} / {imageSrc.length}
+            </div>
+
+            <div className="relative w-full h-full max-w-7xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+              <Image
+                src={imageSrc[currentImageIndex] || "/placeholder.svg"}
+                alt="Full screen view"
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+              />
+            </div>
           </div>
-
-          <div className="relative w-full h-full max-w-7xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={imageSrc[currentImageIndex] || "/placeholder.svg"}
-              alt="Full screen view"
-              fill
-              className="object-contain"
-              sizes="100vw"
-              priority
-            />
-          </div>
-        </div>
-      )}
+        )}
       </div>
     </>
   )
