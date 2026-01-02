@@ -52,10 +52,16 @@ export enum BookingType {
     sharing = 2,
 }
 
-export enum BoatCruises {
+export enum BoatCruisesId {
     dayCruise = 1,
     overNightCruise = 2,
     nightStay = 3,
+}
+
+export enum BoatCruises {
+    dayCruise = "Day Cruise",
+    overNightCruise = "Overnight Cruise",
+    nightStay = "Night Stay",
 }
 
 export const coordinates: [number, number] = [9.5008, 76.3443];

@@ -16,7 +16,7 @@ const NightStaySteps = () => {
             <section className="sm:pl-3 p-2 body-font">
                 <div className="container flex flex-wrap">
                     <div className="flex flex-wrap w-full">
-                        <div className="lg:w-2/5 md:w-1/2 md:pr-10 md:py-6">
+                        <div className="md:pr-10 md:py-6">
                             <h1 className="font-sans font-semibold text-2xl text-gray-900 mb-5 ">Night Stay Schedule</h1>
                             <div className="flex relative pb-12">
                                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
@@ -149,7 +149,7 @@ const NightStaySteps = () => {
                                 </button>
                             </div>
                         </div>
-                        <div className='sm:w-auto md:w-1/2 md:pl-24 mt-24'>
+                        <div className='w-full'>
                             <AdditionalInfo />
                         </div>
                     </div>

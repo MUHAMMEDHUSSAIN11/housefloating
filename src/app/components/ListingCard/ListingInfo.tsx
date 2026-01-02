@@ -22,10 +22,10 @@ interface ListingInfoProps {
 
 const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxchildCount,
   bathroomCount, guestCount, roomCount, setAdultCount,
-  setChildCount, adultCount, childCount, minAdultCount,title,boardingPoint }) => {
+  setChildCount, adultCount, childCount, minAdultCount, title, boardingPoint }) => {
 
   return (
-    <div className='col-span-4 flex flex-col gap-7 px-1'>
+    <div className='flex flex-col gap-7 px-1'>
       <div className='flex flex-col gap-2'>
         <div className="text-xl font-semibold">{title},{boardingPoint}</div>
         <div className="text-sm flex flex-row items-center gap-2">

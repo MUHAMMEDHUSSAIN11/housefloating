@@ -94,8 +94,10 @@ const Listingpage = ({ params }: { params: Iparams }) => {
       <ListingSkeleton />
     </div>
   ) : !fetchedBoatData || error ? (
-    <div className='pt-40 md:pt-24 text-lg'>
-      <EmptyState showReset />
+    <div className="w-full h-screen">
+      <div className="w-full h-full flex justify-center items-center">
+        <EmptyState showReset={true} />
+      </div>
     </div>
   ) : (
     <ListingClient boatDetails={fetchedBoatData} date={date} cruiseTypeId={cruiseTypeId} />

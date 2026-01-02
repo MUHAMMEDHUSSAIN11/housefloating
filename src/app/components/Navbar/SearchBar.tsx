@@ -2,9 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Ship, Calendar, Users, ChevronDown, User, Plus, Minus, Send, Search } from 'lucide-react';
 import DateSelector from './DateSelector';
 import { format } from 'date-fns';
-import { BookingType, BoatCruises, Categories } from '@/app/enums/enums';
+import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
 import { usePathname, useRouter } from 'next/navigation';
 import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
+import SearchBarMobileModal from '../Modals/SearchBarMobileModal';
+import DesktopSearchBar from './DesktopSearchBar';
 
 interface DateRange {
   startDate: Date | null;
@@ -14,27 +16,27 @@ interface DateRange {
 const categoryOptions = [
   { id: Categories.All, label: 'All Category' },
   { id: Categories.Deluxe, label: 'Deluxe' },
-  { id: Categories.Premium, label: 'Premium'},
+  { id: Categories.Premium, label: 'Premium' },
   { id: Categories.Luxury, label: 'Luxury' },
 ];
 
 const typeOptions = [
-  { id: BookingType.private, label: 'Private', icon: <User/> },
-  { id: BookingType.sharing, label: 'Sharing', icon: <Users/> },
+  { id: BookingType.private, label: 'Private', icon: <User /> },
+  { id: BookingType.sharing, label: 'Sharing', icon: <Users /> },
 ];
 
 const SearchBar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  
-  const [selectedCruise, setSelectedCruise] = useState<BoatCruises>(BoatCruises.overNightCruise);
+
+  const [selectedCruise, setSelectedCruise] = useState<BoatCruisesId>(BoatCruisesId.overNightCruise);
   const [selectedType, setSelectedType] = useState<BookingType | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({ startDate: null, endDate: null });
   const [selectedCategory, setSelectedCategory] = useState<Categories>(Categories.All);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [roomCount, setRoomCount] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
-
+  const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
   const [errors, setErrors] = useState({
     type: false,
     category: false,
@@ -45,6 +47,24 @@ const SearchBar = () => {
   const typeRef = useRef<HTMLDivElement>(null);
   const categoryRef = useRef<HTMLDivElement>(null);
   const datesRef = useRef<HTMLDivElement>(null);
+
+  const isOpeningRef = useRef(false);
+
+  useEffect(() => {
+    if (activeSection || showFilter || isMobileModalOpen) {
+      document.body.style.overflow = 'hidden';
+      isOpeningRef.current = true;
+      setTimeout(() => {
+        isOpeningRef.current = false;
+      }, 300); // 300ms buffer to allow layout shifts to settle
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [activeSection, showFilter, isMobileModalOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,12 +79,28 @@ const SearchBar = () => {
       }
     };
 
-    const handleScroll = () => {
+    const handleScroll = (event: Event) => {
+      // Ignore scroll events during the opening "settling" phase to prevent flickering
+      if (isOpeningRef.current) {
+        return;
+      }
+
+      // If we're scrolling inside a scrollable container in our active section, don't close
+      if (activeSection === 'date' && datesRef.current && datesRef.current.contains(event.target as Node)) {
+        return;
+      }
+      if (activeSection === 'category' && categoryRef.current && categoryRef.current.contains(event.target as Node)) {
+        return;
+      }
+      if (activeSection === 'type' && typeRef.current && typeRef.current.contains(event.target as Node)) {
+        return;
+      }
+
       if (activeSection) {
         setActiveSection(null);
       }
-      if(showFilter) {
-        setShowFilter(false)
+      if (showFilter) {
+        setShowFilter(false);
       }
     };
 
@@ -90,9 +126,9 @@ const SearchBar = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    const isDateValid = selectedDateRange.startDate && 
-      (selectedCruise !== BoatCruises.overNightCruise || selectedDateRange.endDate);
-    
+    const isDateValid = selectedDateRange.startDate &&
+      (selectedCruise !== BoatCruisesId.overNightCruise || selectedDateRange.endDate);
+
     if (isDateValid && errors.date) {
       setErrors(prev => ({ ...prev, date: false }));
     }
@@ -101,9 +137,9 @@ const SearchBar = () => {
   const validateFields = () => {
     const newErrors = {
       type: !selectedType,
-      category: !selectedCategory ,
-      date: !selectedDateRange.startDate || 
-            (selectedCruise === BoatCruises.overNightCruise && !selectedDateRange.endDate),
+      category: !selectedCategory,
+      date: !selectedDateRange.startDate ||
+        (selectedCruise === BoatCruisesId.overNightCruise && !selectedDateRange.endDate),
     };
 
     setErrors(newErrors);
@@ -119,14 +155,14 @@ const SearchBar = () => {
 
     try {
       const params = new URLSearchParams();
-      
+
       // Add required parameters
       if (selectedType) params.append('type', selectedType.toString());
       if (selectedCategory) {
         params.append('category', selectedCategory.toString());
       }
       params.append('rooms', roomCount.toString());
-      
+
       // Add date parameters
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
@@ -134,196 +170,115 @@ const SearchBar = () => {
       if (selectedDateRange.endDate) {
         params.append('endDate', FormatToLocalDateTime(selectedDateRange.endDate));
       }
-      
+
       // Add cruise type
       params.append('cruise', selectedCruise.toString());
 
+      setIsMobileModalOpen(false);
       router.push(`/houseBoats?${params.toString()}`);
     } catch (error) {
       console.error('Error during search:', error);
     }
   };
 
-  const getCategoryLabel = (type: Categories) => {
+  const getCategoryLabel = (type: Categories): string => {
     const option = categoryOptions.find(o => o.id === type);
-    return option ? option.label : null;
+    return option ? option.label : '';
   };
 
-  const getSelectedLabel = (type: BookingType) => {
+  const getSelectedLabel = (type: BookingType): string => {
     const option = typeOptions.find(o => o.id === type);
-    return option ? option.label : null;
+    return option ? option.label : '';
   };
 
-  const getDateDisplayText = () => {
-    if(!selectedDateRange.startDate) return
-    
-    if (selectedCruise === BoatCruises.overNightCruise && selectedDateRange.endDate) {
+  const getDateDisplayText = (): string => {
+    if (!selectedDateRange.startDate) return '';
+
+    if (selectedCruise === BoatCruisesId.overNightCruise && selectedDateRange.endDate) {
       return `${format(selectedDateRange.startDate, 'MMM d')} - ${format(selectedDateRange.endDate, 'MMM d, yyyy')}`;
     }
-    
+
     return format(selectedDateRange.startDate, 'MMM d, yyyy');
   };
 
+  const isSearchPerformed = pathname === '/houseBoats';
+
   return (
     <div className="relative w-full mb-2 lg:mb:0 lg:my-8">
-      <div className="flex w-full gap-1 px-1 lg:py-1 justify-between items-center bg-white rounded-full border z-10 shadow-lg border-gray-300">
-        <div className='w-full'>
-          <div className='w-full grid grid-cols-3'>
-            {/* Type Selector */}
-            <div ref={typeRef} className="flex-1 min-w-0">
-              <button
-                onClick={() => setActiveSection(activeSection === 'type' ? null : 'type')}
-                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${
-                  showErrors && errors.type
-                    ? 'border-2 border-red-500 bg-red-50'
-                    : 'hover:bg-blue-500 hover:text-white'
-                } ${selectedType ? 'font-bold' : ''} text-black`}
-              >
-                <div className="flex items-center gap-1 lg:gap-2">
-                  {selectedType === BookingType.private
-                  ?<User className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />
-                  :<Users className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />}
-                  <div className="min-w-0 flex-1">
-                    <p className={`hidden sm:block text-sm truncate ${showErrors && errors.type ? 'text-red-500 font-semibold' : ''}`}>
-                      {selectedType ? getSelectedLabel(selectedType) : 'Select Type'}
-                    </p>
-                    <p className={`sm:hidden truncate ${showErrors && errors.type ? 'text-red-500 font-semibold' : ''}`}>
-                      {selectedType ? getSelectedLabel(selectedType) : 'Type'}
-                    </p>
-                  </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'type' ? 'rotate-180' : ''} ${showErrors && errors.type ? 'text-red-500' : ''}`} />
-                </div>
-              </button>
-
-              {activeSection === 'type' && (
-                <div className="absolute top-full left-0 right-0 w-fit mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50">
-                  {typeOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      onClick={() => {
-                        setSelectedType(option.id);
-                        setActiveSection(null);
-                      }}
-                      className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${
-                        selectedType === option.id
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'hover:bg-blue-100 text-gray-900'
-                      }`}
-                    >
-                      <span className="text-xl">{option.icon}</span>
-                      <span className="font-medium text-sm">{option.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Category Selector */}
-            <div ref={categoryRef} className="flex-1 min-w-0">
-              <button
-                onClick={() => setActiveSection(activeSection === 'category' ? null : 'category')}
-                className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${
-                  showErrors && errors.category
-                    ? 'border-2 border-red-500 bg-red-50'
-                    : 'hover:bg-blue-500 hover:text-white'
-                } text-black font-bold`}
-              >
-                <div className="flex items-center gap-1 lg:gap-2">
-                  <Ship className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.category ? 'text-red-500' : ''}`} />
-                  <div className="min-w-0 flex-1">
-                    <p className={`truncate ${showErrors && errors.category ? 'text-red-500 font-semibold' : ''}`}>
-                      {selectedCategory ? getCategoryLabel(selectedCategory) : 'Select category'}
-                    </p>
-                  </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'category' ? 'rotate-180' : ''} ${showErrors && errors.category ? 'text-red-500' : ''}`} />
-                </div>
-              </button>
-
-              {activeSection === 'category' && (       
-                <div className="absolute top-full mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50">
-                  <div className="flex items-center justify-between gap-4 my-2">
-                    <span className="text-sm text-gray-600">Rooms</span>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => setRoomCount(Math.max(1, roomCount - 1))}
-                        className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-6 text-center font-medium">{roomCount}</span>
-                      <button
-                        onClick={() => setRoomCount(roomCount + 1)}
-                        className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <hr/>
-                  {categoryOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      onClick={() => {
-                        setSelectedCategory(option.id);
-                        setActiveSection(null);
-                      }}
-                      className={`w-full flex items-center mt-1 gap-0.5 lg:gap-3 px-4 py-3 rounded-xl transition-colors ${
-                        selectedCategory === option.id
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'hover:bg-blue-100 text-gray-900'
-                      }`}
-                    >
-                      <span className="font-medium text-sm">{option.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Date Selector */}
-            <div ref={datesRef} className="flex-1 min-w-0">
-              <button
-                onClick={() => setActiveSection(activeSection === 'date' ? null : 'date')}
-                className={`w-full px-1 sm:px-4 py-5 sm:py-4 text-left transition-colors duration-200 rounded-full ${
-                  showErrors && errors.date
-                    ? 'border-2 border-red-500 bg-red-50 text-red-500'
-                    : 'text-black hover:text-white hover:bg-blue-500'
-                } ${selectedDateRange.startDate ? 'font-bold' : ''}`}
-              >
-                <div className="flex items-center gap-1 lg:gap-2">
-                  <Calendar className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.date ? 'text-red-500' : ''}`} />
-                  <div className="min-w-0 flex-1">
-                    <p className={`hidden sm:block truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
-                      {!selectedDateRange.startDate?'Select Date': getDateDisplayText()}
-                    </p>
-                    <p className={`sm:hidden text-sm truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
-                      {!selectedDateRange.startDate?'Date': getDateDisplayText()}
-                    </p>
-                  </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeSection === 'date' ? 'rotate-180' : ''} ${showErrors && errors.date ? 'text-red-500' : ''}`} />
-                </div>
-              </button>
-
-              {activeSection === 'date' && (
-                <DateSelector
-                  selectedCruise={selectedCruise}
-                  setSelectedCruise={setSelectedCruise}
-                  selected={selectedDateRange}
-                  onSelect={setSelectedDateRange}
-                  onClose={() => setActiveSection(null)}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-
+      {/* Mobile Search Trigger */}
+      <div className="md:hidden w-full px-4 mb-4">
         <button
-          onClick={handleSearch}
-          className="p-3 flex items-center justify-center gap-1 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:scale-110 active:scale-95 flex-shrink-0 transition-all duration-200"
+          onClick={() => setIsMobileModalOpen(true)}
+          className="w-full bg-white border border-gray-300 rounded-full py-3 px-4 shadow-sm flex items-center justify-between"
         >
-          <div className='hidden sm:block'>Search</div><Search className="w-5 h-5 sm:w-4 sm:h-4"/>
+          {isSearchPerformed && selectedType && selectedDateRange.startDate ? (
+            <div className="flex flex-col items-center flex-1">
+              <span className="text-sm font-bold text-gray-900">
+                {getSelectedLabel(selectedType)} • {getCategoryLabel(selectedCategory)}
+              </span>
+              <span className="text-xs text-gray-500">
+                {getDateDisplayText()} • {roomCount} {roomCount === 1 ? 'room' : 'rooms'}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center flex-1 gap-2">
+              <Search className="w-4 h-4 text-blue-500" />
+              <span className="font-semibold text-gray-800">Start your search</span>
+            </div>
+          )}
         </button>
       </div>
+
+      {/* Mobile Modal */}
+      {isMobileModalOpen && (
+        <SearchBarMobileModal
+          selectedCruise={selectedCruise}
+          setSelectedCruise={setSelectedCruise}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          selectedDateRange={selectedDateRange}
+          setSelectedDateRange={setSelectedDateRange}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          roomCount={roomCount}
+          setRoomCount={setRoomCount}
+          showErrors={showErrors}
+          errors={errors}
+          handleSearch={handleSearch}
+          setIsMobileModalOpen={setIsMobileModalOpen}
+          getSelectedLabel={getSelectedLabel}
+          getCategoryLabel={getCategoryLabel}
+          getDateDisplayText={getDateDisplayText}
+          typeOptions={typeOptions}
+          categoryOptions={categoryOptions}
+        />
+      )}
+
+      <DesktopSearchBar
+        typeRef={typeRef}
+        categoryRef={categoryRef}
+        datesRef={datesRef}
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+        showErrors={showErrors}
+        errors={errors}
+        selectedType={selectedType}
+        setSelectedType={setSelectedType}
+        getSelectedLabel={getSelectedLabel}
+        typeOptions={typeOptions}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        getCategoryLabel={getCategoryLabel}
+        categoryOptions={categoryOptions}
+        roomCount={roomCount}
+        setRoomCount={setRoomCount}
+        selectedDateRange={selectedDateRange}
+        setSelectedDateRange={setSelectedDateRange}
+        getDateDisplayText={getDateDisplayText}
+        selectedCruise={selectedCruise}
+        setSelectedCruise={setSelectedCruise}
+        handleSearch={handleSearch}
+      />
     </div>
   );
 };

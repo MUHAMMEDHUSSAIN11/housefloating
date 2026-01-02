@@ -48,7 +48,7 @@ const NavbarIcons: React.FC = () => {
     };
 
     return (
-        <div className="hidden md:flex flex-row items-center gap-3">
+         <div className="hidden md:flex flex-row items-center gap-3">
             <div
                 className="p-2 cursor-pointer hover:shadow-md transition rounded-full flex items-center justify-center group"
                 onClick={handleWishlistPush}
@@ -56,8 +56,8 @@ const NavbarIcons: React.FC = () => {
             >
                 <Heart
                     className={`w-6 h-6 transition-colors duration-200 ${isWishlistActive
-                            ? 'text-blue-500'
-                            : 'text-gray-600 group-hover:text-blue-500'
+                        ? 'text-blue-500'
+                        : 'text-gray-600 group-hover:text-blue-500'
                         }`}
                     fill={isWishlistActive ? "currentColor" : "none"}
                 />
@@ -69,8 +69,8 @@ const NavbarIcons: React.FC = () => {
             >
                 <ShoppingCart
                     className={`w-6 h-6 transition-colors duration-200 ${isCartActive
-                            ? 'text-blue-500'
-                            : 'text-gray-600 group-hover:text-blue-500'
+                        ? 'text-blue-500'
+                        : 'text-gray-600 group-hover:text-blue-500'
                         }`}
                 />
             </div>
