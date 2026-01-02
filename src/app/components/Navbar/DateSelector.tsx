@@ -14,6 +14,7 @@ interface DateSelectorProps {
   setSelectedCruise: React.Dispatch<React.SetStateAction<BoatCruisesId>>;
   onSelect: (dateRange: DateRange) => void;
   onClose: () => void;
+  inline?: boolean;
 }
 
 const DateSelector: React.FC<DateSelectorProps> = ({
@@ -21,7 +22,8 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   onSelect,
   onClose,
   selectedCruise,
-  setSelectedCruise
+  setSelectedCruise,
+  inline = false
 }) => {
   const [tempStartDate, setTempStartDate] = useState<Date | null>(selected.startDate);
   const [tempEndDate, setTempEndDate] = useState<Date | null>(selected.endDate);
@@ -126,7 +128,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     : Boolean(tempStartDate);
 
   return (
-    <div className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 z-50 w-full sm:w-[400px]">
+    <div className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 w-full sm:w-[400px] z-50'}`}>
       {/* Cruise Type Selection */}
       <div className="flex justify-between items-center my-2 w-full">
         <label className="inline-flex items-center cursor-pointer">
@@ -163,7 +165,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
       <hr className="my-2" />
 
       {/* Scrollable Month List */}
-      <div className="max-h-[380px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className={`${inline ? 'max-h-[270px]' : 'max-h-[380px]'} overflow-y-auto pr-2 custom-scrollbar`}>
         {monthsToShow.map((month, monthIdx) => {
           const days = eachDayOfInterval({
             start: startOfMonth(month),

@@ -1,0 +1,246 @@
+import { BoatCruisesId, BookingType, Categories } from "@/app/enums/enums";
+import { Calendar, ChevronDown, Minus, Plus, Search, Ship, User } from "lucide-react";
+import DateSelector from "../Navbar/DateSelector";
+import React, { useState } from "react";
+
+interface SearchBarMobileModalProps {
+  setIsMobileModalOpen: (isOpen: boolean) => void;
+  selectedType: BookingType | null;
+  setSelectedType: (type: BookingType | null) => void;
+  selectedCategory: Categories;
+  setSelectedCategory: (category: Categories) => void;
+  getSelectedLabel: (typeId: BookingType) => string;
+  getCategoryLabel: (category: Categories) => string;
+  getDateDisplayText: () => string;
+  typeOptions: { id: BookingType; label: string; icon: React.ReactNode; }[];
+  categoryOptions: { id: Categories; label: string; }[];
+  roomCount: number;
+  setRoomCount: (count: number) => void;
+  selectedDateRange: { startDate: Date | null; endDate: Date | null; };
+  setSelectedDateRange: (range: { startDate: Date | null; endDate: Date | null; }) => void;
+  selectedCruise: BoatCruisesId;
+  setSelectedCruise: React.Dispatch<React.SetStateAction<BoatCruisesId>>;
+  showErrors: boolean;
+  errors: { type: boolean; category: boolean; date: boolean; };
+  handleSearch: () => void;
+  onClose?: () => void;
+}
+
+const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
+  setIsMobileModalOpen,
+  selectedType,
+  setSelectedType,
+  selectedCategory,
+  setSelectedCategory,
+  getCategoryLabel,
+  getSelectedLabel,
+  getDateDisplayText,
+  typeOptions,
+  categoryOptions,
+  roomCount,
+  setRoomCount,
+  selectedDateRange,
+  setSelectedDateRange,
+  selectedCruise,
+  setSelectedCruise,
+  showErrors,
+  errors,
+  handleSearch,
+  onClose,
+}) => {
+  const [mobileActiveSection, setMobileActiveSection] = useState<'type' | 'category' | 'date' | null>('type');
+
+  return (
+    <div className="fixed inset-0 z-[60] bg-white flex flex-col md:hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b">
+        <button
+          onClick={() => setIsMobileModalOpen(false)}
+          className="p-1 hover:bg-gray-100 rounded-full"
+        >
+          <Plus className="w-6 h-6 rotate-45" />
+        </button>
+        <h2 className="text-lg font-bold">Search boats</h2>
+        <div className="w-8" /> {/* Spacer */}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 bg-gray-50">
+        {/* Type Selection Pill */}
+        <div
+          className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm ${mobileActiveSection === 'type' ? 'bg-white border-blue-200' :
+            showErrors && errors.type ? 'bg-red-50 border-red-300' : 'bg-white border-gray-100'
+            }`}
+        >
+          <button
+            onClick={() => setMobileActiveSection(mobileActiveSection === 'type' ? null : 'type')}
+            className={`w-full px-5 py-4 flex items-center justify-between text-left ${showErrors && errors.type && mobileActiveSection !== 'type' ? 'text-red-500' : ''}`}
+          >
+            <div className="flex items-center gap-3">
+              <User className={`w-5 h-5 ${mobileActiveSection === 'type' ? 'text-blue-500' : ''}`} />
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Booking Type</p>
+                <p className="font-bold text-gray-900">
+                  {selectedType ? getSelectedLabel(selectedType) : 'Select Type'}
+                </p>
+              </div>
+            </div>
+            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileActiveSection === 'type' ? 'rotate-180 text-blue-500' : 'text-gray-400'}`} />
+          </button>
+
+          <div className={`transition-all duration-300 ${mobileActiveSection === 'type' ? 'max-h-64 opacity-100 p-4 pt-0' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              {typeOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => {
+                    setSelectedType(option.id);
+                    setMobileActiveSection('category');
+                  }}
+                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${selectedType === option.id
+                    ? 'border-blue-500 bg-blue-50 text-blue-600'
+                    : 'border-gray-100 bg-gray-50 text-gray-600'
+                    }`}
+                >
+                  <div className="text-2xl mb-1">{option.icon}</div>
+                  <span className="text-sm font-bold">{option.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Category selection Pill */}
+        <div
+          className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm ${mobileActiveSection === 'category' ? 'bg-white border-blue-200' :
+            showErrors && errors.category ? 'bg-red-50 border-red-300' : 'bg-white border-gray-100'
+            }`}
+        >
+          <button
+            onClick={() => setMobileActiveSection(mobileActiveSection === 'category' ? null : 'category')}
+            className={`w-full px-5 py-4 flex items-center justify-between text-left ${showErrors && errors.category && mobileActiveSection !== 'category' ? 'text-red-500' : ''}`}
+          >
+            <div className="flex items-center gap-3">
+              <Ship className={`w-5 h-5 ${mobileActiveSection === 'category' ? 'text-blue-500' : ''}`} />
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Category & Rooms</p>
+                <p className="font-bold text-gray-900">
+                  {getCategoryLabel(selectedCategory)} • {roomCount} {roomCount === 1 ? 'Room' : 'Rooms'}
+                </p>
+              </div>
+            </div>
+            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileActiveSection === 'category' ? 'rotate-180 text-blue-500' : 'text-gray-400'}`} />
+          </button>
+
+          <div className={`transition-all duration-300 ${mobileActiveSection === 'category' ? 'max-h-[500px] opacity-100 p-4 pt-0' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between bg-gray-50 p-3 rounded-2xl mt-2">
+                <span className="font-bold text-gray-700">Number of Rooms</span>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setRoomCount(Math.max(1, roomCount - 1)); }}
+                    className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-blue-500 transition-colors shadow-sm"
+                  >
+                    <Minus className="w-5 h-5" />
+                  </button>
+                  <span className="w-4 text-center font-black text-lg">{roomCount}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setRoomCount(roomCount + 1); }}
+                    className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-blue-500 transition-colors shadow-sm"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {categoryOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => {
+                      setSelectedCategory(option.id);
+                      setMobileActiveSection('date');
+                    }}
+                    className={`p-3 rounded-xl border-2 text-center transition-all ${selectedCategory === option.id
+                      ? 'border-blue-500 bg-blue-50 text-blue-600'
+                      : 'border-gray-100 bg-gray-50 text-gray-600'
+                      }`}
+                  >
+                    <span className="text-sm font-bold">{option.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Date Selection Pill */}
+        <div
+          className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm ${mobileActiveSection === 'date' ? 'bg-white border-blue-200' :
+            showErrors && errors.date ? 'bg-red-50 border-red-300' : 'bg-white border-gray-100'
+            }`}
+        >
+          <button
+            onClick={() => setMobileActiveSection(mobileActiveSection === 'date' ? null : 'date')}
+            className={`w-full px-5 py-4 flex items-center justify-between text-left ${showErrors && errors.date && mobileActiveSection !== 'date' ? 'text-red-500' : ''}`}
+          >
+            <div className="flex items-center gap-3">
+              <Calendar className={`w-5 h-5 ${mobileActiveSection === 'date' ? 'text-blue-500' : ''}`} />
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pick Dates</p>
+                <p className="font-bold text-gray-900 truncate max-w-[200px]">
+                  {selectedDateRange.startDate ? getDateDisplayText() : 'Select Dates'}
+                </p>
+              </div>
+            </div>
+            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileActiveSection === 'date' ? 'rotate-180 text-blue-500' : 'text-gray-400'}`} />
+          </button>
+
+          <div className={`transition-all duration-300 ${mobileActiveSection === 'date' ? 'max-h-[600px] opacity-100 p-2' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+            <div className="bg-white rounded-2xl overflow-hidden mt-1">
+              <DateSelector
+                selectedCruise={selectedCruise}
+                setSelectedCruise={setSelectedCruise}
+                selected={selectedDateRange}
+                onSelect={(dates) => {
+                  setSelectedDateRange(dates);
+                  // Only auto-close if it's not a range selection or if both dates are picked
+                  if (selectedCruise !== BoatCruisesId.overNightCruise && dates.startDate) {
+                    setMobileActiveSection(null);
+                  } else if (dates.startDate && dates.endDate) {
+                    setMobileActiveSection(null);
+                  }
+                }}
+                onClose={() => setMobileActiveSection(null)}
+                inline={true}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-50">
+        <button
+          onClick={() => {
+            setSelectedType(null);
+            setSelectedDateRange({ startDate: null, endDate: null });
+            setSelectedCategory(Categories.All);
+            setRoomCount(1);
+          }}
+          className="text-gray-500 font-semibold underline px-2"
+        >
+          Clear all
+        </button>
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 text-white px-8 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-blue-200"
+        >
+          <Search className="w-5 h-5" />
+          Search
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default SearchBarMobileModal;
