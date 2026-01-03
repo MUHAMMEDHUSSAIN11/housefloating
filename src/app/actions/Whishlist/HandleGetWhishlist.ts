@@ -33,7 +33,7 @@ const HandleGetWhishlist = async (): Promise<WishlistResponse | null> => {
             }
         });
         if (response.status === 200) {
-            return response.data;
+            return response.data.data;
         }
         return null;
     } catch (error) {

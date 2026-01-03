@@ -65,6 +65,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     const checkStatus = async () => {
       if (user) {
         const wishlistData = await HandleGetWhishlist();
+        console.log('Wishlist Data:', wishlistData);
         if (wishlistData && wishlistData.items) {
           const isFound = wishlistData.items.some(item => item.boatId === data.boatId);
           setIsWishlisted(isFound);
