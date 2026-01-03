@@ -11,9 +11,6 @@ import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
 import { Reservation } from './page';
 
-// this component is used to display items in Cart page
-
-
 interface CardListingProps {
   details: Reservation;
   onAction?: (id: string) => void;
@@ -24,15 +21,15 @@ interface CardListingProps {
 
 const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionId = '', actionLabel }) => {
 
-  function formatDate(date: any) {
+  function formatDate(date: string) {
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-    const dateObj = typeof date.toDate === 'function' ? date.toDate() : new Date(date);
+    const dateObj = new Date(date);
     return dateObj.toLocaleDateString(undefined, options);
   }
 
   const advanceDetails = calculateAdvance(details.Price);
 
-  const bookingDateObj = typeof details.BookingDate.toDate === 'function' ? details.BookingDate.toDate() : new Date(details.BookingDate);
+  const bookingDateObj = new Date(details.BookingDate);
   const IsDateOver = CheckIsDateOver(bookingDateObj);
 
   const handleCancel: any = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -179,7 +176,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             {/* Action Buttons */}
             <div className='space-y-3 mt-6 pb-9 md:pb-0'>
               <Button
-                disabled={details.Status !== BookingStatus.Approved}
+                // disabled={details.Status !== BookingStatus.Approved}
                 label={"Proceed to Payment"}
                 onClick={() => MakeRazorpay(details)}
               />

@@ -13,7 +13,7 @@ export interface Reservation {
   BoatId: string;
   BoatName: string;
   BoatTitle: string;
-  BookingDate: any;
+  BookingDate: string; // Updated to string as per API
   Contactnumber: string;
   Email: string;
   HeadCount: number;
@@ -26,7 +26,7 @@ export interface Reservation {
   Image: string;
   UserId: string;
   BoatOwnerPhoneNumber?: string;
-  CreatedOn?: any;
+  CreatedOn?: string;
 }
 
 
@@ -42,21 +42,20 @@ const CartPage = () => {
 
         // Map the onlineBookings API response to the Reservation interface expected by TripsClient
         const formattedReservations = bookingsData?.map((booking: any) => ({
-          ReservationId: String(booking.onlineBookingId),
+          ReservationId: String(booking.bookingId),
           BoatId: String(booking.boatId),
-          BoatName: booking.boatCode || 'Boat',
-          BoatTitle: booking.boatCode || 'Boat',
-          BookingDate: booking.tripDate, // This will be a string from the API
-          Contactnumber: booking.contactNumber,
+          BoatName: booking.boatName || 'Boat',
+          BoatTitle: booking.boatName || 'Boat',
+          BookingDate: booking.tripDate, // String from API
+          Contactnumber: booking.guestContactNumber,
           Email: user.email,
           HeadCount: booking.adultCount,
           MinorCount: booking.childCount,
-          Mode: booking.cruiseTypeId === 1 ? 'Day Cruise' : booking.cruiseTypeId === 2 ? 'Overnight' : 'Night Stay',
+          Mode: booking.cruiseType || 'NightStay',
           Price: booking.price,
-          Payment: booking.paymentId,
-          Category: booking.guestPlace || '', // Mapping guestPlace to Category if appropriate, adjust if needed
-          Status: booking.bookingStatus || 'Requested',
-          Image: '/placeholder-boat.jpg', // You might need to fetch boat image separately or if API provides it
+          Category: booking.boatCategoryName || '',
+          Status: booking.bookingStatus || 'Booked',
+          Image: '/placeholder-boat.jpg',
           UserId: String(user.id),
         }));
 

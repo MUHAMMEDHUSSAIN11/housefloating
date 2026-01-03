@@ -11,7 +11,8 @@ const HandleGetOnlineBookings = async () => {
         });
 
         if (response.status >= 200 && response.status < 300) {
-            return response.data;
+            console.log('Online Bookings Data:', response.data.data);
+            return response.data.data.items;
         }
 
         return [];

@@ -16,7 +16,6 @@ export interface CreateOnlineBookingData {
     tripDate: string;
     boardingPoint: string;
     isSharing: boolean;
-    paymentId: number | string;
 }
 
 const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData) => {

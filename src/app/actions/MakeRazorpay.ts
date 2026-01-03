@@ -33,7 +33,7 @@ export default async function MakeRazorpay(Order: Reservation) {
             reservationId: Order.ReservationId,
             boatId: Order.BoatId,
             boatName: Order.BoatTitle,
-            bookingDate: Order.BookingDate.toDate().toISOString(),
+            bookingDate: new Date(Order.BookingDate).toISOString(),
             userId: Order.UserId,
             userEmail: Order.Email,
             remainingAmount: balanceAmount,

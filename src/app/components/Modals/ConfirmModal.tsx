@@ -160,7 +160,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 tripDate: finalBookingDate.toISOString(),
                 boardingPoint: boatDetails.boardingPoint,
                 isSharing: false, // Defaulting to false as per most flows
-                paymentId: 0
             };
 
             await HandleCreateOnlineBooking(onlineBookingData)
@@ -173,10 +172,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     BookingConfirmModal.onClose();
                     setStep(STEPS.PHONENUMBER);
                     handlePush();
-                    // Optional: Keep telegram if still needed, but user mentioned replacing the confirm action
-                    // SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber,
-                    //    modeOfTravel, boatDetails.boatCode, boatDetails.boatCategory, boatDetails.bedroomCount,
-                    //    );
                 })
                 .catch((error) => {
                     setIsLoading(false);
