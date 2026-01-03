@@ -13,7 +13,7 @@ export interface Reservation {
   BoatId: string;
   BoatName: string;
   BoatTitle: string;
-  BookingDate: any; // Changed from Timestamp to any to accommodate API string date
+  BookingDate: any;
   Contactnumber: string;
   Email: string;
   HeadCount: number;
@@ -53,7 +53,7 @@ const CartPage = () => {
           MinorCount: booking.childCount,
           Mode: booking.cruiseTypeId === 1 ? 'Day Cruise' : booking.cruiseTypeId === 2 ? 'Overnight' : 'Night Stay',
           Price: booking.price,
-          Payment: booking.paymentId > 0,
+          Payment: booking.paymentId,
           Category: booking.guestPlace || '', // Mapping guestPlace to Category if appropriate, adjust if needed
           Status: booking.bookingStatus || 'Requested',
           Image: '/placeholder-boat.jpg', // You might need to fetch boat image separately or if API provides it

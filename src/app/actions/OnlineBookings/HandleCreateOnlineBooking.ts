@@ -21,7 +21,7 @@ export interface CreateOnlineBookingData {
 
 const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData) => {
     try {
-        const token = jsCookie.get('accessToken');
+        const token = jsCookie.get('token');
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/api/OnlineBookings/createOnlineBooking`, data, {
             headers: {
                 Authorization: `Bearer ${token}`

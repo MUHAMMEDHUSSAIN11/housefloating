@@ -3,7 +3,7 @@ import jsCookie from "js-cookie";
 
 const HandleGetOnlineBookings = async () => {
     try {
-        const token = jsCookie.get('accessToken');
+        const token = jsCookie.get('token');
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/api/OnlineBookings/getMyOnlineBookings`, {
             headers: {
                 Authorization: `Bearer ${token}`
