@@ -1,20 +1,19 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import getReservationById from '../actions/getReservationById';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import TripsClient from './TripsClient';
-import { Timestamp } from 'firebase/firestore';
 import Spinner from '../components/Misc/Spinner';
 import useAuth from '../hooks/useAuth';
+import HandleGetOnlineBookings from '../actions/OnlineBookings/HandleGetOnlineBookings';
 
 export interface Reservation {
   ReservationId: string;
   BoatId: string;
   BoatName: string;
   BoatTitle: string;
-  BookingDate: Timestamp;
+  BookingDate: any; // Changed from Timestamp to any to accommodate API string date
   Contactnumber: string;
   Email: string;
   HeadCount: number;
@@ -27,7 +26,7 @@ export interface Reservation {
   Image: string;
   UserId: string;
   BoatOwnerPhoneNumber?: string;
-  CreatedOn?: Timestamp;
+  CreatedOn?: any;
 }
 
 
@@ -39,14 +38,31 @@ const CartPage = () => {
   const fetchReservations = async () => {
     try {
       if (user) {
-        const reservationsData = await getReservationById(user.email);
-        const updatedReservations = reservationsData?.map(reservation => ({
-          ...reservation,
-          UserId: String(user.id), // Include user.id in each reservation
+        const bookingsData = await HandleGetOnlineBookings();
+
+        // Map the onlineBookings API response to the Reservation interface expected by TripsClient
+        const formattedReservations = bookingsData?.map((booking: any) => ({
+          ReservationId: String(booking.onlineBookingId),
+          BoatId: String(booking.boatId),
+          BoatName: booking.boatCode || 'Boat',
+          BoatTitle: booking.boatCode || 'Boat',
+          BookingDate: booking.tripDate, // This will be a string from the API
+          Contactnumber: booking.contactNumber,
+          Email: user.email,
+          HeadCount: booking.adultCount,
+          MinorCount: booking.childCount,
+          Mode: booking.cruiseTypeId === 1 ? 'Day Cruise' : booking.cruiseTypeId === 2 ? 'Overnight' : 'Night Stay',
+          Price: booking.price,
+          Payment: booking.paymentId > 0,
+          Category: booking.guestPlace || '', // Mapping guestPlace to Category if appropriate, adjust if needed
+          Status: booking.bookingStatus || 'Requested',
+          Image: '/placeholder-boat.jpg', // You might need to fetch boat image separately or if API provides it
+          UserId: String(user.id),
         }));
-        setReservations(updatedReservations || []);
+
+        setReservations(formattedReservations || []);
       } else {
-        setReservations([]); // Handle the case when the user is not authenticated
+        setReservations([]);
       }
     } catch (error) {
       console.error('Error fetching reservations:', error);
@@ -59,8 +75,6 @@ const CartPage = () => {
     if (user) {
       setIsLoading(true);
       fetchReservations();
-      console.log('Fetching reservations for user:', user.email);
-      console.log(reservations);
     }
   }, [user]);
 

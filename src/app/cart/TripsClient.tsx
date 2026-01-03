@@ -10,28 +10,9 @@ import CancelReservation from '../actions/cancelReservation';
 import { useRouter } from 'next/navigation';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { Timestamp } from 'firebase/firestore';
+import { Reservation } from './page';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
-
-interface Reservation {
-  ReservationId: string;
-  BoatId: string;
-  BoatName: string;
-  BoatTitle: string;
-  BookingDate: Timestamp;
-  Contactnumber: string;
-  Email: string;
-  HeadCount: number;
-  MinorCount: number;
-  Mode: string;
-  Price: number;
-  Payment: boolean;
-  Category: string;
-  Status: string;
-  Image: string;
-  UserId: string;
-};
 
 interface TripsClientProps {
   reservations: Reservation[] | null;
@@ -42,7 +23,7 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
   const dtoast = useRef(null);
 
   const onConfirm = useCallback((reservation: Reservation) => {
-     CancelReservation(reservation)
+    CancelReservation(reservation)
     router.push('/cart');
   }, [router])
 
@@ -57,8 +38,8 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
       icon: 'pi pi-exclamation-triangle',
       accept: () => onConfirm(reservation),
       reject,
-      acceptClassName: ' p-3 rounded-md', 
-      rejectClassName: ' p-3 rounded-md', 
+      acceptClassName: ' p-3 rounded-md',
+      rejectClassName: ' p-3 rounded-md',
     });
   }
 

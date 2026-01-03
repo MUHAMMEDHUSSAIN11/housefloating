@@ -41,6 +41,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
   const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.guestCount);
   const [finalChildCount, setFinalChildCount] = useState(0);
+  const [isVeg, setIsVeg] = useState(false);
   const adultAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.adultAddOnDayPrice
     : cruiseTypeId === BoatCruisesId.overNightCruise ? boatDetails.prices.adultAddonDayNightPrice
       : boatDetails.prices.adultAddonNightStayPrice;
@@ -79,7 +80,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   return (
     <>
-      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? 'Day Cruise' : cruiseTypeId == 2 ? 'Overnight Cruise' : 'Night Stay'} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalBookingDate={date} finalMinorCount={finalChildCount} />
+      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? 'Day Cruise' : cruiseTypeId == 2 ? 'Overnight Cruise' : 'Night Stay'} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalBookingDate={date} finalMinorCount={finalChildCount} isVeg={isVeg} />
       <div className='max-w-screen-xl mx-auto pt-20 md:pt-24 pb-24 md:pb-0'>
         <div className='flex flex-col gap-6'>
           <ListingHead
@@ -169,6 +170,8 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 cruiseTypeId={cruiseTypeId}
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
+                isVeg={isVeg}
+                setIsVeg={setIsVeg}
               />
             </div>
           </div>

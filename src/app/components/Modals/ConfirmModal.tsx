@@ -14,11 +14,11 @@ import { BookingStatus } from '@/app/enums/enums';
 import * as NProgress from 'nprogress';
 import sendotp from '@/app/actions/getOTP';
 import validateOTP from '@/app/actions/validateOTP';
-import RequestBooking from '@/app/actions/RequestBooking';
 import { toast } from 'react-hot-toast';
-import SendRequestTelegram from '@/app/actions/SendRequestTelegram';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
+import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
+import { BoatCruisesId } from '@/app/enums/enums';
 
 
 
@@ -34,11 +34,12 @@ interface confirmModalProps {
     finalPrice: number,
     finalHeadCount: number,
     finalBookingDate: Date,
-    finalMinorCount: number
+    finalMinorCount: number,
+    isVeg: boolean
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount, isVeg }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
@@ -143,26 +144,26 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
         if (step === STEPS.SUMMARY) {
             setIsLoading(true)
-            const reservationData = {
-                Contactnumber: data.phonenumber,
-                BookingDate: finalBookingDate,
-                HeadCount: finalHeadCount,
-                Price: finalPrice as number,
-                Email: user?.email,
-                BoatId: String(boatDetails.boatId),
-                BoatName: boatDetails.boatCode,
-                BoatTitle: boatDetails.boatCode,
-                MinorCount: finalMinorCount,
-                Mode: modeOfTravel,
-                Payment: false,
-                Category: boatDetails.boatCategory,
-                Status: BookingStatus.Requested,
-                Image: boatDetails.boatImages[0],
-                CreatedOn: Timestamp.fromDate(new Date()),
-                CruiseType: modeOfTravel
+
+            const onlineBookingData = {
+                adultCount: finalHeadCount,
+                boatId: boatDetails.boatId,
+                bookingDate: new Date().toISOString(),
+                bookingStatusId: 1, // Requested
+                childCount: finalMinorCount,
+                contactNumber: data.phonenumber,
+                cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
+                guestPlace: boatDetails.boardingPoint, // Or another relevant field
+                guestUserId: user?.id || 0,
+                isVeg: isVeg,
+                price: finalPrice,
+                tripDate: finalBookingDate.toISOString(),
+                boardingPoint: boatDetails.boardingPoint,
+                isSharing: false, // Defaulting to false as per most flows
+                paymentId: 0
             };
 
-            await RequestBooking(reservationData)
+            await HandleCreateOnlineBooking(onlineBookingData)
                 .then(() => {
                     setIsLoading(false);
                     toast('Boat enquiry raised successfully! Confirmation will be received once booking is Approved!.', {
@@ -172,11 +173,13 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     BookingConfirmModal.onClose();
                     setStep(STEPS.PHONENUMBER);
                     handlePush();
-                    SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber,
-                        modeOfTravel, boatDetails.boatCode, boatDetails.boatCategory, boatDetails.bedroomCount,
-                        );
+                    // Optional: Keep telegram if still needed, but user mentioned replacing the confirm action
+                    // SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber,
+                    //    modeOfTravel, boatDetails.boatCode, boatDetails.boatCategory, boatDetails.bedroomCount,
+                    //    );
                 })
                 .catch((error) => {
+                    setIsLoading(false);
                     toast.error('something went wrong! Please contact our team');
                 });
         }

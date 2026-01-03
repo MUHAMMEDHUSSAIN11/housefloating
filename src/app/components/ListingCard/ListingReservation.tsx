@@ -9,10 +9,11 @@ interface ListingReservationProps {
   onSubmit: () => void;
   cruiseTypeId?: number;
   disabled?: boolean;
+  isVeg: boolean;
+  setIsVeg: (value: boolean) => void;
 }
 
-const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onSubmit, cruiseTypeId, disabled }) => {
-  const [isVeg, setIsVeg] = useState(false);
+const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onSubmit, cruiseTypeId, disabled, isVeg, setIsVeg }) => {
   const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? "Day Cruise"
     : cruiseTypeId === BoatCruisesId.overNightCruise ? "Overnight Cruise"
       : "Night Stay Cruise";

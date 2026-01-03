@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Button from '../components/Misc/Button';
 import { IoBoat, IoCalendarNumberSharp, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
 import { BookingStatus } from '../enums/enums';
-import MakeStripe from '../actions/MakeStripe';
+import MakeRazorpay from '../actions/MakeRazorpay';
 import calculateAdvance from '../actions/advanceCalculate';
 import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
@@ -25,13 +25,15 @@ interface CardListingProps {
 const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionId = '', actionLabel }) => {
 
   function formatDate(date: any) {
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    return date.toDate().toLocaleDateString(undefined, options);
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+    const dateObj = typeof date.toDate === 'function' ? date.toDate() : new Date(date);
+    return dateObj.toLocaleDateString(undefined, options);
   }
 
   const advanceDetails = calculateAdvance(details.Price);
 
-  const IsDateOver = CheckIsDateOver(details.BookingDate.toDate());
+  const bookingDateObj = typeof details.BookingDate.toDate === 'function' ? details.BookingDate.toDate() : new Date(details.BookingDate);
+  const IsDateOver = CheckIsDateOver(bookingDateObj);
 
   const handleCancel: any = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -179,7 +181,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
               <Button
                 disabled={details.Status !== BookingStatus.Approved}
                 label={"Proceed to Payment"}
-                onClick={() => MakeStripe(details)}
+                onClick={() => MakeRazorpay(details)}
               />
 
               {onAction && actionLabel && (
