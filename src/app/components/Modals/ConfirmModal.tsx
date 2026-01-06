@@ -8,7 +8,6 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import OtpInput from 'react-otp-input';
-import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation'
 import { BookingStatus } from '@/app/enums/enums';
 import * as NProgress from 'nprogress';

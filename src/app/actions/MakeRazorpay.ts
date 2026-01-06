@@ -37,6 +37,7 @@ export default async function MakeRazorpay(Order: Reservation) {
             userId: Order.UserId,
             userEmail: Order.Email,
             remainingAmount: balanceAmount,
+            totalPrice: Order.Price,
             contactNumber: Order.Contactnumber
         };
 

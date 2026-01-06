@@ -6,7 +6,7 @@ import Heading from '../components/Misc/Heading';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import Card from './Card';
-import CancelReservation from '../actions/cancelReservation';
+// import CancelReservation from '../actions/cancelReservation';
 import { useRouter } from 'next/navigation';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
@@ -23,7 +23,8 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
   const dtoast = useRef(null);
 
   const onConfirm = useCallback((reservation: Reservation) => {
-    CancelReservation(reservation)
+    // CancelReservation(reservation)
+    console.log("Cancellation TODO: Implement new API cancellation logic");
     router.push('/cart');
   }, [router])
 

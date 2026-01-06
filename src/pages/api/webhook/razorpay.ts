@@ -1,9 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import crypto from 'crypto';
-import SendPaymentTelegram from '@/app/actions/SendPaymentTelegram';
-import SendFailedPaymentTelegram from '@/app/actions/SendFailedPaymentTelegram';
-import { CreatePaymentAndConfirmBooking, paymentModel } from '@/app/actions/CreatePaymentAndConfirmBooking';
-import { Timestamp } from 'firebase-admin/firestore';
+import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreateOnlinePayment';
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "dummy_webhook_secret";
 
@@ -32,33 +29,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // In Razorpay, notes often contain the metadata
         const metadata = paymentEntity.notes || {};
-
         const reservationId = metadata.reservationId;
-        const boatId = metadata.boatId;
-        const bookingDate = metadata.bookingDate;
-        const userEmail = metadata.userEmail;
-        const userId = metadata.userId;
-        const contactNumber = metadata.contactNumber;
-        const boatName = metadata.boatName;
         const remainingAmount = metadata.remainingAmount;
+        const totalPrice = metadata.totalPrice;
 
-        const payment: paymentModel = {
-            ReservationId: reservationId,
-            BoatId: boatId,
-            PaidDate: Timestamp.now(),
-            PaymentStatus: 'succeeded',
-            AmountPaidInRupees: paymentEntity.amount / 100,
-            UserEmail: userEmail,
-            UserId: userId,
-            RemainingAmount: remainingAmount,
+        const paymentData = {
+            advanceAmount: paymentEntity.amount / 100,
+            bookingId: Number(reservationId),
+            paymentModeId: 1, // Online/Razorpay
+            paymentStatusId: 2, // Paid/Captured
+            remainingAmount: Number(remainingAmount),
+            totalPrice: Number(totalPrice),
+            transactionId: paymentEntity.id,
         };
 
         try {
-            await CreatePaymentAndConfirmBooking(reservationId, payment);
-            await SendPaymentTelegram(reservationId, boatId, boatName, bookingDate, userEmail, contactNumber);
+            await HandleCreateOnlinePayment(paymentData);
             return res.status(200).json({ status: 'ok' });
         } catch (error) {
-            console.error('Error processing booking:', error);
+            console.error('Error processing booking payment:', error);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
@@ -74,15 +63,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const userEmail = metadata.userEmail;
         const contactNumber = metadata.contactNumber;
 
-        await SendFailedPaymentTelegram(
-            reservationId,
-            boatId,
-            boatName,
-            bookingDate,
-            userEmail,
-            paymentEntity.error_description || 'Payment Failed',
-            contactNumber
-        );
         return res.status(200).json({ status: 'ok' });
     }
 

@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { amount, metadata } = req.body;
 
         const options = {
-            amount: amount * 100,
+            amount: Math.round(amount * 100),
             currency: "INR",
             receipt: metadata.reservationId,
             notes: metadata,
