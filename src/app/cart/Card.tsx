@@ -8,7 +8,7 @@ import { BookingStatus } from '../enums/enums';
 import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
 import { BookingData } from './page';
-import { Baby } from 'lucide-react';
+import { Baby, House } from 'lucide-react';
 
 interface CardListingProps {
   details: BookingData;
@@ -112,19 +112,27 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
                 </div>
               </div>
 
-              <div className='flex flex-col items-center gap-3 p-3 bg-green-50 rounded-lg'>
+              <div className="flex items-center gap-1.5 lg:gap-3 p-1 lg:p-3 bg-green-50 rounded-lg">
                 <div>
-                  <p className="text-xs text-gray-600 uppercase tracking-wide">Guests</p>
+                    <p className="text-xs text-gray-600 uppercase tracking-wide">Adult</p>
+                    <div className="flex gap-1">
+                        <IoPersonSharp className="text-green-600" size={20} />
+                        <p className="font-semibold text-sm text-gray-900">{details.adultCount}</p>
+                    </div>
                 </div>
-                <div className='flex'>
-                  <div className="flex-shrink-0 flex gap-2">
-                    <IoPersonSharp className="text-green-600" size={20} />
-                    <p className="font-semibold text-gray-900">{details.adultCount}</p>
-                  </div>
-                  <div className="flex-shrink-0 flex gap-2">
-                    <Baby className="text-green-600" size={20} />
-                    <p className="font-semibold text-gray-900">{details.childCount}</p>
-                  </div>
+                <div>
+                    <p className="text-xs text-gray-600 uppercase tracking-wide">Child</p>
+                    <div className="flex gap-1">
+                        <Baby className="text-green-600" size={20} />
+                        <p className="font-semibold text-sm text-gray-900">{details.childCount}</p>
+                    </div>
+                </div>
+                <div className={`${!details.isShared&&'hidden'}`}>
+                    <p className="text-xs text-gray-600 uppercase tracking-wide">Room</p>
+                    <div className="flex gap-1">
+                        <House className="text-green-600" size={20} />
+                        <p className="font-semibold text-sm text-gray-900">{details.parentSharingRoomCount}</p>
+                    </div>
                 </div>
               </div>
 
