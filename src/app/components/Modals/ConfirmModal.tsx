@@ -15,23 +15,10 @@ import validateOTP from '@/app/actions/validateOTP';
 import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
-import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
-import { BoatCruisesId, amount as amountEnum, PaymentModes } from '@/app/enums/enums';
+import { BoatCruisesId } from '@/app/enums/enums';
 import axios from 'axios';
+import MakeRazorpay from '@/app/actions/MakeRazorpay';
 
-const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.onload = () => {
-            resolve(true);
-        };
-        script.onerror = () => {
-            resolve(false);
-        };
-        document.body.appendChild(script);
-    });
-};
 
 
 
@@ -160,23 +147,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             setIsLoading(true)
 
             try {
-                const res = await loadRazorpayScript();
-
-                if (!res) {
-                    toast.error("Razorpay SDK failed to load. Are you online?");
-                    setIsLoading(false);
-                    return;
-                }
-
-                const advanceAmount = finalPrice * amountEnum.advance;
-                const remainingAmount = finalPrice * amountEnum.remaining;
-
                 const metadata = {
                     boatId: boatDetails.boatId,
                     userId: user?.id || 0,
-                    totalPrice: finalPrice,
-                    advanceAmount: advanceAmount,
-                    remainingAmount: remainingAmount,
                     contactNumber: cleanedPhoneNumber,
                     adultCount: finalHeadCount,
                     childCount: finalMinorCount,
@@ -185,85 +158,30 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     isVeg: isVeg,
                     boardingPoint: boatDetails.boardingPoint,
                     isSharing: false,
+                    roomCount: boatDetails.bedroomCount
                 };
 
-                const { data: order } = await axios.post('/api/razorpay/route', {
-                    amount: advanceAmount,
-                    metadata
-                });
-
-                const options = {
-                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-                    amount: order.amount,
-                    currency: order.currency,
-                    name: "House Floating",
+                await MakeRazorpay({
+                    totalPrice: finalPrice,
                     description: `Booking for ${boatDetails.boatCode}`,
                     image: boatDetails.boatImages?.[0] || '/placeholder-boat.jpg',
-                    order_id: order.id,
-                    method: {
-                        upi: true,
-                        card: true,
-                        netbanking: true,
-                        wallet: false,
-                        emi: false,
-                        paylater: false,
-                    },
-                    handler: async function (response: any) {
-                        const onlineBookingData = {
-                            adultCount: finalHeadCount,
-                            boatId: boatDetails.boatId,
-                            bookingDate: new Date().toISOString(),
-                            childCount: finalMinorCount,
-                            contactNumber: cleanedPhoneNumber,
-                            cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
-                            guestPlace: boatDetails.boardingPoint,
-                            guestUserId: user?.id || 0,
-                            isVeg: isVeg,
-                            price: finalPrice,
-                            tripDate: finalCheckInDate.toISOString(),
-                            boardingPoint: boatDetails.boardingPoint,
-                            isSharing: false,
-                            transactionId: response.razorpay_payment_id,
-                            paymentModeId: PaymentModes.UPI,
-                            totalPrice: finalPrice,
-                            advanceAmount: advanceAmount,
-                            remainingAmount: remainingAmount
-                        };
-
-                        await HandleCreateOnlineBooking(onlineBookingData)
-                            .then(() => {
-                                setIsLoading(false);
-                                toast.success('Booking and Payment successful!');
-                                BookingConfirmModal.onClose();
-                                setStep(STEPS.PHONENUMBER);
-                                handlePush();
-                            })
-                            .catch((error) => {
-                                setIsLoading(false);
-                                console.error('Booking Error:', error);
-                                toast.success('Payment successful! Processing your booking...');
-                                BookingConfirmModal.onClose();
-                                handlePush();
-                            });
-                    },
                     prefill: {
                         name: user?.name || '',
                         email: user?.email || '',
-                        contact: data.phonenumber,
+                        contact: cleanedPhoneNumber,
                     },
-                    notes: metadata,
-                    theme: {
-                        color: "#3399cc",
+                    metadata: metadata,
+                    onSuccess: () => {
+                        setIsLoading(false);
+                        BookingConfirmModal.onClose();
+                        setStep(STEPS.PHONENUMBER);
+                        handlePush();
                     },
-                    modal: {
-                        ondismiss: function () {
-                            setIsLoading(false);
-                        }
+                    onError: (err: any) => {
+                        setIsLoading(false);
+                        console.error('Payment Error:', err);
                     }
-                };
-
-                const paymentObject = new (window as any).Razorpay(options);
-                paymentObject.open();
+                });
 
             } catch (error) {
                 console.error('Payment/Booking Error:', error);

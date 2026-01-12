@@ -13,7 +13,7 @@ export interface Reservation {
   BoatId: string;
   BoatName: string;
   BoatTitle: string;
-  BookingDate: string; // Updated to string as per API
+  BookingDate: string;
   Contactnumber: string;
   Email: string;
   HeadCount: number;

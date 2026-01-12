@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             contactNumber: metadata.contactNumber,
             cruiseTypeId: Number(metadata.cruiseTypeId),
             guestPlace: metadata.boardingPoint || '',
-            guestUserId: Number(metadata.userId),
+            guestUserId: Number(metadata.userId || metadata.guestUserId),
             isVeg: metadata.isVeg === 'true' || metadata.isVeg === true,
             price: Number(metadata.totalPrice),
             tripDate: metadata.tripDate,
@@ -58,10 +58,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             totalPrice: Number(metadata.totalPrice),
             advanceAmount: paymentEntity.amount / 100,
             remainingAmount: Number(metadata.remainingAmount),
+            roomCount: Number(metadata.roomCount || null)
         };
 
         try {
-            await HandleCreateOnlineBooking(onlineBookingData);
+            const token = metadata.authToken; // Get token passed from frontend
+            console.log('Webhook calling HandleCreateOnlineBooking with token:', token ? 'Bearer Present' : 'NONE');
+            await HandleCreateOnlineBooking(onlineBookingData, token);
             return res.status(200).json({ status: 'ok' });
         } catch (error) {
             console.error('Error processing consolidated booking/payment webhook:', error);

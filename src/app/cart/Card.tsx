@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Button from '../components/Misc/Button';
 import { IoBoat, IoCalendarNumberSharp, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
 import { BookingStatus } from '../enums/enums';
-import MakeRazorpay from '../actions/MakeRazorpay';
 import calculateAdvance from '../actions/advanceCalculate';
 import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
@@ -175,12 +174,6 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
 
             {/* Action Buttons */}
             <div className='space-y-3 mt-6 pb-9 md:pb-0'>
-              <Button
-                // disabled={details.Status !== BookingStatus.Approved}
-                label={"Proceed to Payment"}
-                onClick={() => MakeRazorpay(details)}
-              />
-
               {onAction && actionLabel && (
                 <Button
                   disabled={details.Status === BookingStatus.Cancelled || !IsDateOver}

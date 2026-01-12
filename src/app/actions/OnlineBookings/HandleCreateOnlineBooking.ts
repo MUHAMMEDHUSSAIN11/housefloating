@@ -20,6 +20,7 @@ export interface CreateOnlineBookingData {
     totalPrice: number | string;
     advanceAmount: number | string;
     remainingAmount: number | string;
+    roomCount?: number | string;
 }
 
 const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData, authToken?: string) => {
