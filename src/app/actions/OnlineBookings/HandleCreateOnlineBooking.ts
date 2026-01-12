@@ -5,7 +5,6 @@ export interface CreateOnlineBookingData {
     adultCount: number | string;
     boatId: number | string;
     bookingDate: string;
-    bookingStatusId: number;
     childCount: number | string;
     contactNumber: string;
     cruiseTypeId: number;
@@ -14,9 +13,13 @@ export interface CreateOnlineBookingData {
     isVeg: boolean;
     price: number | string;
     tripDate: string;
-    checkOutDate: string;
     boardingPoint: string;
     isSharing: boolean;
+    transactionId: string;
+    paymentModeId: number;
+    totalPrice: number | string;
+    advanceAmount: number | string;
+    remainingAmount: number | string;
 }
 
 const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData) => {

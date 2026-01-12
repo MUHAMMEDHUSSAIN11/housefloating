@@ -9,7 +9,6 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import OtpInput from 'react-otp-input';
 import { useRouter } from 'next/navigation'
-import { BookingStatus } from '@/app/enums/enums';
 import * as NProgress from 'nprogress';
 import sendotp from '@/app/actions/getOTP';
 import validateOTP from '@/app/actions/validateOTP';
@@ -17,7 +16,22 @@ import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
-import { BoatCruisesId } from '@/app/enums/enums';
+import { BoatCruisesId, amount as amountEnum } from '@/app/enums/enums';
+import axios from 'axios';
+
+const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => {
+            resolve(true);
+        };
+        script.onerror = () => {
+            resolve(false);
+        };
+        document.body.appendChild(script);
+    });
+};
 
 
 
@@ -80,7 +94,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
         } else if (step === STEPS.OTP) {
             return 'verify OTP';
         }
-        return 'Confirm';
+        return 'Proceed to Payment';
     }, [step]);
 
 
@@ -145,39 +159,118 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
         if (step === STEPS.SUMMARY) {
             setIsLoading(true)
 
-            const onlineBookingData = {
-                adultCount: finalHeadCount,
-                boatId: boatDetails.boatId,
-                bookingDate: new Date().toISOString(),
-                bookingStatusId: 1, // Requested
-                childCount: finalMinorCount,
-                contactNumber: data.phonenumber,
-                cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
-                guestPlace: boatDetails.boardingPoint, // Or another relevant field
-                guestUserId: user?.id || 0,
-                isVeg: isVeg,
-                price: finalPrice,
-                tripDate: finalCheckInDate.toISOString(),
-                checkOutDate: finalCheckOutDate.toISOString(),
-                boardingPoint: boatDetails.boardingPoint,
-                isSharing: false, // Defaulting to false as per most flows
-            };
+            try {
+                const res = await loadRazorpayScript();
 
-            await HandleCreateOnlineBooking(onlineBookingData)
-                .then(() => {
+                if (!res) {
+                    toast.error("Razorpay SDK failed to load. Are you online?");
                     setIsLoading(false);
-                    toast('Boat enquiry raised successfully! Confirmation will be received once booking is Approved!.', {
-                        icon: '👏',
-                        duration: 6000,
-                    });
-                    BookingConfirmModal.onClose();
-                    setStep(STEPS.PHONENUMBER);
-                    handlePush();
-                })
-                .catch((error) => {
-                    setIsLoading(false);
-                    toast.error('something went wrong! Please contact our team');
+                    return;
+                }
+
+                const advanceAmount = finalPrice * amountEnum.advance;
+                const remainingAmount = finalPrice * amountEnum.remaining;
+
+                const metadata = {
+                    boatId: boatDetails.boatId,
+                    boatName: boatDetails.boatCode,
+                    userId: user?.id || 0,
+                    userEmail: user?.email || '',
+                    totalPrice: finalPrice,
+                    advanceAmount: advanceAmount,
+                    remainingAmount: remainingAmount,
+                    contactNumber: data.phonenumber,
+                    adultCount: finalHeadCount,
+                    childCount: finalMinorCount,
+                    tripDate: finalCheckInDate.toISOString(),
+                    checkOutDate: finalCheckOutDate.toISOString(),
+                    cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
+                    isVeg: isVeg,
+                    boardingPoint: boatDetails.boardingPoint,
+                };
+
+                // Create Order in backend
+                const { data: order } = await axios.post('/api/razorpay/route', {
+                    amount: advanceAmount,
+                    metadata
                 });
+
+                const options = {
+                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                    amount: order.amount,
+                    currency: order.currency,
+                    name: "House Floating",
+                    description: `Booking for ${boatDetails.boatCode}`,
+                    image: boatDetails.boatImages?.[0] || '/placeholder-boat.jpg',
+                    order_id: order.id,
+                    method: {
+                        upi: true,
+                        card: true,
+                        netbanking: true,
+                        wallet: false,
+                        emi: false,
+                        paylater: false,
+                    },
+                    handler: async function (response: any) {
+                        const onlineBookingData = {
+                            adultCount: finalHeadCount,
+                            boatId: boatDetails.boatId,
+                            bookingDate: new Date().toISOString(),
+                            childCount: finalMinorCount,
+                            contactNumber: data.phonenumber,
+                            cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
+                            guestPlace: boatDetails.boardingPoint,
+                            guestUserId: user?.id || 0,
+                            isVeg: isVeg,
+                            price: finalPrice,
+                            tripDate: finalCheckInDate.toISOString(),
+                            boardingPoint: boatDetails.boardingPoint,
+                            isSharing: false,
+                            transactionId: response.razorpay_payment_id,
+                            paymentModeId: 1,
+                            totalPrice: finalPrice,
+                            advanceAmount: advanceAmount,
+                            remainingAmount: remainingAmount
+                        };
+
+                        await HandleCreateOnlineBooking(onlineBookingData)
+                            .then(() => {
+                                setIsLoading(false);
+                                toast.success('Booking and Payment successful!');
+                                BookingConfirmModal.onClose();
+                                setStep(STEPS.PHONENUMBER);
+                                handlePush();
+                            })
+                            .catch((error) => {
+                                setIsLoading(false);
+                                console.error('Booking Error:', error);
+                                toast.error('Payment successful but booking failed! Please contact support with Transaction ID: ' + response.razorpay_payment_id);
+                            });
+                    },
+                    prefill: {
+                        name: user?.name || '',
+                        email: user?.email || '',
+                        contact: data.phonenumber,
+                    },
+                    notes: metadata,
+                    theme: {
+                        color: "#3399cc",
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            setIsLoading(false);
+                        }
+                    }
+                };
+
+                const paymentObject = new (window as any).Razorpay(options);
+                paymentObject.open();
+
+            } catch (error) {
+                console.error('Payment/Booking Error:', error);
+                setIsLoading(false);
+                toast.error('Something went wrong during payment initialization');
+            }
         }
     }
 
@@ -217,7 +310,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     <p className="text-gray-900">Total Price: {finalPrice}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
                 </div>
-                <p className="text-gray-900"> We’ll update you soon. Thanks for waiting!!</p>
+                <p className="text-gray-900 font-bold mt-2"> Thank you for your payment!</p>
+                <p className="text-gray-900"> Your booking request is being processed. We’ll update you soon.</p>
                 <p className="text-gray-900">Please note that some boats may be unavailable due to Offline or Spot Bookings.</p>
                 <p className="text-gray-900">Look out for a confirmation message on your WhatsApp or Email!</p>
                 <p className="text-gray-900">If the chosen boat is unavailable, we'll quickly provide a list of alternative options for you to consider.</p>

@@ -64,4 +64,10 @@ export enum BoatCruises {
     nightStay = "Night Stay",
 }
 
+export enum PaymentModes {
+    UPI = 1,
+    Card = 2,
+    NetBanking = 3
+}
+
 export const coordinates: [number, number] = [9.5008, 76.3443];

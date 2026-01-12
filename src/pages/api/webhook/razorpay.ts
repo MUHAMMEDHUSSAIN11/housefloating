@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import crypto from 'crypto';
-import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreateOnlinePayment';
+import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
+import { PaymentModes } from '@/app/enums/enums';
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "dummy_webhook_secret";
 
@@ -25,29 +26,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (event === 'payment.captured') {
         const paymentEntity = payload.payment.entity;
-        const orderEntity = payload.order?.entity;
 
-        // In Razorpay, notes often contain the metadata
+        // In Razorpay, notes contain the metadata
         const metadata = paymentEntity.notes || {};
-        const reservationId = metadata.reservationId;
-        const remainingAmount = metadata.remainingAmount;
-        const totalPrice = metadata.totalPrice;
 
-        const paymentData = {
-            advanceAmount: paymentEntity.amount / 100,
-            bookingId: Number(reservationId),
-            paymentModeId: 1, // Online/Razorpay
-            paymentStatusId: 2, // Paid/Captured
-            remainingAmount: Number(remainingAmount),
-            totalPrice: Number(totalPrice),
+        // Map Razorpay method to our PaymentModes enum
+        let paymentModeId = 1; // Default to 1 (Online/Other)
+        if (paymentEntity.method === 'upi') {
+            paymentModeId = PaymentModes.UPI;
+        } else if (paymentEntity.method === 'card') {
+            paymentModeId = PaymentModes.Card;
+        } else if (paymentEntity.method === 'netbanking') {
+            paymentModeId = PaymentModes.NetBanking;
+        }
+
+        const onlineBookingData = {
+            adultCount: Number(metadata.adultCount),
+            boatId: Number(metadata.boatId),
+            bookingDate: new Date().toISOString(),
+            childCount: Number(metadata.childCount),
+            contactNumber: metadata.contactNumber,
+            cruiseTypeId: Number(metadata.cruiseTypeId),
+            guestPlace: metadata.boardingPoint || '',
+            guestUserId: Number(metadata.userId),
+            isVeg: metadata.isVeg === 'true' || metadata.isVeg === true,
+            price: Number(metadata.totalPrice),
+            tripDate: metadata.tripDate,
+            boardingPoint: metadata.boardingPoint || '',
+            isSharing: false, // Defaulting to false as per existing flows
             transactionId: paymentEntity.id,
+            paymentModeId: paymentModeId,
+            totalPrice: Number(metadata.totalPrice),
+            advanceAmount: paymentEntity.amount / 100,
+            remainingAmount: Number(metadata.remainingAmount),
         };
 
         try {
-            await HandleCreateOnlinePayment(paymentData);
+            await HandleCreateOnlineBooking(onlineBookingData);
             return res.status(200).json({ status: 'ok' });
         } catch (error) {
-            console.error('Error processing booking payment:', error);
+            console.error('Error processing consolidated booking/payment webhook:', error);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     }

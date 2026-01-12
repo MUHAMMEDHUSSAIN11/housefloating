@@ -33,12 +33,18 @@ export default async function MakeRazorpay(Order: Reservation) {
             reservationId: Order.ReservationId,
             boatId: Order.BoatId,
             boatName: Order.BoatTitle,
-            bookingDate: new Date(Order.BookingDate).toISOString(),
+            bookingDate: new Date().toISOString(),
             userId: Order.UserId,
             userEmail: Order.Email,
             remainingAmount: balanceAmount,
             totalPrice: Order.Price,
-            contactNumber: Order.Contactnumber
+            contactNumber: Order.Contactnumber,
+            adultCount: Order.HeadCount,
+            childCount: Order.MinorCount,
+            tripDate: Order.BookingDate, // In cart, BookingDate is the trip date
+            cruiseTypeId: Order.Mode === 'Day Cruise' ? 1 : Order.Mode === 'Overnight Cruise' ? 2 : 3, // Mapping cruise type
+            isVeg: false, // Defaulting if not in Order object
+            boardingPoint: '', // Defaulting
         };
 
         // Create Order in backend
