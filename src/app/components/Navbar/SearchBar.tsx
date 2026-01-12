@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Ship, Calendar, Users, ChevronDown, User, Plus, Minus, Send, Search } from 'lucide-react';
-import DateSelector from './DateSelector';
+import { Users, User, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
 import { usePathname, useRouter } from 'next/navigation';

@@ -48,7 +48,6 @@ const fetchBoatData = async (
     Date: date,
     CruiseTypeId: cruiseTypeId,
   });
-  console.log("Fetched Boat Data:", fetchedBoatData);
   return fetchedBoatData;
 };
 
