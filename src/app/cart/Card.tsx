@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import Image from 'next/image';
 import Button from '../components/Misc/Button';
 import { IoBoat, IoCalendarNumberSharp, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
-import { BookingStatus } from '../enums/enums';
+import { BookingStatuses } from '../enums/enums';
 import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
 import { BookingData } from './page';
@@ -20,13 +20,12 @@ interface CardListingProps {
 
 const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionId = '', actionLabel }) => {
 
-  function formatDate(date: string) {
-    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' };
-    const dateObj = new Date(date);
-    return dateObj.toLocaleDateString(undefined, options);
+  function formatDate(date: any) {
+    const options = { day: "numeric", month: "short", year: "numeric" }
+    return date.toLocaleDateString(undefined, options)
   }
 
-  const bookingDateObj = new Date(details.bookingDate);
+  const bookingDateObj = new Date(details.tripDate);
   const IsDateOver = CheckIsDateOver(bookingDateObj);
 
   const handleCancel: any = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -38,14 +37,11 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
   }, [disabled, onAction, actionId]);
 
   // Status styling helper
-  const getStatusStyle = (status: string) => {
+  const getStatusStyle = (status: number) => {
     switch (status) {
-      case "Confirmed":
-      case "Approved":
+      case BookingStatuses.Booked:
         return "bg-green-100 text-green-800 border-green-200";
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "Cancelled":
+      case BookingStatuses.Cancelled:
         return "bg-red-100 text-red-800 border-red-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
@@ -66,7 +62,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           {/* Status Badge */}
           <div className="absolute top-4 left-4">
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusStyle('Confirmed')}`}>
+            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusStyle(details.bookingStatusId)}`}>
               {details.bookingStatus}
             </span>
           </div>
@@ -94,7 +90,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 uppercase tracking-wide">Trip Date</p>
-                  <p className="font-semibold text-gray-900">{formatDate(details.bookingDate)}</p>
+                  <p className="font-semibold text-gray-900">{formatDate(new Date(details.tripDate))}</p>
                 </div>
               </div>
 
@@ -179,7 +175,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             <div className='space-y-3 mt-6 pb-9 md:pb-0'>
               {onAction && actionLabel && (
                 <Button
-                  disabled={details.bookingStatus === BookingStatus.Cancelled || !IsDateOver}
+                  disabled={details.bookingStatusId === BookingStatuses.Cancelled || !IsDateOver}
                   outline
                   small
                   label={actionLabel}

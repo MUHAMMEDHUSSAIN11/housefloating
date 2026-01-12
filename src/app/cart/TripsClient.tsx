@@ -6,11 +6,11 @@ import Heading from '../components/Misc/Heading';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import Card from './Card';
-// import CancelReservation from '../actions/cancelReservation';
 import { useRouter } from 'next/navigation';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { BookingData } from './page';
+import HandleCancelOnlineBooking from '../actions/OnlinePayments/HandleCancelOnlineBooking';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
 
@@ -20,18 +20,47 @@ interface TripsClientProps {
 
 const TripsClient: React.FC<TripsClientProps> = ({ bookings }) => {
   const router = useRouter();
-  const dtoast = useRef(null);
+  const dtoast = useRef<Toast>(null);
 
-  const onConfirm = useCallback((bookings: BookingData) => {
-    // CancelReservation(reservation)
-    console.log("Cancellation TODO: Implement new API cancellation logic");
-    router.push('/cart');
+  const onConfirm = useCallback(async (booking: BookingData) => {
+    try {
+      const cancelData = {
+        bookingId: booking.bookingId,
+        tripDate: booking.tripDate
+      };
+
+      const result = await HandleCancelOnlineBooking(cancelData);
+
+      if (result) {
+        dtoast.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Booking cancelled successfully',
+          life: 3000
+        });
+
+        // Refresh the page to update the bookings list
+        setTimeout(() => {
+          router.refresh();
+        }, 1000);
+      } else {
+        throw new Error('Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      dtoast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to cancel booking. Please try again.',
+        life: 3000
+      });
+    }
   }, [router])
 
   const reject = () => {
 
   }
- 
+
   const showConfirmationDialog = async (bookings: BookingData) => {
     confirmDialog({
       message: 'Proceed with booking cancellation?',

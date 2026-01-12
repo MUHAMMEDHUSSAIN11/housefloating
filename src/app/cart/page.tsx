@@ -7,7 +7,7 @@ import TripsClient from './TripsClient';
 import Spinner from '../components/Misc/Spinner';
 import useAuth from '../hooks/useAuth';
 import HandleGetOnlineBookings from '../actions/OnlineBookings/HandleGetOnlineBookings';
-import { BookingStatus } from '../enums/enums';
+import { BookingStatuses } from '../enums/enums';
 
 export interface BookingData {
   bookingId: number;
@@ -28,7 +28,8 @@ export interface BookingData {
   childCount: number;
   cruiseTypeId: number;
   cruiseType: string;
-  bookingStatus: BookingStatus;
+  bookingStatusId: number;
+  bookingStatus: string;
   isVeg: boolean;
   isAdvancePaid: boolean;
   price: number;
