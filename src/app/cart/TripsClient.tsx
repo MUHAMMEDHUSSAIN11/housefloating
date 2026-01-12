@@ -10,19 +10,19 @@ import Card from './Card';
 import { useRouter } from 'next/navigation';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { Reservation } from './page';
+import { BookingData } from './page';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
 
 interface TripsClientProps {
-  reservations: Reservation[] | null;
+  bookings: BookingData[] | null;
 }
 
-const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
+const TripsClient: React.FC<TripsClientProps> = ({ bookings }) => {
   const router = useRouter();
   const dtoast = useRef(null);
 
-  const onConfirm = useCallback((reservation: Reservation) => {
+  const onConfirm = useCallback((bookings: BookingData) => {
     // CancelReservation(reservation)
     console.log("Cancellation TODO: Implement new API cancellation logic");
     router.push('/cart');
@@ -31,13 +31,13 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
   const reject = () => {
 
   }
-
-  const showConfirmationDialog = async (reservation: Reservation) => {
+ 
+  const showConfirmationDialog = async (bookings: BookingData) => {
     confirmDialog({
       message: 'Proceed with booking cancellation?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => onConfirm(reservation),
+      accept: () => onConfirm(bookings),
       reject,
       acceptClassName: ' p-3 rounded-md',
       rejectClassName: ' p-3 rounded-md',
@@ -47,12 +47,12 @@ const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
   return (
     <Container>
       <Heading title="Trips" subtitle="Where you've been and where you're going" />
-      {reservations !== null ? (
+      {bookings !== null ? (
         <div className="mt-10 w-full lg:w-5/6 ">
-          {reservations.map((reservation, index) => (
+          {bookings.map((booking, index) => (
             <div key={index} className="mb-4">
-              <Card key={index} details={reservation} actionLabel="Cancel booking"
-                onAction={() => showConfirmationDialog(reservation)}
+              <Card key={index} details={booking} actionLabel="Cancel booking"
+                onAction={() => showConfirmationDialog(booking)}
                 disabled={false}
               />
             </div>

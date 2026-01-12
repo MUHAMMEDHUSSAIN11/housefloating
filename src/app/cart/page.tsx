@@ -7,64 +7,63 @@ import TripsClient from './TripsClient';
 import Spinner from '../components/Misc/Spinner';
 import useAuth from '../hooks/useAuth';
 import HandleGetOnlineBookings from '../actions/OnlineBookings/HandleGetOnlineBookings';
+import { BookingStatus } from '../enums/enums';
 
-export interface Reservation {
-  ReservationId: string;
-  BoatId: string;
-  BoatName: string;
-  BoatTitle: string;
-  BookingDate: string;
-  Contactnumber: string;
-  Email: string;
-  HeadCount: number;
-  MinorCount: number;
-  Mode: string;
-  Price: number;
-  Payment: boolean;
-  Category: string;
-  Status: string;
-  Image: string;
-  UserId: string;
-  BoatOwnerPhoneNumber?: string;
-  CreatedOn?: string;
+export interface BookingData {
+  bookingId: number;
+  boatId: number;
+  boatName: string;
+  boatCategoryId: number;
+  boatCategoryName: string;
+  guestName: string;
+  imageUrl:string
+  guestContactNumber: string;
+  guestPlace: string | null;
+  boardingPoint: string | null;
+  tripDate: Date;
+  bookingDate: string;
+  bookingTypeId: number;
+  bookingType: string;
+  adultCount: number;
+  childCount: number;
+  cruiseTypeId: number;
+  cruiseType: string;
+  bookingStatus: BookingStatus;
+  isVeg: boolean;
+  isAdvancePaid: boolean;
+  price: number;
+  advanceAmount: number;
+  balanceAmount: number;
+  agent: string | null;
+  notes: string | null;
+  createdOn: string;
+  createdBy: string;
+  updatedOn: string | null;
+  updatedBy: string | null;
+  isShared: boolean;
+  occupiedSlots: number;
+  remainingSlots: number;
+  totalSharedAmount: number;
+  parentSharingRoomCount: number;
+  sharedBookings: BookingData[]
 }
 
 
 const CartPage = () => {
   const { user } = useAuth();
-  const [reservations, setReservations] = useState<Reservation[] | null>(null);
+  const [bookings, setbookings] = useState<BookingData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchReservations = async () => {
+  const fetchbookings = async () => {
     try {
       if (user) {
         const bookingsData = await HandleGetOnlineBookings();
-
-        // Map the onlineBookings API response to the Reservation interface expected by TripsClient
-        const formattedReservations = bookingsData?.map((booking: any) => ({
-          ReservationId: String(booking.bookingId),
-          BoatId: String(booking.boatId),
-          BoatName: booking.boatName || 'Boat',
-          BoatTitle: booking.boatName || 'Boat',
-          BookingDate: booking.tripDate, // String from API
-          Contactnumber: booking.guestContactNumber,
-          Email: user.email,
-          HeadCount: booking.adultCount,
-          MinorCount: booking.childCount,
-          Mode: booking.cruiseType || 'NightStay',
-          Price: booking.price,
-          Category: booking.boatCategoryName || '',
-          Status: booking.bookingStatus || 'Booked',
-          Image: '/placeholder-boat.jpg',
-          UserId: String(user.id),
-        }));
-
-        setReservations(formattedReservations || []);
+        setbookings(bookingsData || []);
       } else {
-        setReservations([]);
+        setbookings([]);
       }
     } catch (error) {
-      console.error('Error fetching reservations:', error);
+      console.error('Error fetching bookings:', error);
     } finally {
       setIsLoading(false);
     }
@@ -73,20 +72,20 @@ const CartPage = () => {
   useEffect(() => {
     if (user) {
       setIsLoading(true);
-      fetchReservations();
+      fetchbookings();
     }
   }, [user]);
 
 
   return (
-    <div className="pt-56 md:pt-32 ">
-      {isLoading ? (<Spinner />) : user && reservations ? (
+    <div className="pt-40 md:pt-36 ">
+      {isLoading ? (<Spinner />) : user && bookings ? (
         <ClientOnly>
-          <TripsClient reservations={reservations} />
+          <TripsClient bookings={bookings} />
         </ClientOnly>
       ) : (
         <ClientOnly>
-          <EmptyState title="Not Logged in!" subtitle="Please log in to see reservations!" />
+          <EmptyState title="Not Logged in!" subtitle="Please log in to see bookings!" />
         </ClientOnly>
       )}
     </div>
