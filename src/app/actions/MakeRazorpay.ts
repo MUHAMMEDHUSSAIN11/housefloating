@@ -1,7 +1,8 @@
 import axios from "axios";
 import toast from "react-hot-toast";
-import { amount } from "../enums/enums";
+import { amount as amountEnum, PaymentModes } from "../enums/enums";
 import { Reservation } from "../cart/page";
+import HandleCreateOnlineBooking from "./OnlineBookings/HandleCreateOnlineBooking";
 
 const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -26,16 +27,12 @@ export default async function MakeRazorpay(Order: Reservation) {
             return;
         }
 
-        const advanceAmount = Order.Price * amount.advance;
-        const balanceAmount = Order.Price * amount.remaining;
+        const advanceAmount = Order.Price * amountEnum.advance;
+        const balanceAmount = Order.Price * amountEnum.remaining;
 
         const metadata = {
-            reservationId: Order.ReservationId,
             boatId: Order.BoatId,
-            boatName: Order.BoatTitle,
-            bookingDate: new Date().toISOString(),
             userId: Order.UserId,
-            userEmail: Order.Email,
             remainingAmount: balanceAmount,
             totalPrice: Order.Price,
             contactNumber: Order.Contactnumber,
@@ -45,6 +42,7 @@ export default async function MakeRazorpay(Order: Reservation) {
             cruiseTypeId: Order.Mode === 'Day Cruise' ? 1 : Order.Mode === 'Overnight Cruise' ? 2 : 3, // Mapping cruise type
             isVeg: false, // Defaulting if not in Order object
             boardingPoint: '', // Defaulting
+            isSharing: false,
         };
 
         // Create Order in backend
@@ -61,11 +59,39 @@ export default async function MakeRazorpay(Order: Reservation) {
             description: `Booking for ${Order.BoatTitle}`,
             image: Order.Image,
             order_id: order.id,
-            handler: function (response: any) {
-                // Razorpay handles the payment, we rely on the webhook to confirm the booking.
-                // But we can show a success message or redirect here too.
-                toast.success("Payment Successful! Your booking is being processed.");
-                window.location.href = "/cart";
+            handler: async function (response: any) {
+                const onlineBookingData = {
+                    adultCount: Order.HeadCount,
+                    boatId: Order.BoatId,
+                    bookingDate: new Date().toISOString(),
+                    childCount: Order.MinorCount,
+                    contactNumber: Order.Contactnumber,
+                    cruiseTypeId: Order.Mode === 'Day Cruise' ? 1 : Order.Mode === 'Overnight Cruise' ? 2 : 3,
+                    guestPlace: '', // Defaulting
+                    guestUserId: Order.UserId,
+                    isVeg: false,
+                    price: Order.Price,
+                    tripDate: Order.BookingDate,
+                    boardingPoint: '',
+                    isSharing: false,
+                    transactionId: response.razorpay_payment_id,
+                    paymentModeId: PaymentModes.UPI, // Default
+                    totalPrice: Order.Price,
+                    advanceAmount: Order.Price * amountEnum.advance,
+                    remainingAmount: Order.Price * amountEnum.remaining
+                };
+
+                await HandleCreateOnlineBooking(onlineBookingData)
+                    .then(() => {
+                        toast.success("Payment Successful!");
+                        window.location.href = "/cart";
+                    })
+                    .catch((error) => {
+                        console.error('Booking Update Error:', error);
+                        // Fallback to webhook redirect
+                        toast.success("Payment Successful! Processing your order...");
+                        window.location.href = "/cart";
+                    });
             },
             prefill: {
                 name: Order.Email,

@@ -1,10 +1,9 @@
-export enum BookingStatus
-{
+export enum BookingStatus {
     //when user requests a boat
     Requested = "Requested",
 
     //when admin approves the request
-    Approved  = "Approved",
+    Approved = "Approved",
 
     //when user pays the advance
     Confirmed = "Confirmed",
@@ -13,20 +12,18 @@ export enum BookingStatus
     Cancelled = "Cancelled",
 }
 
-export enum Categories
-{
+export enum Categories {
     Deluxe = 1,
     Premium = 2,
     Luxury = 3,
     All = 4,
 }
 
-export enum amount
-{
+export enum amount {
     advance = 0.3,
     remaining = 0.7,
     weekendPrice = 2000,
-    preChristmas = 1.71, 
+    preChristmas = 1.71,
     christmasSeason = 2.20,
     offerPrice = 1.1,
     summerVaccationPrice = 2500,
@@ -35,14 +32,12 @@ export enum amount
     dayCruiseReduction = 500
 }
 
-export enum Telegram
-{
+export enum Telegram {
     botToken = '6317566293:AAFj2P1IlI91Cap6iR8Scy_A4xvFnyJTiws',
     chatId = '6777591451',
 }
 
-export enum TravelMode 
-{
+export enum TravelMode {
     DayCruise = "DayCruise",
     OverNight = "Overnight"
 }
@@ -67,7 +62,7 @@ export enum BoatCruises {
 export enum PaymentModes {
     UPI = 1,
     Card = 2,
-    NetBanking = 3
+    NetBanking = 3,
 }
 
 export const coordinates: [number, number] = [9.5008, 76.3443];

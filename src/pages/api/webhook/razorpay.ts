@@ -23,15 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const { event, payload } = req.body;
+    console.log('Razorpay Webhook Received Event:', event);
 
     if (event === 'payment.captured') {
         const paymentEntity = payload.payment.entity;
 
-        // In Razorpay, notes contain the metadata
         const metadata = paymentEntity.notes || {};
 
-        // Map Razorpay method to our PaymentModes enum
-        let paymentModeId = 1; // Default to 1 (Online/Other)
+        let paymentModeId = PaymentModes.UPI; // Default to UPI
         if (paymentEntity.method === 'upi') {
             paymentModeId = PaymentModes.UPI;
         } else if (paymentEntity.method === 'card') {
@@ -53,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             price: Number(metadata.totalPrice),
             tripDate: metadata.tripDate,
             boardingPoint: metadata.boardingPoint || '',
-            isSharing: false, // Defaulting to false as per existing flows
+            isSharing: metadata.isSharing === 'true' || metadata.isSharing === true,
             transactionId: paymentEntity.id,
             paymentModeId: paymentModeId,
             totalPrice: Number(metadata.totalPrice),

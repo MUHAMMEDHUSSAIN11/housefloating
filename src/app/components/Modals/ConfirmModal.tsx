@@ -16,7 +16,7 @@ import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
-import { BoatCruisesId, amount as amountEnum } from '@/app/enums/enums';
+import { BoatCruisesId, amount as amountEnum, PaymentModes } from '@/app/enums/enums';
 import axios from 'axios';
 
 const loadRazorpayScript = () => {
@@ -173,23 +173,20 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
                 const metadata = {
                     boatId: boatDetails.boatId,
-                    boatName: boatDetails.boatCode,
                     userId: user?.id || 0,
-                    userEmail: user?.email || '',
                     totalPrice: finalPrice,
                     advanceAmount: advanceAmount,
                     remainingAmount: remainingAmount,
-                    contactNumber: data.phonenumber,
+                    contactNumber: cleanedPhoneNumber,
                     adultCount: finalHeadCount,
                     childCount: finalMinorCount,
                     tripDate: finalCheckInDate.toISOString(),
-                    checkOutDate: finalCheckOutDate.toISOString(),
                     cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
                     isVeg: isVeg,
                     boardingPoint: boatDetails.boardingPoint,
+                    isSharing: false,
                 };
 
-                // Create Order in backend
                 const { data: order } = await axios.post('/api/razorpay/route', {
                     amount: advanceAmount,
                     metadata
@@ -217,7 +214,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             boatId: boatDetails.boatId,
                             bookingDate: new Date().toISOString(),
                             childCount: finalMinorCount,
-                            contactNumber: data.phonenumber,
+                            contactNumber: cleanedPhoneNumber,
                             cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
                             guestPlace: boatDetails.boardingPoint,
                             guestUserId: user?.id || 0,
@@ -227,7 +224,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             boardingPoint: boatDetails.boardingPoint,
                             isSharing: false,
                             transactionId: response.razorpay_payment_id,
-                            paymentModeId: 1,
+                            paymentModeId: PaymentModes.UPI,
                             totalPrice: finalPrice,
                             advanceAmount: advanceAmount,
                             remainingAmount: remainingAmount
@@ -244,7 +241,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             .catch((error) => {
                                 setIsLoading(false);
                                 console.error('Booking Error:', error);
-                                toast.error('Payment successful but booking failed! Please contact support with Transaction ID: ' + response.razorpay_payment_id);
+                                toast.success('Payment successful! Processing your booking...');
+                                BookingConfirmModal.onClose();
+                                handlePush();
                             });
                     },
                     prefill: {

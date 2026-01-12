@@ -22,9 +22,10 @@ export interface CreateOnlineBookingData {
     remainingAmount: number | string;
 }
 
-const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData) => {
+const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData, authToken?: string) => {
     try {
-        const token = jsCookie.get('token');
+        const token = authToken || jsCookie.get('token');
+        console.log('Sending CreateOnlineBooking with token:', token ? 'Bearer Present' : 'NONE');
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/api/OnlineBookings/createOnlineBooking`, data, {
             headers: {
                 Authorization: `Bearer ${token}`
