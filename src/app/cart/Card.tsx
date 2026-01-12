@@ -22,7 +22,7 @@ interface CardListingProps {
 const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionId = '', actionLabel }) => {
 
   function formatDate(date: string) {
-    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' };
     const dateObj = new Date(date);
     return dateObj.toLocaleDateString(undefined, options);
   }

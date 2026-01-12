@@ -32,13 +32,14 @@ interface confirmModalProps {
     modeOfTravel: string,
     finalPrice: number,
     finalHeadCount: number,
-    finalBookingDate: Date,
+    finalCheckInDate: Date,
+    finalCheckOutDate: Date,
     finalMinorCount: number,
     isVeg: boolean
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount, isVeg }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, finalMinorCount, isVeg }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
@@ -156,7 +157,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 guestUserId: user?.id || 0,
                 isVeg: isVeg,
                 price: finalPrice,
-                tripDate: finalBookingDate.toISOString(),
+                tripDate: finalCheckInDate.toISOString(),
+                checkOutDate: finalCheckOutDate.toISOString(),
                 boardingPoint: boatDetails.boardingPoint,
                 isSharing: false, // Defaulting to false as per most flows
             };
@@ -211,7 +213,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 <div className="bg-white p-4 rounded-lg shadow-md">
                     <p className="text-lg font-semibold">{boatDetails.boatCode}</p>
                     <p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>
-                    <p className="text-gray-900">Booking Date: {finalBookingDate.toDateString()}</p>
+                    <p className="text-gray-900">Booking Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
                     <p className="text-gray-900">Total Price: {finalPrice}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
                 </div>

@@ -165,9 +165,19 @@ const SearchBar = () => {
       // Add date parameters
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
-      }
-      if (selectedDateRange.endDate) {
-        params.append('endDate', FormatToLocalDateTime(selectedDateRange.endDate));
+
+        let calculatedEndDate: Date | null = selectedDateRange.endDate;
+
+        if (selectedCruise === BoatCruisesId.dayCruise) {
+          calculatedEndDate = selectedDateRange.startDate;
+        } else if (selectedCruise === BoatCruisesId.nightStay) {
+          calculatedEndDate = new Date(selectedDateRange.startDate);
+          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
+        }
+
+        if (calculatedEndDate) {
+          params.append('endDate', FormatToLocalDateTime(calculatedEndDate));
+        }
       }
 
       // Add cruise type

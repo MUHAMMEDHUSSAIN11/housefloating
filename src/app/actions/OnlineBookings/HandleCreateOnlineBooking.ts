@@ -14,6 +14,7 @@ export interface CreateOnlineBookingData {
     isVeg: boolean;
     price: number | string;
     tripDate: string;
+    checkOutDate: string;
     boardingPoint: string;
     isSharing: boolean;
 }
