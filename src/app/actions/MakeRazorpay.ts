@@ -63,25 +63,30 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             image: options.image || '/placeholder-boat.jpg',
             order_id: order.id,
             handler: async function (response: any) {
-                const bookingData: any = {
-                    adultCount: finalMetadata.adultCount,
-                    childCount: finalMetadata.childCount,
-                    boatId: finalMetadata.boatId,
+                const bookingData = {
+                    adultCount: Number(finalMetadata.adultCount),
+                    boatId: Number(finalMetadata.boatId),
                     bookingDate: new Date().toISOString(),
-                    contactNumber: finalMetadata.contactNumber,
-                    cruiseTypeId: finalMetadata.cruiseTypeId,
-                    guestPlace: finalMetadata.boardingPoint || '',
-                    guestUserId: finalMetadata.userId || finalMetadata.guestUserId,
-                    isVeg: finalMetadata.isVeg,
-                    price: finalMetadata.totalPrice,
-                    tripDate: finalMetadata.tripDate,
-                    boardingPoint: finalMetadata.boardingPoint || '',
-                    isSharing: finalMetadata.isSharing,
-                    transactionId: response.razorpay_payment_id,
+                    childCount: Number(finalMetadata.childCount),
+                    contactNumber: String(finalMetadata.contactNumber),
+                    cruiseTypeId: Number(finalMetadata.cruiseTypeId),
+                    guestPlace: String(finalMetadata.boardingPoint || ''),
+                    guestUserId: Number(finalMetadata.userId || finalMetadata.guestUserId),
+                    isVeg: Boolean(finalMetadata.isVeg),
+                    price: Number(finalMetadata.totalPrice),
+                    tripDate: String(finalMetadata.tripDate),
+                    boardingPoint: String(finalMetadata.boardingPoint || ''),
+                    isSharing: Boolean(finalMetadata.isSharing),
+                    transactionId: String(response.razorpay_payment_id),
                     paymentModeId: PaymentModes.UPI,
+                    totalPrice: Number(finalMetadata.totalPrice),
+                    advanceAmount: Number(finalMetadata.advanceAmount),
+                    remainingAmount: Number(finalMetadata.remainingAmount),
+                    roomCount: Number(finalMetadata.roomCount || null)
                 };
 
                 try {
+                    // 1. Verify Payment Mode Server-Side
                     try {
                         const verifyRes = await axios.post('/api/razorpay/verify', {
                             paymentId: response.razorpay_payment_id
