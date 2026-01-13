@@ -1,11 +1,11 @@
 const CheckIsDateOver = (date: Date): boolean => {
     const today = new Date();
-    // Reset time part for accurate date comparison
-    today.setHours(0, 0, 0, 0);
-    date.setHours(0, 0, 0, 0);
 
-    // Return true if booking date is today or in the future
-    return date >= today;
+    // Standardize both to UTC midnight for comparison
+    const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    const dateUtc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+
+    return dateUtc >= todayUtc;
 };
 
 export default CheckIsDateOver;

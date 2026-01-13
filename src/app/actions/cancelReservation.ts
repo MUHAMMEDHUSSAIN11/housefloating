@@ -1,6 +1,6 @@
 import { Timestamp, collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/clientApp";
-import { BookingStatus } from "../enums/enums";
+import { BookingStatuses } from "../enums/enums";
 import SendCancellationTelegram from "./SendCancellationTelegram";
 import toast from "react-hot-toast";
 import SendCancellationAttemptFailedTelegram from "./SendCancellationAttemptFailedTelegram";
@@ -43,7 +43,7 @@ export default async function CancelReservation(OrderDetails: BookingDetails) {
       // Now, update the status of reservation document in the "Reservations" collection
       const reservationDocRef = doc(collection(firestore, 'Reservations'), OrderDetails.ReservationId);
       // Update the status field to "cancelled"
-      await updateDoc(reservationDocRef, { Status: BookingStatus.Cancelled });
+      await updateDoc(reservationDocRef, { Status: BookingStatuses.Cancelled });
 
       const cancellationsRef = doc(collection(firestore, "Cancellations"), OrderDetails.ReservationId);
       //setting Refund to false, as the refund is not initiated.. 

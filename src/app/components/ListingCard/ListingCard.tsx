@@ -27,13 +27,15 @@ interface ListingCardProps {
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
+  bookingTypeId?: number;
 }
 
-const ListingCard: React.FC<ListingCardProps> = React.memo(({ 
-  data, 
-  startDate, 
-  endDate, 
-  cruiseTypeId 
+const ListingCard: React.FC<ListingCardProps> = React.memo(({
+  data,
+  startDate,
+  endDate,
+  cruiseTypeId,
+  bookingTypeId
 }) => {
   const loginModal = useLoginModal();
   const { user } = useAuth();
@@ -43,20 +45,22 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
   const offerPrice = useMemo(() => data.price, [data.price]);
-  
-  const imageUrl = !imageError && data.boatImage 
-    ? data.boatImage 
+
+  const imageUrl = !imageError && data.boatImage
+    ? data.boatImage
     : '/placeholder-boat.jpg';
 
   const listingUrl = useMemo(() => {
     const params = new URLSearchParams();
-    
+
     if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
-    
+    if (bookingTypeId) params.append('type', bookingTypeId.toString());
+
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
-  }, [data.boatId, startDate, cruiseTypeId]);
+  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -66,7 +70,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
       loginModal.onOpen();
       return;
     }
-    
+
     setIsWishlisted(!isWishlisted);
   };
 
@@ -79,8 +83,8 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
         <Heart
           size={16}
           className={`transition ${isWishlisted
-              ? 'text-red-500 fill-red-500'
-              : 'text-gray-700 hover:text-red-500'
+            ? 'text-red-500 fill-red-500'
+            : 'text-gray-700 hover:text-red-500'
             }`}
         />
       </div>

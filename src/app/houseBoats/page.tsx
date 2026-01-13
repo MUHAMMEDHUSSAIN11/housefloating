@@ -18,7 +18,7 @@ const Page = () => {
   const startDateFromUrl = searchParams?.get('startDate');
   const endDateFromUrl = searchParams?.get('endDate');
   const cruiseFromUrl = Number(searchParams?.get('cruise')) || 0;
-  
+
   const startDate = startDateFromUrl ? new Date(startDateFromUrl) : null;
   const endDate = endDateFromUrl ? new Date(endDateFromUrl) : null;
 
@@ -67,7 +67,7 @@ const Page = () => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       refreshInterval: 0,
-      dedupingInterval: 5000, 
+      dedupingInterval: 5000,
     }
   );
 
@@ -210,12 +210,13 @@ const Page = () => {
       <div className="pb-20 pt-40 lg:pt-28">
         <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
           {allListings.map((listing: any) => (
-            <ListingCard 
-              key={listing.boatId} 
+            <ListingCard
+              key={listing.boatId}
               data={listing}
               startDate={startDateFromUrl}
               endDate={endDateFromUrl}
               cruiseTypeId={cruiseFromUrl}
+              bookingTypeId={typeFromUrl}
             />
           ))}
         </div>

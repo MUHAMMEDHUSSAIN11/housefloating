@@ -6,71 +6,82 @@ import Heading from '../components/Misc/Heading';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import Card from './Card';
-import CancelReservation from '../actions/cancelReservation';
 import { useRouter } from 'next/navigation';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
-import { Timestamp } from 'firebase/firestore';
+import { BookingData } from './page';
+import HandleCancelOnlineBooking from '../actions/OnlinePayments/HandleCancelOnlineBooking';
 import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/tailwind-light/theme.css';
 
-interface Reservation {
-  ReservationId: string;
-  BoatId: string;
-  BoatName: string;
-  BoatTitle: string;
-  BookingDate: Timestamp;
-  Contactnumber: string;
-  Email: string;
-  HeadCount: number;
-  MinorCount: number;
-  Mode: string;
-  Price: number;
-  Payment: boolean;
-  Category: string;
-  Status: string;
-  Image: string;
-  UserId: string;
-};
-
 interface TripsClientProps {
-  reservations: Reservation[] | null;
+  bookings: BookingData[] | null;
 }
 
-const TripsClient: React.FC<TripsClientProps> = ({ reservations }) => {
+const TripsClient: React.FC<TripsClientProps> = ({ bookings }) => {
   const router = useRouter();
-  const dtoast = useRef(null);
+  const dtoast = useRef<Toast>(null);
 
-  const onConfirm = useCallback((reservation: Reservation) => {
-     CancelReservation(reservation)
-    router.push('/cart');
+  const onConfirm = useCallback(async (booking: BookingData) => {
+    try {
+      const cancelData = {
+        bookingId: booking.bookingId,
+        tripDate: booking.tripDate
+      };
+
+      const result = await HandleCancelOnlineBooking(cancelData);
+
+      if (result) {
+        dtoast.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Booking cancelled successfully',
+          life: 3000
+        });
+
+        // Refresh the page to update the bookings list
+        setTimeout(() => {
+          router.refresh();
+        }, 1000);
+      } else {
+        throw new Error('Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      dtoast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to cancel booking. Please try again.',
+        life: 3000
+      });
+    }
   }, [router])
 
   const reject = () => {
 
   }
 
-  const showConfirmationDialog = async (reservation: Reservation) => {
+  const showConfirmationDialog = async (bookings: BookingData) => {
     confirmDialog({
       message: 'Proceed with booking cancellation?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => onConfirm(reservation),
+      accept: () => onConfirm(bookings),
       reject,
-      acceptClassName: ' p-3 rounded-md', 
-      rejectClassName: ' p-3 rounded-md', 
+      acceptClassName: ' p-3 rounded-md',
+      rejectClassName: ' p-3 rounded-md',
     });
   }
 
   return (
     <Container>
       <Heading title="Trips" subtitle="Where you've been and where you're going" />
-      {reservations !== null ? (
+      {bookings !== null ? (
         <div className="mt-10 w-full lg:w-5/6 ">
-          {reservations.map((reservation, index) => (
+          {bookings.map((booking, index) => (
             <div key={index} className="mb-4">
-              <Card key={index} details={reservation} actionLabel="Cancel booking"
-                onAction={() => showConfirmationDialog(reservation)}
+              <Card key={index} details={booking} actionLabel="Cancel booking"
+                onAction={() => showConfirmationDialog(booking)}
                 disabled={false}
               />
             </div>

@@ -2,27 +2,34 @@
 
 import React from 'react'
 import Counter from '../Inputs/Counter';
+import { BookingType } from '@/app/enums/enums';
 
 interface ListingInfoProps {
-  category: string,
-  roomCount: number,
-  guestCount: number,
-  bathroomCount: number,
-  setAdultCount: (value: number) => void,
-  setChildCount: (value: number) => void,
-  adultCount: number,
-  childCount: number,
-  travelMode: number,
-  maxAdultCount: number,
-  maxchildCount: number,
-  minAdultCount: number,
-  title: string,
-  boardingPoint: string,
+  category: string;
+  roomCount: number;
+  guestCount: number;
+  bathroomCount: number;
+  setAdultCount: (value: number) => void;
+  setChildCount: (value: number) => void;
+  adultCount: number;
+  childCount: number;
+  travelMode: number;
+  maxAdultCount: number;
+  maxchildCount: number;
+  minAdultCount: number;
+  title: string;
+  boardingPoint: string;
+  bookingTypeId?: number | null;
+  roomCountState?: number;
+  availableRoomCount?:number;
+  setRoomCount?: (value: number) => void;
 }
 
 const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxchildCount,
-  bathroomCount, guestCount, roomCount, setAdultCount,
-  setChildCount, adultCount, childCount, minAdultCount, title, boardingPoint }) => {
+  bathroomCount, guestCount, roomCount, setAdultCount,availableRoomCount,
+  setChildCount, adultCount, childCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount }) => {
+
+  const isSharing = bookingTypeId === BookingType.sharing;
 
   return (
     <div className='flex flex-col gap-7 px-1'>
@@ -47,6 +54,21 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxchildCount,
           <div className='text-sm text-red-500 mt-1'>Maximum child count reached</div>
         )}
       </div>
+      {isSharing && setRoomCount && roomCountState !== undefined && (
+        <div className=''>
+          <Counter
+            onChange={(value) => setRoomCount(value)}
+            min={1}
+            max={availableRoomCount}
+            value={roomCountState}
+            title="Number of Rooms"
+            subtitle="Select rooms required"
+          />
+          {roomCountState === availableRoomCount && (
+            <div className='text-sm text-red-500 mt-1'>Maximum room count reached</div>
+          )}
+        </div>
+      )}
       <hr />
     </div>
   )

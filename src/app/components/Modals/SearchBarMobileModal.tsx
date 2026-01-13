@@ -203,10 +203,8 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
                 selected={selectedDateRange}
                 onSelect={(dates) => {
                   setSelectedDateRange(dates);
-                  // Only auto-close if it's not a range selection or if both dates are picked
-                  if (selectedCruise !== BoatCruisesId.overNightCruise && dates.startDate) {
-                    setMobileActiveSection(null);
-                  } else if (dates.startDate && dates.endDate) {
+                  // Auto-close on any valid selection (all types are now single-date)
+                  if (dates.startDate) {
                     setMobileActiveSection(null);
                   }
                 }}

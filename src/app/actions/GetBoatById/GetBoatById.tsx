@@ -4,19 +4,22 @@ interface GetBoatByIdProps {
     BoatId: number;
     Date: Date;
     CruiseTypeId: number;
+    IsSharing: boolean;
 }
 
 const GetBoatById = async ({
     BoatId,
     Date,
-    CruiseTypeId
+    CruiseTypeId,
+    IsSharing
 }: GetBoatByIdProps) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/getBoatDetails`, {
             params: { 
                 BoatId, 
                 Date, 
-                CruiseTypeId
+                CruiseTypeId,
+                IsSharing
             },
         });
         if (response.status >= 200 && response.status < 300) {

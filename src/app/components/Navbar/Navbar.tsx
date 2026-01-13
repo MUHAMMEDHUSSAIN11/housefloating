@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
 import Container from '../Misc/Container';
 import Logo from './Logo';
 import RightContent from './RightContent';
