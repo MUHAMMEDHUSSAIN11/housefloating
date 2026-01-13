@@ -34,37 +34,12 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   const handleDateClick = (day: Date) => {
     if (isBefore(day, today)) return;
 
-    if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay) {
+    if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay || selectedCruise === BoatCruisesId.overNightCruise) {
       setTempStartDate(day);
       setTempEndDate(null);
       onSelect({ startDate: day, endDate: null });
       onClose();
       return;
-    }
-
-    if (selectedCruise === BoatCruisesId.overNightCruise) {
-      if (!tempStartDate || (tempStartDate && tempEndDate)) {
-        setTempStartDate(day);
-        setTempEndDate(null);
-        return;
-      }
-
-      let start: Date;
-      let end: Date;
-
-      if (isBefore(day, tempStartDate)) {
-        start = day;
-        end = tempStartDate;
-      } else {
-        start = tempStartDate;
-        end = day;
-      }
-      if (isSameDay(start, end)) {
-        return;
-      }
-
-      setTempStartDate(start);
-      setTempEndDate(end);
     }
   };
 
@@ -79,53 +54,26 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     setTempEndDate(null);
   };
 
-  const handleConfirm = () => {
-    if (tempStartDate) {
-      onSelect({ startDate: tempStartDate, endDate: tempEndDate });
-      onClose();
-    }
-  };
+  // handleConfirm removed as it is no longer used
 
-  const getDayCount = (): number => {
-    if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay) {
-      return tempStartDate ? 1 : 0;
-    }
-
-    if (tempStartDate && tempEndDate) {
-      return differenceInDays(tempEndDate, tempStartDate) + 1;
-    }
-
-    return 0;
-  };
+  // getDayCount removed as it is no longer used
 
   const isDateInRange = (day: Date): boolean => {
     if (!tempStartDate) return false;
 
-    if (selectedCruise === BoatCruisesId.overNightCruise && tempEndDate) {
-      return (
-        (isAfter(day, tempStartDate) && isBefore(day, tempEndDate)) ||
-        isSameDay(day, tempStartDate) ||
-        isSameDay(day, tempEndDate)
-      );
-    }
+    // Simplified logic: Range selection removed for Overnight Cruise
+    return isSameDay(day, tempStartDate);
 
     return isSameDay(day, tempStartDate);
   };
 
   const isDateSelected = (day: Date): boolean => {
-    if (selectedCruise === BoatCruisesId.overNightCruise) {
-      return Boolean(
-        (tempStartDate && isSameDay(day, tempStartDate)) ||
-        (tempEndDate && isSameDay(day, tempEndDate))
-      );
-    }
+    // Simplified logic: Range selection removed for Overnight Cruise
+    return tempStartDate ? isSameDay(day, tempStartDate) : false;
     return tempStartDate ? isSameDay(day, tempStartDate) : false;
   };
 
-  const dayCount = getDayCount();
-  const canConfirm = selectedCruise === BoatCruisesId.overNightCruise
-    ? Boolean(tempStartDate && tempEndDate)
-    : Boolean(tempStartDate);
+  // dayCount and canConfirm removed as they are no longer used
 
   return (
     <div className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 w-full sm:w-[400px] z-50'}`}>
@@ -230,32 +178,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
         })}
       </div>
 
-      {/* Action Buttons - Only for Overnight Cruise */}
-      {selectedCruise === BoatCruisesId.overNightCruise && (
-        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
-          <button
-            onClick={handleClear}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <X className="w-4 h-4" />
-            <span className="text-sm font-medium">Clear</span>
-          </button>
-
-          <button
-            onClick={handleConfirm}
-            disabled={!canConfirm}
-            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${canConfirm
-              ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
-          >
-            <Check className="w-4 h-4" />
-            <span className="text-sm font-medium">
-              Confirm {dayCount > 0 && `(${dayCount}d)`}
-            </span>
-          </button>
-        </div>
-      )}
+      {/* Action Buttons removed as they are no longer needed for single date selection */}
     </div>
   );
 };

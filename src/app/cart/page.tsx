@@ -1,55 +1,70 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import getReservationById from '../actions/getReservationById';
 import ClientOnly from '../components/ClientOnly';
 import EmptyState from '../components/Misc/EmptyState';
 import TripsClient from './TripsClient';
-import { Timestamp } from 'firebase/firestore';
 import Spinner from '../components/Misc/Spinner';
 import useAuth from '../hooks/useAuth';
+import HandleGetOnlineBookings from '../actions/OnlineBookings/HandleGetOnlineBookings';
+import { BookingStatuses } from '../enums/enums';
 
-export interface Reservation {
-  ReservationId: string;
-  BoatId: string;
-  BoatName: string;
-  BoatTitle: string;
-  BookingDate: Timestamp;
-  Contactnumber: string;
-  Email: string;
-  HeadCount: number;
-  MinorCount: number;
-  Mode: string;
-  Price: number;
-  Payment: boolean;
-  Category: string;
-  Status: string;
-  Image: string;
-  UserId: string;
-  BoatOwnerPhoneNumber?: string;
-  CreatedOn?: Timestamp;
+export interface BookingData {
+  bookingId: number;
+  boatId: number;
+  boatName: string;
+  boatCategoryId: number;
+  boatCategoryName: string;
+  guestName: string;
+  imageUrl:string
+  guestContactNumber: string;
+  guestPlace: string | null;
+  boardingPoint: string | null;
+  tripDate: Date;
+  bookingDate: string;
+  bookingTypeId: number;
+  bookingType: string;
+  adultCount: number;
+  childCount: number;
+  cruiseTypeId: number;
+  cruiseType: string;
+  bookingStatusId: number;
+  bookingStatus: string;
+  isVeg: boolean;
+  isAdvancePaid: boolean;
+  roomCount:number;
+  price: number;
+  advanceAmount: number;
+  balanceAmount: number;
+  agent: string | null;
+  notes: string | null;
+  createdOn: string;
+  createdBy: string;
+  updatedOn: string | null;
+  updatedBy: string | null;
+  isSharing: boolean;
+  occupiedSlots: number;
+  remainingSlots: number;
+  totalSharedAmount: number;
+  sharedBookings: BookingData[]
 }
 
 
 const CartPage = () => {
   const { user } = useAuth();
-  const [reservations, setReservations] = useState<Reservation[] | null>(null);
+  const [bookings, setbookings] = useState<BookingData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchReservations = async () => {
+  const fetchbookings = async () => {
     try {
       if (user) {
-        const reservationsData = await getReservationById(user.email);
-        const updatedReservations = reservationsData?.map(reservation => ({
-          ...reservation,
-          UserId: String(user.id), // Include user.id in each reservation
-        }));
-        setReservations(updatedReservations || []);
+        const bookingsData = await HandleGetOnlineBookings();
+        setbookings(bookingsData || []);
       } else {
-        setReservations([]); // Handle the case when the user is not authenticated
+        setbookings([]);
       }
     } catch (error) {
-      console.error('Error fetching reservations:', error);
+      console.error('Error fetching bookings:', error);
     } finally {
       setIsLoading(false);
     }
@@ -58,22 +73,20 @@ const CartPage = () => {
   useEffect(() => {
     if (user) {
       setIsLoading(true);
-      fetchReservations();
-      console.log('Fetching reservations for user:', user.email);
-      console.log(reservations);
+      fetchbookings();
     }
   }, [user]);
 
 
   return (
-    <div className="pt-56 md:pt-32 ">
-      {isLoading ? (<Spinner />) : user && reservations ? (
+    <div className="pt-40 md:pt-36 ">
+      {isLoading ? (<Spinner />) : user && bookings ? (
         <ClientOnly>
-          <TripsClient reservations={reservations} />
+          <TripsClient bookings={bookings} />
         </ClientOnly>
       ) : (
         <ClientOnly>
-          <EmptyState title="Not Logged in!" subtitle="Please log in to see reservations!" />
+          <EmptyState title="Not Logged in!" subtitle="Please log in to see bookings!" />
         </ClientOnly>
       )}
     </div>

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Ship, Calendar, Users, ChevronDown, User, Plus, Minus, Send, Search } from 'lucide-react';
-import DateSelector from './DateSelector';
+import { Users, User, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
 import { usePathname, useRouter } from 'next/navigation';
@@ -126,8 +125,7 @@ const SearchBar = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    const isDateValid = selectedDateRange.startDate &&
-      (selectedCruise !== BoatCruisesId.overNightCruise || selectedDateRange.endDate);
+    const isDateValid = !!selectedDateRange.startDate;
 
     if (isDateValid && errors.date) {
       setErrors(prev => ({ ...prev, date: false }));
@@ -138,8 +136,7 @@ const SearchBar = () => {
     const newErrors = {
       type: !selectedType,
       category: !selectedCategory,
-      date: !selectedDateRange.startDate ||
-        (selectedCruise === BoatCruisesId.overNightCruise && !selectedDateRange.endDate),
+      date: !selectedDateRange.startDate,
     };
 
     setErrors(newErrors);
@@ -166,9 +163,20 @@ const SearchBar = () => {
       // Add date parameters
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
-      }
-      if (selectedDateRange.endDate) {
-        params.append('endDate', FormatToLocalDateTime(selectedDateRange.endDate));
+
+        let calculatedEndDate: Date | null = selectedDateRange.endDate;
+
+        if (selectedCruise === BoatCruisesId.dayCruise) {
+          calculatedEndDate = selectedDateRange.startDate;
+        } else if (selectedCruise === BoatCruisesId.nightStay) {
+          calculatedEndDate = new Date(selectedDateRange.startDate);
+          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
+        }
+        // For Overnight Cruise, we do NOT set calculatedEndDate, so endDate is not appended to params.
+
+        if (calculatedEndDate) {
+          params.append('endDate', FormatToLocalDateTime(calculatedEndDate));
+        }
       }
 
       // Add cruise type
@@ -194,8 +202,8 @@ const SearchBar = () => {
   const getDateDisplayText = (): string => {
     if (!selectedDateRange.startDate) return '';
 
-    if (selectedCruise === BoatCruisesId.overNightCruise && selectedDateRange.endDate) {
-      return `${format(selectedDateRange.startDate, 'MMM d')} - ${format(selectedDateRange.endDate, 'MMM d, yyyy')}`;
+    if (selectedCruise === BoatCruisesId.overNightCruise) {
+      return format(selectedDateRange.startDate, 'MMM d, yyyy');
     }
 
     return format(selectedDateRange.startDate, 'MMM d, yyyy');

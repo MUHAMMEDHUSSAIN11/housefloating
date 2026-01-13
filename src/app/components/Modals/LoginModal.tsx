@@ -13,7 +13,6 @@ import toast from "react-hot-toast";
 import Login from "@/app/actions/Login/Login";
 import { useRouter } from "next/navigation";
 import useAuth from "@/app/hooks/useAuth";
-import { watch } from "fs/promises";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginModal = () => {
@@ -24,31 +23,31 @@ const LoginModal = () => {
     const { login } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
 
-    const { register, handleSubmit, watch, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { Email: '', Password: '' }, });
+    const { register, handleSubmit, watch, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { email: '', password: '' }, });
 
     const passwordValue = watch("password");
     const isPasswordEmpty = !passwordValue;
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const { Email, Password } = data;
+        const { email, password } = data;
         setIsLoading(true);
 
         try {
             const response = await Login({
-                email: Email,
-                password: Password,
+                email: email,
+                password: password,
             });
 
             if (response && response.status === 200 && response.data) {
                 const { user, accessToken } = response.data.data;
 
                 if (user && accessToken) {
-                login(user, accessToken);
-                toast.success("User Created Successfully");
-                loginModal.onClose();
-                router.refresh();
+                    login(user, accessToken);
+                    toast.success("Login Successful");
+                    loginModal.onClose();
+                    router.refresh();
                 } else {
-                console.error("Missing user or accessToken in response", response.data);
-                toast.error("Signin succeeded but invalid response structure");
+                    console.error("Missing user or accessToken in response", response.data);
+                    toast.error("Signin succeeded but invalid response structure");
                 }
             } else {
                 toast.error("Login failed");
@@ -73,7 +72,7 @@ const LoginModal = () => {
     const bodyContent = (
         <div className="flex flex-col gap-4">
             <Heading title="Welcome back" subtitle="Login to your account!" />
-             <Input
+            <Input
                 id="email"
                 label="Email Id"
                 type="email"
@@ -83,32 +82,32 @@ const LoginModal = () => {
                 validation={{
                     required: "Email is required",
                     pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Enter a valid email address",
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Enter a valid email address",
                     },
                 }}
-                />
-            <div className="relative">
-            <Input
-                id="password"
-                label="Password"
-                disabled={isLoading}
-                type={showPassword ? "text" : "password"}
-                register={register}
-                errors={errors}
-                validation={{
-                required: "Password is required",
-                }}
             />
-            {!isPasswordEmpty && (
-                <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className={`absolute top-7 right-5 hover:cursor-pointer`}
-                >
-                {showPassword ? <FaEye /> : <FaEyeSlash />}
-                </button>
-            )}
+            <div className="relative">
+                <Input
+                    id="password"
+                    label="Password"
+                    disabled={isLoading}
+                    type={showPassword ? "text" : "password"}
+                    register={register}
+                    errors={errors}
+                    validation={{
+                        required: "Password is required",
+                    }}
+                />
+                {!isPasswordEmpty && (
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={`absolute top-7 right-5 hover:cursor-pointer`}
+                    >
+                        {showPassword ? <FaEye /> : <FaEyeSlash />}
+                    </button>
+                )}
             </div>
         </div>
     );

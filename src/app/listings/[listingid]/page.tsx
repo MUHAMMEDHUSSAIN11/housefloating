@@ -7,15 +7,16 @@ import ListingClient from './ListingClient';
 import useSWR from 'swr';
 import GetBoatById from '@/app/actions/GetBoatById/GetBoatById';
 import ListingSkeleton from './ListingSkeleton';
+import { BookingType } from '@/app/enums/enums';
 
 interface Prices {
-  adultAddOnDayPrice:number
-  adultAddonDayNightPrice:number
-  adultAddonNightStayPrice:number;
-  childAddOnDayPrice:number;
-  childAddonDayNightPrice:number;
-  childAddonNightStayPrice:number;
-  dayPrice:number;
+  adultAddOnDayPrice: number
+  adultAddonDayNightPrice: number
+  adultAddonNightStayPrice: number;
+  childAddOnDayPrice: number;
+  childAddonDayNightPrice: number;
+  childAddonNightStayPrice: number;
+  dayPrice: number;
 }
 
 export interface BoatDetails {
@@ -27,11 +28,12 @@ export interface BoatDetails {
   bedroomCount: number;
   boatCode: string;
   guestCount: number;
-  maxAdulCount:number;
-  minAdulCount:number;
-  maxChildCount:number;
-  bathroomCount:number;
-  prices:Prices
+  maxAdulCount: number;
+  minAdulCount: number;
+  maxChildCount: number;
+  bathroomCount: number;
+  prices: Prices;
+  availableRoomCount?: number;
 }
 
 interface Iparams {
@@ -41,36 +43,41 @@ interface Iparams {
 const fetchBoatData = async (
   listingId: string,
   date: Date,
-  cruiseTypeId: number
+  cruiseTypeId: number,
+  bookingTypeId: number
 ) => {
   const fetchedBoatData = await GetBoatById({
     BoatId: parseInt(listingId),
     Date: date,
     CruiseTypeId: cruiseTypeId,
+    IsSharing: bookingTypeId === BookingType.sharing
   });
-  console.log("Fetched Boat Data:", fetchedBoatData);
   return fetchedBoatData;
 };
 
 const Listingpage = ({ params }: { params: Iparams }) => {
   const searchParams = useSearchParams();
   const listingId = params.listingid;
-  
+
   const startDateParam = searchParams?.get('startDate');
+  const endDateParam = searchParams?.get('endDate');
   const cruiseTypeIdParam = searchParams?.get('cruiseTypeId');
-  
-  const date = startDateParam ? new Date(startDateParam) : null;
+  const bookingTypeIdParam = searchParams?.get('type');
+
+  const startDate = startDateParam ? new Date(startDateParam) : null;
+  const endDate = endDateParam ? new Date(endDateParam) : null;
   const cruiseTypeId = cruiseTypeIdParam ? Number(cruiseTypeIdParam) : null;
+  const bookingTypeId = bookingTypeIdParam ? Number(bookingTypeIdParam) : null;
 
-  const hasRequiredParams = !!(listingId && startDateParam && cruiseTypeIdParam && date && cruiseTypeId);
+  const hasRequiredParams = !!(listingId && startDateParam && cruiseTypeIdParam && startDate && cruiseTypeId);
 
-  const cacheKey = hasRequiredParams 
-    ? `boat-${listingId}-${startDateParam}-${cruiseTypeId}` 
+  const cacheKey = hasRequiredParams
+    ? `boat-${listingId}-${startDateParam}-${cruiseTypeId}`
     : null;
 
   const { data: fetchedBoatData, error, isLoading } = useSWR<BoatDetails>(
     cacheKey,
-    () => fetchBoatData(listingId!, date!, cruiseTypeId!),
+    () => fetchBoatData(listingId!, startDate!, cruiseTypeId!,bookingTypeId!),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -80,10 +87,10 @@ const Listingpage = ({ params }: { params: Iparams }) => {
   if (!hasRequiredParams) {
     return (
       <div className='pt-40 md:pt-24 text-lg'>
-        <EmptyState 
+        <EmptyState
           title="Missing Information"
           subtitle="Please select a date and cruise type to view this listing."
-          showReset 
+          showReset
         />
       </div>
     );
@@ -100,7 +107,13 @@ const Listingpage = ({ params }: { params: Iparams }) => {
       </div>
     </div>
   ) : (
-    <ListingClient boatDetails={fetchedBoatData} date={date} cruiseTypeId={cruiseTypeId} />
+    <ListingClient
+      boatDetails={fetchedBoatData}
+      startDate={startDate!}
+      endDate={endDate!}
+      cruiseTypeId={cruiseTypeId!}
+      bookingTypeId={bookingTypeId}
+    />
   );
 };
 

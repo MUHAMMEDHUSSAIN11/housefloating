@@ -11,7 +11,7 @@ export default async function SendCancellationAttemptFailedTelegram(Email: strin
     const message = `An order has been tried to cancel but failed:
     - Email: ${Email}
     - Booking Date: ${bookingDate}
-    - Reservation Id: ${ReservationId}
+    -  Id: ${ReservationId}
     - Price: ${Price}
     - Phone Number: ${Contactnumber}
     - Payment : ${Payment}

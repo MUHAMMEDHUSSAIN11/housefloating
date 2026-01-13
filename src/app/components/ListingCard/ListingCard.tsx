@@ -30,6 +30,7 @@ interface ListingCardProps {
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
+  bookingTypeId?: number;
 }
 
 const ListingCard: React.FC<ListingCardProps> = React.memo(({
@@ -49,17 +50,22 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
   const imageUrl = !imageError && data.boatImage
     ? data.boatImage
+
+  const imageUrl = !imageError && data.boatImage
+    ? data.boatImage
     : '/placeholder-boat.jpg';
 
   const listingUrl = useMemo(() => {
     const params = new URLSearchParams();
 
+
     if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
 
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
-  }, [data.boatId, startDate, cruiseTypeId]);
+  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -112,6 +118,8 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
         <Heart
           size={16}
           className={`transition ${isWishlisted
+            ? 'text-red-500 fill-red-500'
+            : 'text-gray-700 hover:text-red-500'
             ? 'text-red-500 fill-red-500'
             : 'text-gray-700 hover:text-red-500'
             }`}
