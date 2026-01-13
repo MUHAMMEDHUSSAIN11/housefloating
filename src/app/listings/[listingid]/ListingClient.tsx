@@ -112,6 +112,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 maxchildCount={boatDetails.maxChildCount}
                 minAdultCount={boatDetails.minAdulCount}
                 bookingTypeId={bookingTypeId}
+                availableRoomCount={boatDetails?.availableRoomCount}
                 roomCountState={roomCount}
                 setRoomCount={setRoomCount}
               />

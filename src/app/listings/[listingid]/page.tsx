@@ -7,6 +7,7 @@ import ListingClient from './ListingClient';
 import useSWR from 'swr';
 import GetBoatById from '@/app/actions/GetBoatById/GetBoatById';
 import ListingSkeleton from './ListingSkeleton';
+import { BookingType } from '@/app/enums/enums';
 
 interface Prices {
   adultAddOnDayPrice: number
@@ -31,7 +32,8 @@ export interface BoatDetails {
   minAdulCount: number;
   maxChildCount: number;
   bathroomCount: number;
-  prices: Prices
+  prices: Prices;
+  availableRoomCount?: number;
 }
 
 interface Iparams {
@@ -41,12 +43,14 @@ interface Iparams {
 const fetchBoatData = async (
   listingId: string,
   date: Date,
-  cruiseTypeId: number
+  cruiseTypeId: number,
+  bookingTypeId: number
 ) => {
   const fetchedBoatData = await GetBoatById({
     BoatId: parseInt(listingId),
     Date: date,
     CruiseTypeId: cruiseTypeId,
+    IsSharing: bookingTypeId === BookingType.sharing
   });
   return fetchedBoatData;
 };
@@ -73,7 +77,7 @@ const Listingpage = ({ params }: { params: Iparams }) => {
 
   const { data: fetchedBoatData, error, isLoading } = useSWR<BoatDetails>(
     cacheKey,
-    () => fetchBoatData(listingId!, startDate!, cruiseTypeId!),
+    () => fetchBoatData(listingId!, startDate!, cruiseTypeId!,bookingTypeId!),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

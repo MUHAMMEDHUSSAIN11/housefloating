@@ -5,27 +5,28 @@ import Counter from '../Inputs/Counter';
 import { BookingType } from '@/app/enums/enums';
 
 interface ListingInfoProps {
-  category: string,
-  roomCount: number,
-  guestCount: number,
-  bathroomCount: number,
-  setAdultCount: (value: number) => void,
-  setChildCount: (value: number) => void,
-  adultCount: number,
-  childCount: number,
-  travelMode: number,
-  maxAdultCount: number,
-  maxchildCount: number,
-  minAdultCount: number,
-  title: string,
-  boardingPoint: string,
-  bookingTypeId?: number | null,
-  roomCountState?: number,
-  setRoomCount?: (value: number) => void,
+  category: string;
+  roomCount: number;
+  guestCount: number;
+  bathroomCount: number;
+  setAdultCount: (value: number) => void;
+  setChildCount: (value: number) => void;
+  adultCount: number;
+  childCount: number;
+  travelMode: number;
+  maxAdultCount: number;
+  maxchildCount: number;
+  minAdultCount: number;
+  title: string;
+  boardingPoint: string;
+  bookingTypeId?: number | null;
+  roomCountState?: number;
+  availableRoomCount?:number;
+  setRoomCount?: (value: number) => void;
 }
 
 const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxchildCount,
-  bathroomCount, guestCount, roomCount, setAdultCount,
+  bathroomCount, guestCount, roomCount, setAdultCount,availableRoomCount,
   setChildCount, adultCount, childCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount }) => {
 
   const isSharing = bookingTypeId === BookingType.sharing;
@@ -58,12 +59,12 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxchildCount,
           <Counter
             onChange={(value) => setRoomCount(value)}
             min={1}
-            max={roomCount}
+            max={availableRoomCount}
             value={roomCountState}
             title="Number of Rooms"
             subtitle="Select rooms required"
           />
-          {roomCountState === roomCount && (
+          {roomCountState === availableRoomCount && (
             <div className='text-sm text-red-500 mt-1'>Maximum room count reached</div>
           )}
         </div>
