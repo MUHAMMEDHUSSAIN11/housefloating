@@ -15,18 +15,12 @@ export interface CreateOnlineBookingData {
     tripDate: string;
     boardingPoint: string;
     isSharing: boolean;
-    transactionId: string;
-    paymentModeId: number;
-    totalPrice: number | string;
-    advanceAmount: number | string;
-    remainingAmount: number | string;
     roomCount?: number | string;
 }
 
 const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData, authToken?: string) => {
     try {
         const token = authToken || jsCookie.get('token');
-        console.log('Sending CreateOnlineBooking with token:', token ? 'Bearer Present' : 'NONE');
         const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/api/OnlineBookings/createOnlineBooking`, data, {
             headers: {
                 Authorization: `Bearer ${token}`

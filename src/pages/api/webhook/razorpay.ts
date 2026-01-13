@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import crypto from 'crypto';
-import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
+import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreateOnlinePayment';
 import { PaymentModes } from '@/app/enums/enums';
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "dummy_webhook_secret";
@@ -39,32 +39,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             paymentModeId = PaymentModes.NetBanking;
         }
 
-        const onlineBookingData = {
-            adultCount: Number(metadata.adultCount),
-            boatId: Number(metadata.boatId),
-            bookingDate: new Date().toISOString(),
-            childCount: Number(metadata.childCount),
-            contactNumber: metadata.contactNumber,
-            cruiseTypeId: Number(metadata.cruiseTypeId),
-            guestPlace: metadata.boardingPoint || '',
-            guestUserId: Number(metadata.userId || metadata.guestUserId),
-            isVeg: metadata.isVeg === 'true' || metadata.isVeg === true,
-            price: Number(metadata.totalPrice),
-            tripDate: metadata.tripDate,
-            boardingPoint: metadata.boardingPoint || '',
-            isSharing: metadata.isSharing === 'true' || metadata.isSharing === true,
-            transactionId: paymentEntity.id,
+        const paymentData = {
+            advanceAmount: paymentEntity.amount / 100, // Razorpay amount is in paise
+            onlineBookingId: Number(metadata.onlineBookingId),
             paymentModeId: paymentModeId,
-            totalPrice: Number(metadata.totalPrice),
-            advanceAmount: paymentEntity.amount / 100,
             remainingAmount: Number(metadata.remainingAmount),
-            roomCount: Number(metadata.roomCount || null)
+            totalPrice: Number(metadata.totalPrice),
+            transactionId: paymentEntity.id
         };
 
         try {
             const token = metadata.authToken; // Get token passed from frontend
-            console.log('Webhook calling HandleCreateOnlineBooking with token:', token ? 'Bearer Present' : 'NONE');
-            await HandleCreateOnlineBooking(onlineBookingData, token);
+            console.log('Webhook calling HandleCreateOnlinePayment with token:', token ? 'Bearer Present' : 'NONE');
+            await HandleCreateOnlinePayment(paymentData, token);
             return res.status(200).json({ status: 'ok' });
         } catch (error) {
             console.error('Error processing consolidated booking/payment webhook:', error);
@@ -88,3 +75,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json({ status: 'ignored' });
 }
+ 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { amount as amountEnum, PaymentModes } from "../enums/enums";
-import HandleCreateOnlineBooking from "./OnlineBookings/HandleCreateOnlineBooking";
+import HandleCreateOnlinePayment from "./OnlinePayments/HandleCreateOnlinePayment";
 import jsCookie from 'js-cookie';
 
 const loadRazorpayScript = () => {
@@ -35,18 +35,17 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             toast.error("Razorpay SDK failed to load.");
             return;
         }
-
+ 
         const advanceAmount = options.totalPrice * amountEnum.advance;
         const remainingAmount = options.totalPrice * amountEnum.remaining;
 
-        // Add authToken to metadata so Webhook can use it
         const token = jsCookie.get('token');
         const finalMetadata = {
             ...options.metadata,
             totalPrice: options.totalPrice,
             advanceAmount: advanceAmount,
             remainingAmount: remainingAmount,
-            authToken: token, // Webhook will use this
+            authToken: token,
         };
 
         const { data: order } = await axios.post('/api/razorpay/route', {
@@ -63,49 +62,35 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             image: options.image || '/placeholder-boat.jpg',
             order_id: order.id,
             handler: async function (response: any) {
-                const bookingData = {
-                    adultCount: Number(finalMetadata.adultCount),
-                    boatId: Number(finalMetadata.boatId),
-                    bookingDate: new Date().toISOString(),
-                    childCount: Number(finalMetadata.childCount),
-                    contactNumber: String(finalMetadata.contactNumber),
-                    cruiseTypeId: Number(finalMetadata.cruiseTypeId),
-                    guestPlace: String(finalMetadata.boardingPoint || ''),
-                    guestUserId: Number(finalMetadata.userId || finalMetadata.guestUserId),
-                    isVeg: Boolean(finalMetadata.isVeg),
-                    price: Number(finalMetadata.totalPrice),
-                    tripDate: String(finalMetadata.tripDate),
-                    boardingPoint: String(finalMetadata.boardingPoint || ''),
-                    isSharing: Boolean(finalMetadata.isSharing),
-                    transactionId: String(response.razorpay_payment_id),
-                    paymentModeId: PaymentModes.UPI,
-                    totalPrice: Number(finalMetadata.totalPrice),
-                    advanceAmount: Number(finalMetadata.advanceAmount),
-                    remainingAmount: Number(finalMetadata.remainingAmount),
-                    roomCount: finalMetadata.roomCount ? Number(finalMetadata.roomCount) : undefined
-                };
+                let paymentModeId = PaymentModes.UPI;
 
                 try {
-                    // 1. Verify Payment Mode Server-Side
                     try {
                         const verifyRes = await axios.post('/api/razorpay/verify', {
                             paymentId: response.razorpay_payment_id
                         });
                         if (verifyRes.data?.paymentModeId) {
-                            bookingData.paymentModeId = verifyRes.data.paymentModeId;
+                            paymentModeId = verifyRes.data.paymentModeId;
                         }
                     } catch (verifyError) {
                         console.error('Verification API failed, using default UPI:', verifyError);
                     }
 
-                    // 2. Create Booking with Correct Mode
-                    await HandleCreateOnlineBooking(bookingData, finalMetadata.authToken);
+                    const paymentData = {
+                        advanceAmount: Number(finalMetadata.advanceAmount),
+                        onlineBookingId: Number(finalMetadata.onlineBookingId),
+                        paymentModeId: paymentModeId,
+                        remainingAmount: Number(finalMetadata.remainingAmount),
+                        totalPrice: Number(finalMetadata.totalPrice),
+                        transactionId: String(response.razorpay_payment_id)
+                    };
+                    await HandleCreateOnlinePayment(paymentData, finalMetadata.authToken);
                     toast.success("Payment Successful!");
                     if (options.onSuccess) options.onSuccess();
                     else window.location.href = "/cart";
                 } catch (error) {
-                    console.error('Booking Update Error:', error);
-                    toast.success("Payment Received! Your booking is being processed.");
+                    console.error('Payment Creation Error:', error);
+                    toast.error("Payment recorded but failed to sync. Please contact support.");
                     if (options.onSuccess) options.onSuccess();
                     else window.location.href = "/cart";
                 }

@@ -17,6 +17,7 @@ import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
 import { BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
+import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -115,7 +116,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
         }
 
-        // Validating the OTP
         if (step === STEPS.OTP) {
             try {
                 setIsLoading(true);
@@ -145,47 +145,77 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             setIsLoading(true)
 
             try {
-                // Calculate sharing-specific values
                 const isSharing = bookingTypeId === BookingType.sharing;
-                const finalRoomCount = isSharing ? roomCount : null;
+                const finalRoomCount = isSharing ? roomCount : undefined;
 
-                const metadata = {
-                    boatId: boatDetails.boatId,
-                    userId: user?.id || 0,
-                    contactNumber: cleanedPhoneNumber,
+                const bookingData = {
                     adultCount: finalHeadCount,
+                    boatId: boatDetails.boatId,
+                    bookingDate: new Date().toISOString(),
                     childCount: finalMinorCount,
-                    tripDate: finalCheckInDate.toISOString(),
+                    contactNumber: cleanedPhoneNumber,
                     cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
+                    guestPlace: boatDetails.boardingPoint,
+                    guestUserId: user?.id || 0,
                     isVeg: isVeg,
+                    price: finalPrice,
+                    tripDate: finalCheckInDate.toISOString(),
                     boardingPoint: boatDetails.boardingPoint,
                     isSharing: isSharing,
                     roomCount: finalRoomCount
                 };
 
-                console.log('Booking metadata:', metadata);
+                let bookingResponse;
+                try {
+                    bookingResponse = await HandleCreateOnlineBooking(bookingData);
+                } catch (err) {
+                    console.error('Booking Creation Failed:', err);
+                    toast.error('Failed to create booking');
+                    setIsLoading(false);
+                    return;
+                }
 
-                await MakeRazorpay({
-                    totalPrice: finalPrice,
-                    description: `Booking for ${boatDetails.boatCode}`,
-                    image: boatDetails.boatImages?.[0] || '/placeholder-boat.jpg',
-                    prefill: {
-                        name: user?.name || '',
-                        email: user?.email || '',
-                        contact: cleanedPhoneNumber,
-                    },
-                    metadata: metadata,
-                    onSuccess: () => {
+                if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
+                    const bookingId = bookingResponse.data.bookingId;
+                    const metadata = {
+                        onlineBookingId: bookingId
+                    };
+
+                    console.log('Booking created:', bookingId, 'Initiating Payment...');
+
+                    try {
+                        await MakeRazorpay({
+                            totalPrice: finalPrice,
+                            description: `Booking for ${boatDetails.boatCode}`,
+                            image: boatDetails.boatImages?.[0] || '/placeholder-boat.jpg',
+                            prefill: {
+                                name: user?.name || '',
+                                email: user?.email || '',
+                                contact: cleanedPhoneNumber,
+                            },
+                            metadata: metadata,
+                            onSuccess: () => {
+                                setIsLoading(false);
+                                BookingConfirmModal.onClose();
+                                setStep(STEPS.PHONENUMBER);
+                                handlePush();
+                            },
+                            onError: (err: any) => {
+                                setIsLoading(false);
+                                console.error('Payment Error:', err);
+                                toast.error('Payment failed or cancelled');
+                            }
+                        });
+                    } catch (paymentErr) {
+                        console.error('Payment Initialization Error:', paymentErr);
                         setIsLoading(false);
-                        BookingConfirmModal.onClose();
-                        setStep(STEPS.PHONENUMBER);
-                        handlePush();
-                    },
-                    onError: (err: any) => {
-                        setIsLoading(false);
-                        console.error('Payment Error:', err);
+                        toast.error('Failed to initialize payment gateway');
                     }
-                });
+                } else {
+                    console.error('Invalid booking response:', bookingResponse);
+                    toast.error('Failed to create booking - Please try again');
+                    setIsLoading(false);
+                }
 
             } catch (error) {
                 console.error('Payment/Booking Error:', error);
