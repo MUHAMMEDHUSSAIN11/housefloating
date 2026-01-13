@@ -33,9 +33,10 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
         const res = await loadRazorpayScript();
         if (!res) {
             toast.error("Razorpay SDK failed to load.");
+            if (options.onError) options.onError("SDK failed to load");
             return;
         }
- 
+
         const advanceAmount = options.totalPrice * amountEnum.advance;
         const remainingAmount = options.totalPrice * amountEnum.remaining;
 
@@ -61,6 +62,14 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             description: options.description,
             image: options.image || '/placeholder-boat.jpg',
             order_id: order.id,
+            method: {
+                card: true,
+                upi: true,
+                netbanking: true,
+                wallet: false,
+                emi: false,
+                paylater: false
+            },
             handler: async function (response: any) {
                 let paymentModeId = PaymentModes.UPI;
 
@@ -111,6 +120,7 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
     } catch (error) {
         console.error('Razorpay Error:', error);
         toast.error('Failed to initialize payment');
+        if (options.onError) options.onError(error);
     }
 };
 

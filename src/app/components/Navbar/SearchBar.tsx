@@ -125,8 +125,7 @@ const SearchBar = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    const isDateValid = selectedDateRange.startDate &&
-      (selectedCruise !== BoatCruisesId.overNightCruise || selectedDateRange.endDate);
+    const isDateValid = !!selectedDateRange.startDate;
 
     if (isDateValid && errors.date) {
       setErrors(prev => ({ ...prev, date: false }));
@@ -137,8 +136,7 @@ const SearchBar = () => {
     const newErrors = {
       type: !selectedType,
       category: !selectedCategory,
-      date: !selectedDateRange.startDate ||
-        (selectedCruise === BoatCruisesId.overNightCruise && !selectedDateRange.endDate),
+      date: !selectedDateRange.startDate,
     };
 
     setErrors(newErrors);
@@ -174,6 +172,7 @@ const SearchBar = () => {
           calculatedEndDate = new Date(selectedDateRange.startDate);
           calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
         }
+        // For Overnight Cruise, we do NOT set calculatedEndDate, so endDate is not appended to params.
 
         if (calculatedEndDate) {
           params.append('endDate', FormatToLocalDateTime(calculatedEndDate));
@@ -203,8 +202,8 @@ const SearchBar = () => {
   const getDateDisplayText = (): string => {
     if (!selectedDateRange.startDate) return '';
 
-    if (selectedCruise === BoatCruisesId.overNightCruise && selectedDateRange.endDate) {
-      return `${format(selectedDateRange.startDate, 'MMM d')} - ${format(selectedDateRange.endDate, 'MMM d, yyyy')}`;
+    if (selectedCruise === BoatCruisesId.overNightCruise) {
+      return format(selectedDateRange.startDate, 'MMM d, yyyy');
     }
 
     return format(selectedDateRange.startDate, 'MMM d, yyyy');

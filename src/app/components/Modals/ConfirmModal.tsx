@@ -18,6 +18,7 @@ import { BoatDetails } from '@/app/listings/[listingid]/page';
 import { BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
+import HandleCancelOnlineBooking from '@/app/actions/OnlinePayments/HandleCancelOnlineBooking';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -169,7 +170,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 try {
                     bookingResponse = await HandleCreateOnlineBooking(bookingData);
                 } catch (err) {
-                    console.error('Booking Creation Failed:', err);
                     toast.error('Failed to create booking');
                     setIsLoading(false);
                     return;
@@ -180,8 +180,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     const metadata = {
                         onlineBookingId: bookingId
                     };
-
-                    console.log('Booking created:', bookingId, 'Initiating Payment...');
 
                     try {
                         await MakeRazorpay({
@@ -202,8 +200,16 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             },
                             onError: (err: any) => {
                                 setIsLoading(false);
-                                console.error('Payment Error:', err);
-                                toast.error('Payment failed or cancelled');
+                                console.error('Payment Error/Cancelled:', err);
+
+                                // Silently cancel the booking
+                                const cancellationData = {
+                                    bookingId: bookingId,
+                                    tripDate: finalCheckInDate
+                                };
+                                HandleCancelOnlineBooking(cancellationData).catch(cancelErr => {
+                                    console.error('Failed to cancel booking after payment failure:', cancelErr);
+                                });
                             }
                         });
                     } catch (paymentErr) {
