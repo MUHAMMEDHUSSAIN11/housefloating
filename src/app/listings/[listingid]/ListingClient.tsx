@@ -28,6 +28,7 @@ export interface ListingClientProps {
   startDate: Date;
   endDate: Date;
   cruiseTypeId: number;
+  bookingTypeId: number | null;
 }
 
 const ListingClient: React.FC<ListingClientProps> = ({
@@ -35,6 +36,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   startDate,
   endDate,
   cruiseTypeId,
+  bookingTypeId,
 }) => {
   const { user } = useAuth();
   const loginModal = useLoginModal();
@@ -44,6 +46,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.guestCount);
   const [finalChildCount, setFinalChildCount] = useState(0);
   const [isVeg, setIsVeg] = useState(false);
+  const [roomCount, setRoomCount] = useState(1);
   const adultAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.adultAddOnDayPrice
     : cruiseTypeId === BoatCruisesId.overNightCruise ? boatDetails.prices.adultAddonDayNightPrice
       : boatDetails.prices.adultAddonNightStayPrice;
@@ -82,7 +85,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   return (
     <>
-      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? 'Day Cruise' : cruiseTypeId == 2 ? 'Overnight Cruise' : 'Night Stay'} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} finalMinorCount={finalChildCount} isVeg={isVeg} />
+      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? 'Day Cruise' : cruiseTypeId == 2 ? 'Overnight Cruise' : 'Night Stay'} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} finalMinorCount={finalChildCount} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
       <div className='max-w-screen-xl mx-auto pt-20 md:pt-24 pb-24 md:pb-0'>
         <div className='flex flex-col gap-6'>
           <ListingHead
@@ -108,6 +111,9 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 maxAdultCount={boatDetails.maxAdulCount}
                 maxchildCount={boatDetails.maxChildCount}
                 minAdultCount={boatDetails.minAdulCount}
+                bookingTypeId={bookingTypeId}
+                roomCountState={roomCount}
+                setRoomCount={setRoomCount}
               />
               <div className='w-full'>
                 {cruiseTypeId === BoatCruisesId.overNightCruise ? (
@@ -170,6 +176,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               <ListingReservation
                 totalPrice={totalPrice}
                 cruiseTypeId={cruiseTypeId}
+                bookingTypeId={bookingTypeId}
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 isVeg={isVeg}

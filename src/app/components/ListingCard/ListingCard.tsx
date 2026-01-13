@@ -27,13 +27,15 @@ interface ListingCardProps {
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
+  bookingTypeId?: number;
 }
 
 const ListingCard: React.FC<ListingCardProps> = React.memo(({
   data,
   startDate,
   endDate,
-  cruiseTypeId
+  cruiseTypeId,
+  bookingTypeId
 }) => {
   const loginModal = useLoginModal();
   const { user } = useAuth();
@@ -54,10 +56,11 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
+    if (bookingTypeId) params.append('type', bookingTypeId.toString());
 
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
-  }, [data.boatId, startDate, endDate, cruiseTypeId]);
+  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
 
   const handleHeartClick = (e: React.MouseEvent) => {
     e.preventDefault();

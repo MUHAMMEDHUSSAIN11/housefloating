@@ -58,10 +58,12 @@ const Listingpage = ({ params }: { params: Iparams }) => {
   const startDateParam = searchParams?.get('startDate');
   const endDateParam = searchParams?.get('endDate');
   const cruiseTypeIdParam = searchParams?.get('cruiseTypeId');
+  const bookingTypeIdParam = searchParams?.get('type');
 
   const startDate = startDateParam ? new Date(startDateParam) : null;
   const endDate = endDateParam ? new Date(endDateParam) : null;
   const cruiseTypeId = cruiseTypeIdParam ? Number(cruiseTypeIdParam) : null;
+  const bookingTypeId = bookingTypeIdParam ? Number(bookingTypeIdParam) : null;
 
   const hasRequiredParams = !!(listingId && startDateParam && cruiseTypeIdParam && startDate && cruiseTypeId);
 
@@ -106,6 +108,7 @@ const Listingpage = ({ params }: { params: Iparams }) => {
       startDate={startDate!}
       endDate={endDate!}
       cruiseTypeId={cruiseTypeId!}
+      bookingTypeId={bookingTypeId}
     />
   );
 };

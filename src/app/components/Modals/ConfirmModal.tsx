@@ -15,11 +15,8 @@ import validateOTP from '@/app/actions/validateOTP';
 import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
-import { BoatCruisesId } from '@/app/enums/enums';
+import { BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
-
-
-
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -35,11 +32,13 @@ interface confirmModalProps {
     finalCheckInDate: Date,
     finalCheckOutDate: Date,
     finalMinorCount: number,
-    isVeg: boolean
+    isVeg: boolean,
+    bookingTypeId: number | null,
+    roomCount: number,
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, finalMinorCount, isVeg }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, finalMinorCount, isVeg, bookingTypeId, roomCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
@@ -146,6 +145,10 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             setIsLoading(true)
 
             try {
+                // Calculate sharing-specific values
+                const isSharing = bookingTypeId === BookingType.sharing;
+                const finalRoomCount = isSharing ? roomCount : null;
+
                 const metadata = {
                     boatId: boatDetails.boatId,
                     userId: user?.id || 0,
@@ -156,9 +159,11 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
                     isVeg: isVeg,
                     boardingPoint: boatDetails.boardingPoint,
-                    isSharing: false,
-                    roomCount: boatDetails.bedroomCount
+                    isSharing: isSharing,
+                    roomCount: finalRoomCount
                 };
+
+                console.log('Booking metadata:', metadata);
 
                 await MakeRazorpay({
                     totalPrice: finalPrice,

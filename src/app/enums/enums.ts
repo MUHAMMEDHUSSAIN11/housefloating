@@ -56,4 +56,24 @@ export enum PaymentModes {
     NetBanking = 3,
 }
 
+export enum CheckInOutTimes {
+    SharingDayCruiseCheckIn = "1:30 PM",
+    SharingDayCruiseCheckOut = "5:30 PM",
+
+    SharingOvernightCheckIn = "1:30 PM",
+    SharingOvernightCheckOut = "9:00 AM",
+
+    SharingNightStayCheckIn = "6:00 PM",
+    SharingNightStayCheckOut = "9:00 AM",
+
+    PrivateDayCruiseCheckIn = "11:00 AM",
+    PrivateDayCruiseCheckOut = "5:00 PM",
+
+    PrivateOvernightCheckIn = "12:00 PM",
+    PrivateOvernightCheckOut = "9:00 AM",
+
+    PrivateNightStayCheckIn = "6:00 PM",
+    PrivateNightStayCheckOut = "9:00 AM",
+}
+
 export const coordinates: [number, number] = [9.5008, 76.3443];

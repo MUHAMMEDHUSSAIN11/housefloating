@@ -1,21 +1,74 @@
 'use client';
 
-import { BoatCruisesId } from "@/app/enums/enums";
+import { BoatCruisesId, CheckInOutTimes, BookingType } from "@/app/enums/enums";
 import Button from "../Misc/Button";
 
 interface ListingReservationProps {
   totalPrice: number;
   onSubmit: () => void;
   cruiseTypeId?: number;
+  bookingTypeId?: number | null;
   disabled?: boolean;
   isVeg: boolean;
   setIsVeg: (value: boolean) => void;
 }
 
-const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onSubmit, cruiseTypeId, disabled, isVeg, setIsVeg }) => {
+const ListingReservation: React.FC<ListingReservationProps> = ({
+  totalPrice,
+  onSubmit,
+  cruiseTypeId,
+  bookingTypeId,
+  disabled,
+  isVeg,
+  setIsVeg
+}) => {
   const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? "Day Cruise"
     : cruiseTypeId === BoatCruisesId.overNightCruise ? "Overnight Cruise"
       : "Night Stay Cruise";
+
+  // Function to get check-in and check-out times based on booking type and cruise type
+  const getCheckInOutTimes = (): { checkIn: string; checkOut: string } => {
+    const isSharing = bookingTypeId === BookingType.sharing;
+
+    if (isSharing) {
+      if (cruiseTypeId === BoatCruisesId.dayCruise) {
+        return {
+          checkIn: CheckInOutTimes.SharingDayCruiseCheckIn,
+          checkOut: CheckInOutTimes.SharingDayCruiseCheckOut,
+        };
+      } else if (cruiseTypeId === BoatCruisesId.overNightCruise) {
+        return {
+          checkIn: CheckInOutTimes.SharingOvernightCheckIn,
+          checkOut: CheckInOutTimes.SharingOvernightCheckOut,
+        };
+      } else {
+        return {
+          checkIn: CheckInOutTimes.SharingNightStayCheckIn,
+          checkOut: CheckInOutTimes.SharingNightStayCheckOut,
+        };
+      }
+    } else {
+      // Private booking
+      if (cruiseTypeId === BoatCruisesId.dayCruise) {
+        return {
+          checkIn: CheckInOutTimes.PrivateDayCruiseCheckIn,
+          checkOut: CheckInOutTimes.PrivateDayCruiseCheckOut,
+        };
+      } else if (cruiseTypeId === BoatCruisesId.overNightCruise) {
+        return {
+          checkIn: CheckInOutTimes.PrivateOvernightCheckIn,
+          checkOut: CheckInOutTimes.PrivateOvernightCheckOut,
+        };
+      } else {
+        return {
+          checkIn: CheckInOutTimes.PrivateNightStayCheckIn,
+          checkOut: CheckInOutTimes.PrivateNightStayCheckOut,
+        };
+      }
+    }
+  };
+
+  const { checkIn, checkOut } = getCheckInOutTimes();
 
   return (
     <>
@@ -40,11 +93,11 @@ const ListingReservation: React.FC<ListingReservationProps> = ({ totalPrice, onS
           <div className="grid grid-cols-2 w-full justify-between text-start border rounded-lg p-4">
             <div className="flex flex-col border-r-2 pl-4">
               <div className="text-sm">CheckInTime</div>
-              <div className="text-black">9:30Am</div>
+              <div className="text-black">{checkIn}</div>
             </div>
             <div className="flex flex-col pl-4">
               <div className="text-sm">CheckOutTime</div>
-              <div className="text-black">12:30Pm</div>
+              <div className="text-black">{checkOut}</div>
             </div>
             <div className="col-span-2 pt-2 pl-4 border-t-2">
               <div className="text-xl font-semibold">₹{totalPrice}</div>

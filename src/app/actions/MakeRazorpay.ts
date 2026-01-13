@@ -82,7 +82,7 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
                     totalPrice: Number(finalMetadata.totalPrice),
                     advanceAmount: Number(finalMetadata.advanceAmount),
                     remainingAmount: Number(finalMetadata.remainingAmount),
-                    roomCount: Number(finalMetadata.roomCount || null)
+                    roomCount: finalMetadata.roomCount ? Number(finalMetadata.roomCount) : undefined
                 };
 
                 try {
