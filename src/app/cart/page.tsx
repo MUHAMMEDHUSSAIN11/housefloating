@@ -32,6 +32,7 @@ export interface BookingData {
   bookingStatus: string;
   isVeg: boolean;
   isAdvancePaid: boolean;
+  roomCount:number;
   price: number;
   advanceAmount: number;
   balanceAmount: number;
@@ -41,11 +42,10 @@ export interface BookingData {
   createdBy: string;
   updatedOn: string | null;
   updatedBy: string | null;
-  isShared: boolean;
+  isSharing: boolean;
   occupiedSlots: number;
   remainingSlots: number;
   totalSharedAmount: number;
-  parentSharingRoomCount: number;
   sharedBookings: BookingData[]
 }
 

@@ -123,11 +123,11 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
                         <p className="font-semibold text-sm text-gray-900">{details.childCount}</p>
                     </div>
                 </div>
-                <div className={`${!details.isShared&&'hidden'}`}>
+                <div className={`${!details.isSharing&&'hidden'}`}>
                     <p className="text-xs text-gray-600 uppercase tracking-wide">Room</p>
                     <div className="flex gap-1">
                         <House className="text-green-600" size={20} />
-                        <p className="font-semibold text-sm text-gray-900">{details.parentSharingRoomCount}</p>
+                        <p className="font-semibold text-sm text-gray-900">{details.roomCount}</p>
                     </div>
                 </div>
               </div>
