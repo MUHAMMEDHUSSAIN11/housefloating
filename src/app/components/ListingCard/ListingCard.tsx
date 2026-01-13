@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { amount } from '@/app/enums/enums'
@@ -8,6 +8,9 @@ import { Heart } from 'lucide-react'
 import useLoginModal from '@/app/hooks/useLoginModal'
 import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
 import useAuth from '@/app/hooks/useAuth'
+import Handlecreatewhishlist from '@/app/actions/Whishlist/HandleCreateWhilshlist'
+import HandleGetWhishlist from '@/app/actions/Whishlist/HandleGetWhishlist'
+import toast from 'react-hot-toast'
 
 interface BoatCardDetails {
   boatId: number;
@@ -53,16 +56,30 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   const listingUrl = useMemo(() => {
     const params = new URLSearchParams();
 
+
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
-    if (bookingTypeId) params.append('type', bookingTypeId.toString());
 
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
   }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
 
-  const handleHeartClick = (e: React.MouseEvent) => {
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (user) {
+        const wishlistData = await HandleGetWhishlist();
+        console.log('Wishlist Data:', wishlistData);
+        if (wishlistData && wishlistData.items) {
+          const isFound = wishlistData.items.some(item => item.boatId === data.boatId);
+          setIsWishlisted(isFound);
+        }
+      }
+    };
+    checkStatus();
+  }, [user, data.boatId]);
+
+  const handleHeartClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -71,7 +88,23 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
       return;
     }
 
-    setIsWishlisted(!isWishlisted);
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const success = await Handlecreatewhishlist(data.boatId, Number(user.id));
+      if (success) {
+        setIsWishlisted(!isWishlisted);
+        toast.success(!isWishlisted ? 'Added to wishlist' : 'Removed from wishlist');
+      } else {
+        toast.error('Something went wrong');
+      }
+    } catch (error) {
+      console.error('Wishlist error:', error);
+      toast.error('Failed to update wishlist');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
