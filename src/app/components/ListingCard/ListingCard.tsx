@@ -37,7 +37,8 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   data,
   startDate,
   endDate,
-  cruiseTypeId
+  cruiseTypeId,
+  bookingTypeId
 }) => {
   const loginModal = useLoginModal();
   const { user } = useAuth();
@@ -47,9 +48,6 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
   const offerPrice = useMemo(() => data.price, [data.price]);
-
-  const imageUrl = !imageError && data.boatImage
-    ? data.boatImage
 
   const imageUrl = !imageError && data.boatImage
     ? data.boatImage
@@ -118,8 +116,6 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
         <Heart
           size={16}
           className={`transition ${isWishlisted
-            ? 'text-red-500 fill-red-500'
-            : 'text-gray-700 hover:text-red-500'
             ? 'text-red-500 fill-red-500'
             : 'text-gray-700 hover:text-red-500'
             }`}
