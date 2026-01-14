@@ -278,7 +278,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3">
-            <hr />
+            <hr className='border border-gray-300'/>
         </div>
     )
 

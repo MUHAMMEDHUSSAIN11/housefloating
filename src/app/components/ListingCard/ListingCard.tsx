@@ -69,7 +69,6 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     const checkStatus = async () => {
       if (user) {
         const wishlistData = await HandleGetWhishlist();
-        console.log('Wishlist Data:', wishlistData);
         if (wishlistData && wishlistData.items) {
           const isFound = wishlistData.items.some(item => item.boatId === data.boatId);
           setIsWishlisted(isFound);
@@ -124,7 +123,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
       <Link href={listingUrl} className="block cursor-pointer">
         <div className="flex flex-col w-full">
-          <div className="aspect-[4/3] w-full relative overflow-hidden rounded-lg bg-gray-200">
+          <div className="aspect-4/3 w-full relative overflow-hidden rounded-lg bg-gray-200">
             <Image
               fill
               className="object-cover h-full w-full group-hover:scale-110 transition"

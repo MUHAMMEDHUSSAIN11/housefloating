@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Quicksand } from "next/font/google";
 import MiddleContent from "../Navbar/MiddleContent";
 
@@ -10,9 +10,9 @@ const quicksand = Quicksand({
 });
 
 // Animation variants for the text
-const textVariants = {
+const textVariants: Variants = {
   hidden: { opacity: 0, y: -30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1.5, ease: "easeOut" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 1.5, ease: "easeOut" as any } },
 };
 
 const Background: React.FC = () => {
@@ -24,7 +24,7 @@ const Background: React.FC = () => {
         alt="Hero background image"
         className="absolute inset-0 object-cover w-full h-full"
       />
-      
+
       {/* Stronger Dark Overlay for Better Contrast */}
       <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center lg:items-start lg:pl-16">
         <div className="text-center mt-36 lg:text-left">

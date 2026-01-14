@@ -86,7 +86,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   return (
     <>
       <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? 'Day Cruise' : cruiseTypeId == 2 ? 'Overnight Cruise' : 'Night Stay'} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} finalMinorCount={finalChildCount} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
-      <div className='max-w-screen-xl mx-auto pt-20 md:pt-24 pb-24 md:pb-0'>
+      <div className='max-w-7xl mx-auto pt-20 md:pt-24 pb-24 md:pb-0'>
         <div className='flex flex-col gap-6'>
           <ListingHead
             title={boatDetails.boatCode}
@@ -120,19 +120,19 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 {cruiseTypeId === BoatCruisesId.overNightCruise ? (
                   <>
                     <Occupancy title={'Overnight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdulCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />
-                    <hr />
+                    <hr className='border border-gray-300'/>
                     <OverNightSteps />
                   </>
                 ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
                     <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdulCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />
-                    <hr />
+                    <hr className='border border-gray-300'/>
                     <NightStaySteps />
                   </>
                 ) : (
                   <>
                     <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdulCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} childAddonPrice={boatDetails.prices.childAddOnDayPrice} />
-                    <hr />
+                    <hr className='border border-gray-300'/>
                     <DayCruiseSteps />
                   </>
                 )}
@@ -148,28 +148,28 @@ const ListingClient: React.FC<ListingClientProps> = ({
                     if (boatDetails.boatCategoryId === Categories.Deluxe) {
                       return (
                         <>
-                          <hr />
+                          <hr className='border border-gray-300'/>
                           <DeluxeFood bookingType={cruiseTypeId} />
                         </>
                       )
                     } else if (boatDetails.boatCategoryId === Categories.Premium) {
                       return (
                         <>
-                          <hr />
+                          <hr className='border border-gray-300'/>
                           <PremiumFood bookingType={cruiseTypeId} />
                         </>
                       )
                     } else {
                       return (
                         <>
-                          <hr />
+                          <hr className='border border-gray-300'/>
                           <LuxuryFood bookingType={cruiseTypeId} />
                         </>
                       )
                     }
                   })()
                 }
-                <hr />
+                <hr className='border border-gray-300'/>
                 <HouseRules />
               </div>
             </div>
@@ -187,7 +187,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
           </div>
         </div>
       </div>
-      <hr />
+      <hr className='border border-gray-300'/>
       <Updated />
       <Footer />
     </>

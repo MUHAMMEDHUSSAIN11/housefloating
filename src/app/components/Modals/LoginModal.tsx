@@ -114,7 +114,7 @@ const LoginModal = () => {
 
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3 mb-12 md:mb-0">
-            <hr />
+            <hr className='border border-gray-300'/>
             <Button outline label="Continue with Google" icon={FcGoogle} onClick={handleGoogleSign} />
             <div className="text-neutral-500 text-center mt-4 font-light">
                 <p>Are you new here?

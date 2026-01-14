@@ -98,7 +98,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
         </div>
 
         <div className="relative mt-2 md:mt-0">
-          <div className="grid grid-cols-4 gap-2 rounded-xl mb-2 overflow-hidden h-[350px] md:h-[500px]">
+          <div className="grid grid-cols-4 gap-2 rounded-xl mb-2 overflow-hidden h-[350] md:h-[500]">
             <div
               className="col-span-4 md:col-span-2 row-span-1 relative group cursor-pointer overflow-hidden"
               onClick={() => setCurrentImageIndex(mobileMainImageIndex)}
@@ -190,7 +190,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
           {imageSrc.map((img, index) => (
             <div
               key={index}
-              className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer transition-all ${mobileMainImageIndex === index ? "ring-2 ring-blue-400" : ""
+              className={`relative shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer transition-all ${mobileMainImageIndex === index ? "ring-2 ring-blue-400" : ""
                 }`}
               onClick={() => handleThumbnailClick(index)}
             >
@@ -214,7 +214,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {imageSrc.map((img, index) => (
-                    <div key={index} className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                    <div key={index} className="relative aspect-4/3 rounded-lg overflow-hidden">
                       <Image
                         src={img || "/placeholder.svg"}
                         alt={`${title} photo ${index + 1}`}

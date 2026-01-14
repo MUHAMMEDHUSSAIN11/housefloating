@@ -60,7 +60,7 @@ const ListingHero: React.FC = () => {
               <Link
                 key={item.id}
                 href="/houseBoats"
-                className="flex-shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
+                className="shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
               >
                 {/* Image */}
                 <div className="relative h-40 overflow-hidden">
@@ -92,7 +92,7 @@ const ListingHero: React.FC = () => {
 
   // Skeleton Loading Component
   const SkeletonCard = () => (
-    <div className="flex-shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
+    <div className="shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
       {/* Image Skeleton */}
       <div className="h-40 bg-gray-200"></div>
 

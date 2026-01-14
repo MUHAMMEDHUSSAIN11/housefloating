@@ -41,7 +41,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxchildCount,
           <div>{bathroomCount} Bathrooms</div>
         </div>
       </div>
-      <hr />
+      <hr className='border border-gray-300'/>
       <div className=''>
         <Counter onChange={(value) => setAdultCount(value)} min={minAdultCount} max={maxAdultCount} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
         {adultCount === maxAdultCount && (
@@ -69,7 +69,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxchildCount,
           )}
         </div>
       )}
-      <hr />
+      <hr className='border border-gray-300'/>
     </div>
   )
 }

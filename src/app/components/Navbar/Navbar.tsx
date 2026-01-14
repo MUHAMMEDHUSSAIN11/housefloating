@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <div className="fixed w-full bg-white z-50 shadow-sm">
-      <div className=" border-b-[1px]">
+      <div className=" border-b-[1] border-gray-300">
         <Container>
           {/* Desktop Layout */}
           <div className="hidden lg:flex flex-row items-center justify-between gap-1">

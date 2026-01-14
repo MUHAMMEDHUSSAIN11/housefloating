@@ -15,10 +15,10 @@ const DayCruiseSteps = () => {
                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                   <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                 </div>
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                   <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                 </div>
-                <div className="flex-grow pl-4">
+                <div className="grow pl-4">
                   <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Cruise Starts</h2>
                   <p className="text-sm text-gray-900 mt-2">Time: 11:00 AM</p>
                   <p className="leading-relaxed">Board the cruise and begin your day adventure.</p>
@@ -28,10 +28,10 @@ const DayCruiseSteps = () => {
                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                   <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                 </div>
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                   <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                 </div>
-                <div className="flex-grow pl-4">
+                <div className="grow pl-4">
                   <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Lunch</h2>
                   <p className="text-sm text-gray-900 mt-2">Time: 12:00 PM</p>
                   <p className="leading-relaxed">Enjoy a delicious lunch onboard.</p>
@@ -41,19 +41,19 @@ const DayCruiseSteps = () => {
                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                   <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                 </div>
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                   <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                 </div>
-                <div className="flex-grow pl-4">
+                <div className="grow pl-4">
                   <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Cruising</h2>
                   <p className="leading-relaxed">Continue cruising through the backwaters and enjoy sightseeing.</p>
                 </div>
               </div>
               <div className="flex relative">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                   <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                 </div>
-                <div className="flex-grow pl-4">
+                <div className="grow pl-4">
                   <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Checkout</h2>
                   <p className="text-sm text-gray-900 mt-2">Time: 05:00 PM</p>
                   <p className="leading-relaxed">Conclude your houseboat experience.</p>

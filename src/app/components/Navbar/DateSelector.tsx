@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, X, Check } from 'lucide-react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, startOfDay, isAfter, differenceInDays } from 'date-fns';
+import { format, addMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, startOfDay } from 'date-fns';
 import { BoatCruises, BoatCruisesId } from '@/app/enums/enums';
 
 interface DateRange {
@@ -54,63 +53,54 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     setTempEndDate(null);
   };
 
-  // handleConfirm removed as it is no longer used
-
-  // getDayCount removed as it is no longer used
-
   const isDateInRange = (day: Date): boolean => {
     if (!tempStartDate) return false;
-
-    // Simplified logic: Range selection removed for Overnight Cruise
     return isSameDay(day, tempStartDate);
   };
 
   const isDateSelected = (day: Date): boolean => {
-    // Simplified logic: Range selection removed for Overnight Cruise
     return tempStartDate ? isSameDay(day, tempStartDate) : false;
   };
 
-  // dayCount and canConfirm removed as they are no longer used
-
   return (
-    <div className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 w-full sm:w-[400px] z-50'}`}>
+    <div className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-3 sm:p-4 w-full sm:min-w-[420] z-50'}`}>
       {/* Cruise Type Selection */}
-      <div className="flex justify-between items-center my-2 w-full">
-        <label className="inline-flex items-center cursor-pointer">
+      <div className="flex justify-between items-center my-2 w-full gap-2">
+        <label className="inline-flex items-center cursor-pointer group">
           <input
             type="radio"
-            className="form-radio h-3 w-3 text-blue-600"
+            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
             checked={selectedCruise === BoatCruisesId.dayCruise}
             onChange={() => handleCruiseChange(BoatCruisesId.dayCruise)}
           />
-          <span className="ml-1 text-xs">{BoatCruises.dayCruise}</span>
+          <span className="ml-1 text-[10 sm:text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">{BoatCruises.dayCruise}</span>
         </label>
 
-        <label className="inline-flex items-center cursor-pointer">
+        <label className="inline-flex items-center cursor-pointer group">
           <input
             type="radio"
-            className="form-radio h-3 w-3 text-blue-600"
+            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
             checked={selectedCruise === BoatCruisesId.overNightCruise}
             onChange={() => handleCruiseChange(BoatCruisesId.overNightCruise)}
           />
-          <span className="ml-1 text-xs">{BoatCruises.overNightCruise}</span>
+          <span className="ml-1 text-[10 sm:text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">{BoatCruises.overNightCruise}</span>
         </label>
 
-        <label className="inline-flex items-center cursor-pointer">
+        <label className="inline-flex items-center cursor-pointer group">
           <input
             type="radio"
-            className="form-radio h-3 w-3 text-blue-600"
+            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
             checked={selectedCruise === BoatCruisesId.nightStay}
             onChange={() => handleCruiseChange(BoatCruisesId.nightStay)}
           />
-          <span className="ml-1 text-xs">{BoatCruises.nightStay}</span>
+          <span className="ml-1 text-[10 sm:text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">{BoatCruises.nightStay}</span>
         </label>
       </div>
 
       <hr className="my-2" />
 
       {/* Scrollable Month List */}
-      <div className={`${inline ? 'max-h-[270px]' : 'max-h-[380px]'} overflow-y-auto pr-2 custom-scrollbar`}>
+      <div className={`${inline ? 'max-h-[270]' : 'max-h-[380]'} overflow-y-auto pr-2 custom-scrollbar`}>
         {monthsToShow.map((month, monthIdx) => {
           const days = eachDayOfInterval({
             start: startOfMonth(month),
@@ -127,7 +117,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
               {/* Weekday headers */}
               <div className="grid grid-cols-7 mb-2">
                 {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
-                  <div key={day} className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  <div key={day} className="text-center text-[10 font-bold text-gray-400 uppercase tracking-widest">
                     {day}
                   </div>
                 ))}
@@ -137,7 +127,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
               <div className="grid grid-cols-7 gap-1">
                 {/* Empty cells for days before the start of the month */}
                 {Array.from({ length: startDay }).map((_, index) => (
-                  <div key={`empty-${month.toISOString()}-${index}`} className="h-10" />
+                  <div key={`empty-${month.toISOString()}-${index}`} className="h-10 w-10 md:h-12 md:w-12" />
                 ))}
 
                 {days.map((day) => {
