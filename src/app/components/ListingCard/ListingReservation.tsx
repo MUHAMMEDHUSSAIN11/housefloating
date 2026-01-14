@@ -77,21 +77,21 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
           <div className="flex flex-row w-full gap-4">
             <div className="font-semibold">{cruiseType}</div>
             <div className="flex items-center ml-2 gap-2">
-              <label className="inline-flex items-center ">
-                <input type="radio" className="form-radio h-5 w-5 text-blue-600"
+              <label className="inline-flex items-center cursor-pointer group">
+                <input type="radio" className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
                   checked={!isVeg} onChange={() => { setIsVeg(false) }} />
-                <span className="ml-2">Non-Veg</span>
+                <span className="ml-2 group-hover:text-blue-600 transition-colors">Non-Veg</span>
               </label>
-              <label className="inline-flex items-center ml-4">
-                <input type="radio" className="form-radio h-5 w-5 text-blue-600"
+              <label className="inline-flex items-center ml-4 cursor-pointer group">
+                <input type="radio" className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
                   checked={isVeg} onChange={() => { setIsVeg(true) }} />
-                <span className="ml-2">Veg</span>
+                <span className="ml-2 group-hover:text-blue-600 transition-colors">Veg</span>
               </label>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 w-full justify-between text-start border rounded-lg p-4">
-            <div className="flex flex-col border-r-2 pl-4">
+          <div className="grid grid-cols-2 w-full justify-between text-start border border-gray-300 rounded-lg p-4">
+            <div className="flex flex-col border-r-2 border-gray-300 pl-4">
               <div className="text-sm">CheckInTime</div>
               <div className="text-black">{checkIn}</div>
             </div>
@@ -99,7 +99,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
               <div className="text-sm">CheckOutTime</div>
               <div className="text-black">{checkOut}</div>
             </div>
-            <div className="col-span-2 pt-2 pl-4 border-t-2">
+            <div className="col-span-2 pt-2 pl-4 border-t-2 border-gray-300">
               <div className="text-xl font-semibold">₹{totalPrice}</div>
               <div className="text-xs">per day cruise</div>
             </div>
@@ -142,7 +142,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
                 <span className="text-xs text-gray-500">/{cruiseTypeId === BoatCruisesId.dayCruise ? 'day' : 'night'}</span>
               </div>
             </div>
-            <div className="flex-1 max-w-[150px]">
+            <div className="flex-1 max-w-[150">
               <Button
                 disabled={disabled}
                 label="Book Now"

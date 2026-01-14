@@ -85,7 +85,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             {/* Info Grid */}
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
               <div className='flex items-center gap-3 p-3 bg-blue-50 rounded-lg'>
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <IoCalendarNumberSharp className="text-blue-600" size={20} />
                 </div>
                 <div>
@@ -95,7 +95,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
               </div>
 
               <div className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg'>
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   {'Confirmed' == "Confirmed" ? (
                     <IoCheckmarkCircle className="text-green-600" size={20} />
                   ) : (
@@ -133,7 +133,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
               </div>
 
               <div className='flex items-center gap-3 p-3 bg-purple-50 rounded-lg'>
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <IoBoat className='text-purple-600' size={20} />
                 </div>
                 <div>

@@ -6,7 +6,7 @@ import Footer from '../components/Hero/Footer';
 const page = () => {
   return (
     <div className='pt-28 font-sans text-wrap'>
-      <div className='max-w-screen-lg mx-auto'>
+      <div className='max-w-5xl mx-auto'>
         <div className='flex flex-col gap-6 pl-1'>
           <h2 className="text-3xl text-center font-semibold mb-5">Booking Policies</h2>
           <h3 className='text-left text-xl font-semibold mb-1 pl-2'>Bookings</h3>
@@ -113,7 +113,7 @@ const page = () => {
         </div>
       </div>
       <Updated />
-      <hr />
+      <hr className='border border-gray-300'/>
       <Footer />
     </div>
   )

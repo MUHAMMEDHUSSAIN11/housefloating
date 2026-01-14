@@ -46,7 +46,7 @@ const RightContent = () => {
                 <div
                     ref={toggleRef}
                     onClick={toggleOpen}
-                    className="p-3 lg:py-1 lg:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-lg transition"
+                    className="p-3 lg:py-1 lg:px-2 border border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-lg transition"
                 >
                     <AiOutlineMenu />
                     <div className="hidden lg:block gap-2">
@@ -57,13 +57,13 @@ const RightContent = () => {
             {isOpen &&
                 <div
                     ref={ref}
-                    className="absolute rounded-xl shadow-lg w-[40vw] lg:w-48 bg-white overflow-hidden right-0 top-12 text-sm z-[60]"
+                    className="absolute rounded-xl shadow-lg w-[40vw] lg:w-48 bg-white overflow-hidden right-0 top-12 text-sm z-60"
                 >
                     <div className="flex flex-col cursor-pointer">
                         {user && (
                             <>
                                 <UserMenuItem onClick={handleLogout} label="Logout" />
-                                <hr />
+                                <hr className='border border-gray-300' />
                                 <div className="sm:block lg:hidden px-4 py-3 hover:bg-neutral-100 transition">Contact Us</div>
                             </>
                         )}
@@ -77,9 +77,9 @@ const RightContent = () => {
                         {user && isAuthority(user.id ? String(user.id) : "") && (
                             <>
                                 <UserMenuItem onClick={() => router.push('/admin')} label="Reservations" />
-                                <hr />
+                                <hr className='border border-gray-300'/>
                                 <UserMenuItem onClick={onRent} label="Add Listing" />
-                                <hr />
+                                <hr className='border border-gray-300'/>
                                 <UserMenuItem onClick={() => router.push('/manageListings')} label="Manage Listings" />
 
                             </>

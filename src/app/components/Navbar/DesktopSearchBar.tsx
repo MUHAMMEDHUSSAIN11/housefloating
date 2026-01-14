@@ -85,8 +85,8 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
             >
               <div className="flex items-center gap-1 lg:gap-2">
                 {selectedType === BookingType.private
-                  ? <User className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />
-                  : <Users className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />}
+                  ? <User className={`w-4 h-4 shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />
+                  : <Users className={`w-4 h-4 shrink-0 ${showErrors && errors.type ? 'text-red-500' : ''}`} />}
                 <div className="min-w-0 flex-1">
                   <p className={`hidden sm:block text-sm truncate ${showErrors && errors.type ? 'text-red-500 font-semibold' : ''}`}>
                     {selectedType ? getSelectedLabel(selectedType) : 'Select Type'}
@@ -131,7 +131,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
                 } text-black font-bold`}
             >
               <div className="flex items-center gap-1 lg:gap-2">
-                <Ship className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.category ? 'text-red-500' : ''}`} />
+                <Ship className={`w-4 h-4 shrink-0 ${showErrors && errors.category ? 'text-red-500' : ''}`} />
                 <div className="min-w-0 flex-1">
                   <p className={`truncate ${showErrors && errors.category ? 'text-red-500 font-semibold' : ''}`}>
                     {selectedCategory ? getCategoryLabel(selectedCategory) : 'Select category'}
@@ -161,7 +161,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
                     </button>
                   </div>
                 </div>
-                <hr />
+                <hr className='border border-gray-300'/>
                 {categoryOptions.map((option) => (
                   <button
                     key={option.id}
@@ -191,7 +191,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
                 } ${selectedDateRange.startDate ? 'font-bold' : ''}`}
             >
               <div className="flex items-center gap-1 lg:gap-2">
-                <Calendar className={`w-4 h-4 flex-shrink-0 ${showErrors && errors.date ? 'text-red-500' : ''}`} />
+                <Calendar className={`w-4 h-4 shrink-0 ${showErrors && errors.date ? 'text-red-500' : ''}`} />
                 <div className="min-w-0 flex-1">
                   <p className={`hidden sm:block truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
                     {!selectedDateRange.startDate ? 'Select Date' : getDateDisplayText()}
@@ -219,7 +219,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
 
       <button
         onClick={handleSearch}
-        className="p-3 flex items-center justify-center gap-1 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:scale-110 active:scale-95 flex-shrink-0 transition-all duration-200"
+        className="p-3 flex items-center justify-center gap-1 rounded-full bg-blue-500 text-white hover:bg-blue-600 hover:scale-110 active:scale-95 shrink-0 transition-all duration-200"
       >
         <div className='hidden sm:block'>Search</div><Search className="w-5 h-5 sm:w-4 sm:h-4" />
       </button>

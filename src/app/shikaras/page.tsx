@@ -85,7 +85,7 @@ const ComingSoonPage = () => {
           </h1>
           
           {/* Coming Soon Badge */}
-          <div className="inline-flex items-center bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold mb-8 shadow-lg">
+          <div className="inline-flex items-center bg-linear-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold mb-8 shadow-lg">
             <Clock className="w-5 h-5 mr-2" />
             Coming Soon
           </div>
@@ -102,7 +102,7 @@ const ComingSoonPage = () => {
               <h2 className="text-2xl font-bold text-gray-800">Launch Timeline</h2>
             </div>
             
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
+            <div className="bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
               <div className="text-3xl font-bold text-blue-600 mb-2">Within few Weeks</div>
               <p className="text-gray-600">We're putting the finishing touches on this amazing service</p>
             </div>
@@ -130,7 +130,7 @@ const ComingSoonPage = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 {serviceDetails.features.map((feature, index) => (
                   <div key={index} className="flex items-center text-left p-3 bg-gray-50 rounded-lg">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 flex-shrink-0"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 shrink-0"></div>
                     <span className="text-gray-700">{feature}</span>
                   </div>
                 ))}
@@ -139,7 +139,7 @@ const ComingSoonPage = () => {
           )}
 
           {/* Call to Action */}
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-8 text-white">
+          <div className="bg-linear-to-r from-blue-500 to-indigo-600 rounded-2xl p-8 text-white">
             <h3 className="text-2xl font-bold mb-4">Stay Updated</h3>
             <p className="mb-6 opacity-90">
               Be the first to know when our {serviceDetails.title.toLowerCase()} become available!

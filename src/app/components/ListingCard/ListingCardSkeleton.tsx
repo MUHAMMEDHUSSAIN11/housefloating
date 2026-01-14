@@ -4,7 +4,7 @@ const ListingCardSkeleton = () => {
   return (
     <div className="col-span-1">
       <div className="flex flex-col w-full">
-        <div className="aspect-[4/3] w-full relative overflow-hidden rounded-lg bg-gray-200">
+        <div className="aspect-4/3 w-full relative overflow-hidden rounded-lg bg-gray-200">
           <div className="w-full h-full bg-gray-300"></div>
         </div>
         

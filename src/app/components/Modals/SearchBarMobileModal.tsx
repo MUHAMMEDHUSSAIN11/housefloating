@@ -51,7 +51,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
   const [mobileActiveSection, setMobileActiveSection] = useState<'type' | 'category' | 'date' | null>('type');
 
   return (
-    <div className="fixed inset-0 z-[60] bg-white flex flex-col md:hidden">
+    <div className="fixed inset-0 z-60 bg-white flex flex-col md:hidden">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <button
@@ -132,7 +132,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileActiveSection === 'category' ? 'rotate-180 text-blue-500' : 'text-gray-400'}`} />
           </button>
 
-          <div className={`transition-all duration-300 ${mobileActiveSection === 'category' ? 'max-h-[500px] opacity-100 p-4 pt-0' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+          <div className={`transition-all duration-300 ${mobileActiveSection === 'category' ? 'max-h-[500] opacity-100 p-4 pt-0' : 'max-h-0 opacity-0 pointer-events-none'}`}>
             <div className="space-y-4">
               <div className="flex items-center justify-between bg-gray-50 p-3 rounded-2xl mt-2">
                 <span className="font-bold text-gray-700">Number of Rooms</span>
@@ -187,7 +187,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
               <Calendar className={`w-5 h-5 ${mobileActiveSection === 'date' ? 'text-blue-500' : ''}`} />
               <div>
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pick Dates</p>
-                <p className="font-bold text-gray-900 truncate max-w-[200px]">
+                <p className="font-bold text-gray-900 truncate max-w-[200]">
                   {selectedDateRange.startDate ? getDateDisplayText() : 'Select Dates'}
                 </p>
               </div>
@@ -195,7 +195,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileActiveSection === 'date' ? 'rotate-180 text-blue-500' : 'text-gray-400'}`} />
           </button>
 
-          <div className={`transition-all duration-300 ${mobileActiveSection === 'date' ? 'max-h-[600px] opacity-100 p-2' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+          <div className={`transition-all duration-300 ${mobileActiveSection === 'date' ? 'max-h-[600] opacity-100 p-2' : 'max-h-0 opacity-0 pointer-events-none'}`}>
             <div className="bg-white rounded-2xl overflow-hidden mt-1">
               <DateSelector
                 selectedCruise={selectedCruise}

@@ -22,10 +22,10 @@ const OverNightSteps = () => {
                                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                 </div>
-                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                     <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                 </div>
-                                <div className="flex-grow pl-4">
+                                <div className="grow pl-4">
                                     <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Check-In</h2>
                                     <p className="text-sm text-gray-900 mt-2">Time: 12:00 PM</p>
                                     <p className="leading-relaxed">
@@ -37,10 +37,10 @@ const OverNightSteps = () => {
                                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                 </div>
-                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                     <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                 </div>
-                                <div className="flex-grow pl-4">
+                                <div className="grow pl-4">
                                     <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Lunch</h2>
                                     <p className="text-sm text-gray-900 mt-2">Time: 01:00 PM</p>
                                     <p className="leading-relaxed">Enjoy a lavish traditional Kerala cuisine lunch onboard.</p>
@@ -50,10 +50,10 @@ const OverNightSteps = () => {
                                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                 </div>
-                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                     <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                 </div>
-                                <div className="flex-grow pl-4">
+                                <div className="grow pl-4">
                                     <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Cruising</h2>
                                     <p className="text-sm text-gray-900 mt-2">Time: 03:00 PM</p>
                                     <p className="leading-relaxed">Relax and enjoy the scenic canals, rivers, and backwaters during the cruise.</p>
@@ -63,10 +63,10 @@ const OverNightSteps = () => {
                                 <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                     <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                 </div>
-                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                     <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                 </div>
-                                <div className="flex-grow pl-4">
+                                <div className="grow pl-4">
                                     <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Evening Tea</h2>
                                     <p className="text-sm text-gray-900 mt-2">Time: 05:00 PM</p>
                                     <p className="leading-relaxed">
@@ -80,10 +80,10 @@ const OverNightSteps = () => {
                                         <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                         </div>
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                             <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                         </div>
-                                        <div className="flex-grow pl-4">
+                                        <div className="grow pl-4">
                                             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Sunset</h2>
                                             <p className="leading-relaxed">
                                                 Experience the breathtaking sunset over the tranquil backwaters while you relax on the houseboat.
@@ -94,10 +94,10 @@ const OverNightSteps = () => {
                                         <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                         </div>
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                             <div className="h-1 w-1 bg-blue-500 rounded-full"></div>
                                         </div>
-                                        <div className="flex-grow pl-4">
+                                        <div className="grow pl-4">
                                             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Dinner</h2>
                                             <p className="text-sm text-gray-900 mt-2">Time: 07:00 PM</p>
                                             <p className="leading-relaxed">Enjoy a delicious dinner onboard.</p>
@@ -107,10 +107,10 @@ const OverNightSteps = () => {
                                         <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                         </div>
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                             <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                         </div>
-                                        <div className="flex-grow pl-4">
+                                        <div className="grow pl-4">
                                             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Bed Time</h2>
                                             <p className="text-sm text-gray-900 mt-2">Time: 10:00 PM</p>
                                             <p className="leading-relaxed">Guests are not permitted to remain or sleep outside the rooms after 10:00 PM.</p>
@@ -120,10 +120,10 @@ const OverNightSteps = () => {
                                         <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                         </div>
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                             <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                         </div>
-                                        <div className="flex-grow pl-4">
+                                        <div className="grow pl-4">
                                             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Sunrise Time</h2>
                                             <p className="leading-relaxed">Wake up to a bright day and enjoy the sunrise with a cup of coffee.</p>
                                         </div>
@@ -132,10 +132,10 @@ const OverNightSteps = () => {
                                         <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                         </div>
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                             <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                         </div>
-                                        <div className="flex-grow pl-4">
+                                        <div className="grow pl-4">
                                             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Cruising</h2>
                                             <p className="text-sm text-gray-900 mt-2">Time: 08:00 AM</p>
                                             <p className="leading-relaxed">Continue cruising through the backwaters and enjoy sightseeing.</p>
@@ -145,20 +145,20 @@ const OverNightSteps = () => {
                                         <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                                             <div className="h-full w-1 bg-gray-200 pointer-events-none"></div>
                                         </div>
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                             <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                         </div>
-                                        <div className="flex-grow pl-4">
+                                        <div className="grow pl-4">
                                             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Breakfast</h2>
                                             <p className="text-sm text-gray-900 mt-2">Time: 08:30 AM</p>
                                             <p className="leading-relaxed">Enjoy a delicious breakfast onboard.</p>
                                         </div>
                                     </div>
                                     <div className="flex relative">
-                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-blue-500 inline-flex items-center justify-center text-white relative">
                                             <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                                         </div>
-                                        <div className="flex-grow pl-4">
+                                        <div className="grow pl-4">
                                             <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Checkout</h2>
                                             <p className="text-sm text-gray-900 mt-2">Time: 09:00 AM</p>
                                             <p className="leading-relaxed">Check out by 9:00 AM to conclude your houseboat experience.</p>

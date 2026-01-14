@@ -55,9 +55,10 @@ const fetchBoatData = async (
   return fetchedBoatData;
 };
 
-const Listingpage = ({ params }: { params: Iparams }) => {
+const Listingpage = ({ params }: { params: Promise<Iparams> }) => {
   const searchParams = useSearchParams();
-  const listingId = params.listingid;
+  const resolvedParams = React.use(params);
+  const listingId = resolvedParams.listingid;
 
   const startDateParam = searchParams?.get('startDate');
   const endDateParam = searchParams?.get('endDate');
@@ -77,7 +78,7 @@ const Listingpage = ({ params }: { params: Iparams }) => {
 
   const { data: fetchedBoatData, error, isLoading } = useSWR<BoatDetails>(
     cacheKey,
-    () => fetchBoatData(listingId!, startDate!, cruiseTypeId!,bookingTypeId!),
+    () => fetchBoatData(listingId!, startDate!, cruiseTypeId!, bookingTypeId!),
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

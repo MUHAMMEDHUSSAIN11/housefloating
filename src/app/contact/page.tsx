@@ -7,7 +7,7 @@ const Contact = () => {
     return (
       <>
       <Aboutimage/>
-      <div className="font-sans max-w-screen-lg mx-auto pt-20 p-2">
+      <div className="font-sans max-w-5xl mx-auto pt-20 p-2">
             <h1 className="text-3xl font-semibold text-center mb-8">Contact Us</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-lg p-4 shadow-md">
