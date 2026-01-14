@@ -63,13 +63,10 @@ const DateSelector: React.FC<DateSelectorProps> = ({
 
     // Simplified logic: Range selection removed for Overnight Cruise
     return isSameDay(day, tempStartDate);
-
-    return isSameDay(day, tempStartDate);
   };
 
   const isDateSelected = (day: Date): boolean => {
     // Simplified logic: Range selection removed for Overnight Cruise
-    return tempStartDate ? isSameDay(day, tempStartDate) : false;
     return tempStartDate ? isSameDay(day, tempStartDate) : false;
   };
 

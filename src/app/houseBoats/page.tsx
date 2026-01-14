@@ -9,7 +9,7 @@ import ListingCardSkeleton from '../components/ListingCard/ListingCardSkeleton';
 import GetAvailableHouseBoats from '../actions/GetAvailableHouseBoats/GetAvailableHouseBoats';
 import useSWR from 'swr';
 
-const Page = () => {
+const HouseBoatsContent = () => {
   const searchParams = useSearchParams();
 
   const categoryFromUrl = Number(searchParams?.get('category')) || 0;
@@ -236,6 +236,26 @@ const Page = () => {
         )}
       </div>
     </Container>
+  );
+};
+
+import { Suspense } from 'react';
+
+const Page = () => {
+  return (
+    <Suspense fallback={
+      <Container>
+        <div className="pb-20 pt-40 lg:pt-28">
+          <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <ListingCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </Container>
+    }>
+      <HouseBoatsContent />
+    </Suspense>
   );
 };
 

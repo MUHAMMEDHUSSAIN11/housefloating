@@ -2,9 +2,19 @@
 
 import React from 'react';
 import Link from 'next/link';
-import GetHeroListings, { HeroListing } from '@/app/actions/getHeroListings';
+// import GetHeroListings, { HeroListing } from '@/app/actions/getHeroListings';
 import useSWR from 'swr';
 
+
+// Define placeholder interface
+interface HeroListing {
+  id: string;
+  category: string;
+  image: string;
+  price: number;
+  title: string;
+  dayCruisePrice: number;
+}
 
 interface GridSectionProps {
   title: string;
@@ -15,12 +25,15 @@ interface GridSectionProps {
 
 const ListingHero: React.FC = () => {
 
-  const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetHeroListings, {
-    revalidateOnFocus: false,
-    dedupingInterval: 600000, // Cache for 5 minutes
-    errorRetryCount: 3, // Retry failed requests
-    refreshInterval: 0, // Don't auto-refresh (or set to 60000 for 1-minute refresh)
-  });
+  // const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetHeroListings, {
+  //   revalidateOnFocus: false,
+  //   dedupingInterval: 600000, // Cache for 5 minutes
+  //   errorRetryCount: 3, // Retry failed requests
+  //   refreshInterval: 0, // Don't auto-refresh (or set to 60000 for 1-minute refresh)
+  // });
+
+  const listings: HeroListing[] = [];
+  const isLoading = false;
 
 
   const GridSection: React.FC<GridSectionProps> = ({ title, items, path }) => (
@@ -140,6 +153,11 @@ const ListingHero: React.FC = () => {
         </div>
       </section>
     );
+  }
+
+  // If no listings, maybe return null or empty?
+  if (listings.length === 0) {
+    return null;
   }
 
   return (

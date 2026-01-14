@@ -1,27 +1,48 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import useSWR from 'swr';
-import getListings, { Listing } from '../actions/getListings';
-import { updateListing } from '../actions/updateListings';
-import { deleteListing } from '../actions/deleteListing';
+// import useSWR from 'swr';
+// import getListings, { Listing } from '../actions/getListings';
+// import { updateListing } from '../actions/updateListings';
+// import { deleteListing } from '../actions/deleteListing';
 import isAuthority from '../actions/checkAuthority';
-import toast from 'react-hot-toast';
-import Image from 'next/image';
+// import toast from 'react-hot-toast';
+// import Image from 'next/image';
 import useAuth from '../hooks/useAuth';
 
-
+// Define a placeholder Listing interface if needed, or just use any for now since we are commenting out logic
+interface Listing {
+  id: string;
+  title: string;
+  category: string;
+  guestTitle: string;
+  price: number;
+  dayCruisePrice: number;
+  roomCount: number;
+  bathroomCount: number;
+  maxDayGuest: number;
+  maxNightGuest: number;
+  minDayGuest: number;
+  minNightGuest: number;
+  guestCount: number;
+  adultAddonPrice: number;
+  childAddonPrice: number;
+  dayAdultAddOnPrice: number;
+  dayChildAddOnPrice: number;
+  images: string[];
+  docId: string;
+}
 
 const ListingPage = () => {
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [editingListing, setEditingListing] = useState<Listing | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [editingListing, setEditingListing] = useState<Listing | null>(null);
+  // const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: listings, error, isValidating, isLoading, mutate } = useSWR('listings', getListings, {
-    refreshInterval: 10 * 60 * 1000,
-  });
+  // const { data: listings, error, isValidating, isLoading, mutate } = useSWR('listings', getListings, {
+  //   refreshInterval: 10 * 60 * 1000,
+  // });
 
   useEffect(() => {
     if (user?.id) {
@@ -31,57 +52,57 @@ const ListingPage = () => {
     }
   }, [user]);
 
-  const handleEdit = (listing: Listing) => {
-    setEditingListing({ ...listing });
-  };
+  // const handleEdit = (listing: Listing) => {
+  //   setEditingListing({ ...listing });
+  // };
 
-  const handleSave = async () => {
-    if (!editingListing) return;
+  // const handleSave = async () => {
+  //   if (!editingListing) return;
 
-    setIsSubmitting(true);
-    try {
-      const success = await updateListing(editingListing.docId, editingListing);
-      if (success) {
-        setEditingListing(null);
-        mutate(); // Refresh the data
-        toast.success('Listing updated successfully!');
-      } else {
-        toast.error('Failed to update listing');
-      }
-    } catch (error) {
-      console.error('Error updating listing:', error);
-      toast.error('Error updating listing');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  //   setIsSubmitting(true);
+  //   try {
+  //     const success = await updateListing(editingListing.docId, editingListing);
+  //     if (success) {
+  //       setEditingListing(null);
+  //       mutate(); // Refresh the data
+  //       toast.success('Listing updated successfully!');
+  //     } else {
+  //       toast.error('Failed to update listing');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating listing:', error);
+  //     toast.error('Error updating listing');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
-  const handleDelete = async (listingId: string) => {
-    setIsSubmitting(true);
-    try {
-      const success = await deleteListing(listingId);
-      if (success) {
-        setShowDeleteConfirm(null);
-        mutate(); // Refresh the data
-        toast.success('Listing deleted successfully!');
-      } else {
-        toast.error('Failed to delete listing');
-      }
-    } catch (error) {
-      console.error('Error deleting listing:', error);
-      toast.error('Error deleting listing');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // const handleDelete = async (listingId: string) => {
+  //   setIsSubmitting(true);
+  //   try {
+  //     const success = await deleteListing(listingId);
+  //     if (success) {
+  //       setShowDeleteConfirm(null);
+  //       mutate(); // Refresh the data
+  //       toast.success('Listing deleted successfully!');
+  //     } else {
+  //       toast.error('Failed to delete listing');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error deleting listing:', error);
+  //     toast.error('Error deleting listing');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
-  const handleInputChange = (field: keyof Listing, value: any) => {
-    if (!editingListing) return;
-    setEditingListing({
-      ...editingListing,
-      [field]: value,
-    });
-  };
+  // const handleInputChange = (field: keyof Listing, value: any) => {
+  //   if (!editingListing) return;
+  //   setEditingListing({
+  //     ...editingListing,
+  //     [field]: value,
+  //   });
+  // };
 
 
   if (!isAdmin) {
@@ -95,6 +116,21 @@ const ListingPage = () => {
     );
   }
 
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 pt-56 md:pt-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Admin - Manage Listings</h1>
+          <p className="mt-4 text-red-600">
+            This page is currently under maintenance as we migrate to a new system.
+            Please contact support if you need immediate assistance.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  /*
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -124,7 +160,7 @@ const ListingPage = () => {
           </p>
         </div>
 
-        {/* Listings Grid */}
+        {/ * Listings Grid * /}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {listings?.map((listing) => (
             <div key={listing.id} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -314,7 +350,7 @@ const ListingPage = () => {
                     />
                   </div>
 
-                  {/* ✅ Additional Fields */}
+                  {/ * ✅ Additional Fields * /}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Adult Addon Price</label>
@@ -380,7 +416,7 @@ const ListingPage = () => {
         )}
 
 
-        {/* Delete Confirmation Modal */}
+        {/ * Delete Confirmation Modal * /}
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-md w-full p-6">
@@ -412,6 +448,7 @@ const ListingPage = () => {
       </div>
     </div>
   );
+  */
 };
 
 export default ListingPage;
