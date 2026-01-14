@@ -53,15 +53,15 @@ const ListingHero: React.FC = () => {
               <Link
                 key={item.boatId}
                 href="/houseBoats"
-                className="shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
+                className="shrink-0 w-48 bg-white rounded-xl overflow-y-auto shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
               >
                 {/* Image */}
                 <div className="relative h-40 overflow-hidden">
-                  {/* <img
-                    src={item.image}
+                  <img
+                    src={item.thumbnailImage}
                     alt={item.boatName}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  /> */}
+                  />
                 </div>
                 {/* Content */}
                 <div className="p-4">
