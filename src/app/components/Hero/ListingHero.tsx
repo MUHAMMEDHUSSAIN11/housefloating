@@ -2,18 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-// import GetHeroListings, { HeroListing } from '@/app/actions/getHeroListings';
+import GetRandomBoats from '@/app/actions/GetRandomBoats/GetRandomBoats';
 import useSWR from 'swr';
 
 
-// Define placeholder interface
 interface HeroListing {
-  id: string;
-  category: string;
-  image: string;
-  price: number;
-  title: string;
-  dayCruisePrice: number;
+  boatId: number;
+  basePrice: number;
+  boatName: string;
+  thumbnailImage: string;
 }
 
 interface GridSectionProps {
@@ -25,16 +22,12 @@ interface GridSectionProps {
 
 const ListingHero: React.FC = () => {
 
-  // const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetHeroListings, {
-  //   revalidateOnFocus: false,
-  //   dedupingInterval: 600000, // Cache for 5 minutes
-  //   errorRetryCount: 3, // Retry failed requests
-  //   refreshInterval: 0, // Don't auto-refresh (or set to 60000 for 1-minute refresh)
-  // });
-
-  const listings: HeroListing[] = [];
-  const isLoading = false;
-
+  const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetRandomBoats, {
+    revalidateOnFocus: false,
+    dedupingInterval: 600000,
+    errorRetryCount: 3, 
+    refreshInterval: 0, 
+  });
 
   const GridSection: React.FC<GridSectionProps> = ({ title, items, path }) => (
     <div className="mb-5">
@@ -58,25 +51,25 @@ const ListingHero: React.FC = () => {
           <div className="flex space-x-4 pb-4 min-w-max">
             {items.map((item) => (
               <Link
-                key={item.id}
+                key={item.boatId}
                 href="/houseBoats"
-                className="shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
+                className="shrink-0 w-48 bg-white rounded-xl overflow-y-auto shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
               >
                 {/* Image */}
                 <div className="relative h-40 overflow-hidden">
                   <img
-                    src={item.image}
-                    alt={item.title}
+                    src={item.thumbnailImage}
+                    alt={item.boatName}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 {/* Content */}
                 <div className="p-4">
                   <h3 className="text-sm font-medium text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                    {item.title}
+                    {item.boatName}
                   </h3>
                   <p className="text-sm font-semibold text-gray-900">
-                    ₹{item.dayCruisePrice.toLocaleString('en-IN')}
+                    ₹{item.basePrice.toLocaleString('en-IN')}
                     <span className="text-sm font-normal text-gray-600 ml-1">
                       per day
                     </span>
