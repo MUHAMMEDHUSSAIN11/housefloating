@@ -15,7 +15,6 @@ interface HeroListing {
 
 interface GridSectionProps {
   title: string;
-  path: string;
   items: HeroListing[];
 }
 
@@ -29,7 +28,7 @@ const ListingHero: React.FC = () => {
     refreshInterval: 0, 
   });
 
-  const GridSection: React.FC<GridSectionProps> = ({ title, items, path }) => (
+  const GridSection: React.FC<GridSectionProps> = ({ title, items }) => (
     <div className="mb-5">
       {/* Section Title */}
       <div className="px-4 sm:px-6 lg:px-8 mb-6">
@@ -50,9 +49,7 @@ const ListingHero: React.FC = () => {
           `}</style>
           <div className="flex space-x-4 pb-4 min-w-max">
             {items.map((item) => (
-              <Link
-                key={item.boatId}
-                href="/houseBoats"
+              <div
                 className="shrink-0 w-48 bg-white rounded-xl overflow-y-auto shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
               >
                 {/* Image */}
@@ -75,7 +72,7 @@ const ListingHero: React.FC = () => {
                     </span>
                   </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -157,7 +154,7 @@ const ListingHero: React.FC = () => {
     <section className="bg-gray-50 h-auto">
       <div className="pt-48 lg:pt-36 ">
         {/* Houseboats Section */}
-        <GridSection title="Today Hot Deals Individual" items={listings} path="houseBoats" />
+        <GridSection title="Favourite Pricks" items={listings} />
       </div>
     </section>
   );
