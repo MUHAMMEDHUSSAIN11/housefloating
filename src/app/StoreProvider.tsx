@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 import { Provider } from 'react-redux';
+import { SessionProvider } from 'next-auth/react';
 import { initializeStore, AppStore } from '../lib/store';
 import { initializeAuth } from '../lib/features/authSlice';
 
@@ -22,5 +23,9 @@ export default function StoreProvider({
         }
     }, []);
 
-    return <Provider store={storeRef.current!}>{children}</Provider>;
+    return (
+        <SessionProvider>
+            <Provider store={storeRef.current!}>{children}</Provider>
+        </SessionProvider>
+    );
 }
