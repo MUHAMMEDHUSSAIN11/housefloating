@@ -4,6 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import GetRandomBoats from '@/app/actions/GetRandomBoats/GetRandomBoats';
 import useSWR from 'swr';
+import { useRouter } from 'next/navigation';
+import useSearchStore from '@/app/hooks/useSearchStore';
+import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
+import { BoatCruisesId } from '@/app/enums/enums';
 
 
 interface HeroListing {
@@ -25,9 +29,48 @@ const ListingHero: React.FC = () => {
   const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetRandomBoats, {
     revalidateOnFocus: false,
     dedupingInterval: 600000,
-    errorRetryCount: 3, 
-    refreshInterval: 0, 
+    errorRetryCount: 3,
+    refreshInterval: 0,
   });
+
+  const router = useRouter();
+  const {
+    validateFields,
+    selectedType,
+    selectedCategory,
+    roomCount,
+    selectedDateRange,
+    selectedCruise,
+  } = useSearchStore();
+
+  const handleBoatClick = () => {
+    if (validateFields()) {
+      const params = new URLSearchParams();
+      if (selectedType) params.append('type', selectedType.toString());
+      if (selectedCategory) params.append('category', selectedCategory.toString());
+      params.append('rooms', roomCount.toString());
+
+      if (selectedDateRange.startDate) {
+        params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
+        let calculatedEndDate: Date | null = selectedDateRange.endDate;
+
+        if (selectedCruise === BoatCruisesId.dayCruise) {
+          calculatedEndDate = selectedDateRange.startDate;
+        } else if (selectedCruise === BoatCruisesId.nightStay) {
+          calculatedEndDate = new Date(selectedDateRange.startDate);
+          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
+        }
+
+        if (calculatedEndDate) {
+          params.append('endDate', FormatToLocalDateTime(calculatedEndDate));
+        }
+      }
+      params.append('cruise', selectedCruise.toString());
+      router.push(`/houseBoats?${params.toString()}`);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const GridSection: React.FC<GridSectionProps> = ({ title, items, path }) => (
     <div className="mb-5">
@@ -50,9 +93,9 @@ const ListingHero: React.FC = () => {
           `}</style>
           <div className="flex space-x-4 pb-4 min-w-max">
             {items.map((item) => (
-              <Link
+              <div
                 key={item.boatId}
-                href="/houseBoats"
+                onClick={handleBoatClick}
                 className="shrink-0 w-48 bg-white rounded-xl overflow-y-auto shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
               >
                 {/* Image */}
@@ -75,7 +118,7 @@ const ListingHero: React.FC = () => {
                     </span>
                   </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
 import SearchBarMobileModal from '../Modals/SearchBarMobileModal';
 import DesktopSearchBar from './DesktopSearchBar';
+import useSearchStore from '@/app/hooks/useSearchStore';
 
 interface DateRange {
   startDate: Date | null;
@@ -28,20 +29,20 @@ const SearchBar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [selectedCruise, setSelectedCruise] = useState<BoatCruisesId>(BoatCruisesId.overNightCruise);
-  const [selectedType, setSelectedType] = useState<BookingType | null>(null);
-  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({ startDate: null, endDate: null });
-  const [selectedCategory, setSelectedCategory] = useState<Categories>(Categories.All);
+  const {
+    selectedCruise, setSelectedCruise,
+    selectedType, setSelectedType,
+    selectedDateRange, setSelectedDateRange,
+    selectedCategory, setSelectedCategory,
+    roomCount, setRoomCount,
+    showErrors, setShowErrors,
+    errors, setErrors,
+    isMobileModalOpen, setIsMobileModalOpen,
+    validateFields
+  } = useSearchStore();
+
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [roomCount, setRoomCount] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
-  const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
-  const [errors, setErrors] = useState({
-    type: false,
-    category: false,
-    date: false,
-  });
-  const [showErrors, setShowErrors] = useState(false);
 
   const typeRef = useRef<HTMLDivElement>(null);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -132,18 +133,7 @@ const SearchBar = () => {
     }
   }, [selectedDateRange, selectedCruise]);
 
-  const validateFields = () => {
-    const newErrors = {
-      type: !selectedType,
-      category: !selectedCategory,
-      date: !selectedDateRange.startDate,
-    };
-
-    setErrors(newErrors);
-    setShowErrors(true);
-
-    return !Object.values(newErrors).some(error => error);
-  };
+  // Removed local validateFields as it's now in the store
 
   const handleSearch = async () => {
     if (!validateFields()) {
@@ -217,21 +207,21 @@ const SearchBar = () => {
       <div className="md:hidden w-full px-4 mb-4">
         <button
           onClick={() => setIsMobileModalOpen(true)}
-          className="w-full bg-white border border-gray-300 rounded-full py-3 px-4 shadow-sm flex items-center justify-between"
+          className={`w-full bg-white border ${showErrors && (errors.type || errors.category || errors.date) ? 'border-red-500 bg-red-50' : 'border-gray-300'} rounded-full py-3 px-4 shadow-sm flex items-center justify-between transition-colors duration-200`}
         >
           {isSearchPerformed && selectedType && selectedDateRange.startDate ? (
             <div className="flex flex-col items-center flex-1">
-              <span className="text-sm font-bold text-gray-900">
+              <span className={`text-sm font-bold ${showErrors && (errors.type || errors.category || errors.date) ? 'text-red-600' : 'text-gray-900'}`}>
                 {getSelectedLabel(selectedType)} • {getCategoryLabel(selectedCategory)}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className={`text-xs ${showErrors && (errors.type || errors.category || errors.date) ? 'text-red-500' : 'text-gray-500'}`}>
                 {getDateDisplayText()} • {roomCount} {roomCount === 1 ? 'room' : 'rooms'}
               </span>
             </div>
           ) : (
             <div className="flex items-center justify-center flex-1 gap-2">
-              <Search className="w-4 h-4 text-blue-500" />
-              <span className="font-semibold text-gray-800">Start your search</span>
+              <Search className={`w-4 h-4 ${showErrors && (errors.type || errors.category || errors.date) ? 'text-red-500' : 'text-blue-500'}`} />
+              <span className={`font-semibold ${showErrors && (errors.type || errors.category || errors.date) ? 'text-red-600' : 'text-gray-800'}`}>Start your search</span>
             </div>
           )}
         </button>
