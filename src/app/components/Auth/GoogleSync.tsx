@@ -1,10 +1,9 @@
 'use client';
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import useAuth from "@/app/hooks/useAuth";
-import SignUp from "@/app/actions/SignUp/SignUp";
-import Login from "@/app/actions/Login/Login";
+import GoogleAuth from "@/app/actions/GoogleAuth/GoogleAuth";
 import toast from "react-hot-toast";
 
 const GoogleSync = () => {
@@ -25,45 +24,36 @@ const GoogleSync = () => {
         if (status === "authenticated" && session?.user && !isAuthenticated && !isProcessing && !hasAttemptedSync) {
 
             const handleSync = async () => {
-                if (!session?.user) return;
+                const idToken = (session as any).user?.idToken;
+
+                if (!idToken) {
+                    console.error("No idToken found in session");
+                    return;
+                }
 
                 setIsProcessing(true);
                 setHasAttemptedSync(true); // Ensure we only try once per session
 
-                const email = session.user.email!;
-                const userName = session.user.name || email.split('@')[0];
-                const googleId = (session.user as any).id || email;
-                const password = `Google_${googleId}`;
-
                 try {
-                    // 1. Try to Login
-                    const loginResp = await Login({ email, password });
-
-                    if (loginResp && loginResp.status === 200 && loginResp.data?.data) {
-                        const { user, accessToken } = loginResp.data.data;
-                        login(user, accessToken);
-                        toast.success(`Welcome back, ${userName}!`);
-                        return;
-                    }
-
-                    // 2. If Login fails (400 or other), try to SignUp
-                    const signUpResp = await SignUp({
-                        email,
-                        password,
-                        userName,
-                        mobileNumber: ''
+                    const response = await GoogleAuth({
+                        idToken,
+                        provider: "google"
                     });
 
-                    if (signUpResp && signUpResp.status === 200 && signUpResp.data?.data) {
-                        const { user, accessToken } = signUpResp.data.data;
+                    if (response && response.status === 200 && response.data?.data) {
+                        const { user, accessToken } = response.data.data;
                         login(user, accessToken);
-                        toast.success(`Account created successfully! Welcome, ${userName}`);
+                        toast.success(`Welcome, ${user.name || 'User'}!`);
                     } else {
-                        toast.error("Failed to sync Google account with our system.");
+                        toast.error("Failed to sync Google account.");
+                        // If sync fails, finish the Google thing by signing out
+                        await signOut({ redirect: false });
                     }
                 } catch (error) {
                     console.error("Google sync error:", error);
                     toast.error("An error occurred while syncing your Google account.");
+                    // If sync fails, finish the Google thing by signing out
+                    await signOut({ redirect: false });
                 } finally {
                     setIsProcessing(false);
                 }
