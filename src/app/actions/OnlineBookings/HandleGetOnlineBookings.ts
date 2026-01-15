@@ -1,14 +1,9 @@
-import axios from "axios";
+import apiClient from "@/middleware/apiClient";
 import jsCookie from "js-cookie";
 
 const HandleGetOnlineBookings = async () => {
     try {
-        const token = jsCookie.get('token');
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/api/OnlineBookings/getMyOnlineBookings`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await apiClient.get(`/api/OnlineBookings/getMyOnlineBookings`);
 
         if (response.status >= 200 && response.status < 300) {
             console.log('Online Bookings Data:', response.data.data);

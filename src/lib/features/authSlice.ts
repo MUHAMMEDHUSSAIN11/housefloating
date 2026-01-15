@@ -42,7 +42,12 @@ const authSlice = createSlice({
             state.isLoading = false;
 
             Cookies.set('token', accessToken, { expires: 7 });
+            Cookies.set('refreshToken', refreshToken, { expires: 30 });
             Cookies.set('user', JSON.stringify(user), { expires: 7 });
+        },
+        updateAccessToken: (state, action: PayloadAction<string>) => {
+            state.accessToken = action.payload;
+            Cookies.set('token', action.payload, { expires: 7 });
         },
         logout: (state) => {
             state.user = null;
@@ -52,10 +57,12 @@ const authSlice = createSlice({
             state.isLoading = false;
 
             Cookies.remove('token');
+            Cookies.remove('refreshToken');
             Cookies.remove('user');
         },
         initializeAuth: (state) => {
             const token = Cookies.get('token');
+            const refreshToken = Cookies.get('refreshToken');
             const userCookie = Cookies.get('user');
 
             if (token && userCookie) {
@@ -63,6 +70,7 @@ const authSlice = createSlice({
                     const user = JSON.parse(userCookie);
                     state.user = user;
                     state.accessToken = token;
+                    state.refreshToken = refreshToken || null;
                     state.isAuthenticated = true;
                 } catch (error) {
                     console.error("Failed to parse user cookie", error);
@@ -73,5 +81,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { setCredentials, logout, initializeAuth } = authSlice.actions;
+export const { setCredentials, logout, initializeAuth, updateAccessToken } = authSlice.actions;
 export default authSlice.reducer;

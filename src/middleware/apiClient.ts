@@ -1,9 +1,10 @@
 import axios, { AxiosError } from "axios";
-import { store } from "@/redux/store";
-import { updateAccessToken, clearUser } from "@/redux/slices/userSlice";
+import { store } from "@/lib/store";
+import { updateAccessToken, logout } from "@/lib/features/authSlice";
+import Cookies from "js-cookie";
 
 const apiClient = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}`
+  baseURL: `${process.env.NEXT_PUBLIC_API}`
 });
 
 
@@ -28,7 +29,8 @@ const processQueue = (error: any, token: string | null = null) => {
 // Request interceptor - attach access token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = store?.getState()?.user?.accessToken;
+    // Try to get token from store first, then cookies
+    const token = store?.getState()?.auth?.accessToken || Cookies.get('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -44,10 +46,12 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as any;
 
     // If 401 and haven't retried yet and refresh token exists
+    const refreshToken = store?.getState()?.auth?.refreshToken || Cookies.get('refreshToken');
+
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      store.getState().user.refreshToken
+      refreshToken
     ) {
       originalRequest._retry = true;
 
@@ -69,41 +73,47 @@ apiClient.interceptors.response.use(
       try {
         // Call refresh endpoint
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/Auth/refresh`,
-          { refreshToken: store.getState().user.refreshToken }
+          `${process.env.NEXT_PUBLIC_API}/api/Auth/refresh`,
+          { refreshToken }
         );
-        const result = await response.data.data;
 
-        if (!result?.accessToken) {
+
+        const result = response.data.data;
+        const newAccessToken = typeof result === 'string' ? result : result?.accessToken;
+
+        if (!newAccessToken) {
           throw new Error('No access token in refresh response');
         }
 
-        // Update Redux with new access token
-        store.dispatch(updateAccessToken(result));
 
-        // Resolve all queued requests with new token
-        processQueue(null, result.accessToken);
+        if (store) {
+          store.dispatch(updateAccessToken(newAccessToken));
+        } else {
 
-        // Retry original request with new token
-        originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
+          Cookies.set('token', newAccessToken, { expires: 7 });
+        }
+
+        processQueue(null, newAccessToken);
+
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
 
       } catch (refreshError) {
-        // Reject all queued requests
         processQueue(refreshError, null);
 
-        // Clear user data
-        store.dispatch(clearUser());
-
-        // Only redirect if not already on login page
-        if (typeof window !== 'undefined' && window.location.pathname !== '/') {
-          window.location.href = "/";
+        // Clear user data / Logout
+        if (store) {
+          store.dispatch(logout());
+        } else {
+          Cookies.remove('token');
+          Cookies.remove('refreshToken');
+          Cookies.remove('user');
         }
 
         return Promise.reject(refreshError);
 
       } finally {
-        // Reset refreshing flag
         isRefreshing = false;
       }
     }
