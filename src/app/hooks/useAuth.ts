@@ -1,6 +1,9 @@
+'use client';
+
 import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector, useAppStore } from '@/lib/hooks';
-import { setCredentials, logout as logoutAction, initializeAuth } from '@/lib/features/authSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { setCredentials, logout as logoutAction } from '@/lib/features/authSlice';
+import { signOut } from 'next-auth/react';
 
 interface User {
     id: number;
@@ -20,8 +23,10 @@ const useAuth = () => {
         dispatch(setCredentials({ user: userData, accessToken, refreshToken: '' }));
     };
 
-    const logout = () => {
+    const logout = async () => {
         dispatch(logoutAction());
+        // Specifically sign out from next-auth to prevent GoogleSync from re-logging in
+        await signOut({ redirect: false });
         router.push('/');
         router.refresh();
     };

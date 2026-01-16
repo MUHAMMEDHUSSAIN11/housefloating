@@ -1,4 +1,4 @@
-import axios from "axios";
+import apiClient from "@/middleware/apiClient";
 import jsCookie from "js-cookie";
 
 export interface CreateOnlineBookingData {
@@ -20,12 +20,7 @@ export interface CreateOnlineBookingData {
 
 const HandleCreateOnlineBooking = async (data: CreateOnlineBookingData, authToken?: string) => {
     try {
-        const token = authToken || jsCookie.get('token');
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/api/OnlineBookings/createOnlineBooking`, data, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await apiClient.post(`/api/OnlineBookings/createOnlineBooking`, data);
 
         if (response.status >= 200 && response.status < 300) {
             return response.data;

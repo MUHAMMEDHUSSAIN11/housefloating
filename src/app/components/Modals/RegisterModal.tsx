@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { FcGoogle } from "react-icons/fc";
+import { signIn } from "next-auth/react";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -76,8 +77,7 @@ const RegisterModal = () => {
   }
 
   const handleGoogleSign = async () => {
-    // Placeholder for Google Login integration
-    toast.error("Google Login not yet implemented with new API");
+    signIn('google');
   }
 
   const onToggle = useCallback(() => {
@@ -88,94 +88,94 @@ const RegisterModal = () => {
   const bodyContent = (
     <div className="flex flex-col gap-2">
       <Heading title="Welcome to Housefloating" subtitle="Create an account!" />
-        <Input
-          id="userName"
-          label="Name"
-          type="text"
-          disabled={isLoading}
-          register={register}
-          errors={errors}
-          validation={{
-            required: "Name is required",
-            minLength: { value: 3, message: "Name must be at least 3 characters" },
-          }}
-        />
+      <Input
+        id="userName"
+        label="Name"
+        type="text"
+        disabled={isLoading}
+        register={register}
+        errors={errors}
+        validation={{
+          required: "Name is required",
+          minLength: { value: 3, message: "Name must be at least 3 characters" },
+        }}
+      />
 
+      <Input
+        id="email"
+        label="Email Id"
+        type="email"
+        disabled={isLoading}
+        register={register}
+        errors={errors}
+        validation={{
+          required: "Email is required",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Enter a valid email address",
+          },
+        }}
+      />
+      <div className="relative">
         <Input
-          id="email"
-          label="Email Id"
-          type="email"
+          id="password"
+          label="Password"
           disabled={isLoading}
+          type={showPassword ? "text" : "password"}
           register={register}
           errors={errors}
           validation={{
-            required: "Email is required",
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Enter a valid email address",
-            },
+            required: "Password is required",
+            minLength: { value: 6, message: "Password must be at least 6 characters" },
+            pattern: { value: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/, message: "Password must contain at least one letter and one number" },
           }}
         />
-        <div className="relative">
-          <Input
-            id="password"
-            label="Password"
-            disabled={isLoading}
-            type={showPassword ? "text" : "password"}
-            register={register}
-            errors={errors}
-            validation={{
-              required: "Password is required",
-              minLength: { value: 6, message: "Password must be at least 6 characters" },
-              pattern: { value: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/, message: "Password must contain at least one letter and one number" },
-            }}
-          />
-          {!isPasswordEmpty && (
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className={`absolute top-7 right-5 hover:cursor-pointer`}
-            >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </button>
-          )}
-        </div>
-        <div className="relative">
-            <Input
-              id="confirmPassword"
-              label="Confirm Password"
-              disabled={isLoading}
-              type={showConfirmPassword ? "text" : "password"}
-              register={register}
-              errors={errors}
-              validation={{
-                required: "Confirm password is required",
-                validate: (value: string) =>
-                  value === passwordValue || "Passwords do not match",
-              }}
-            />
-            {!isConfirmPasswordEmpty && (
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className={`absolute top-7 right-5 hover:cursor-pointer`}
-              >
-                {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-              </button>
-            )}
-          </div>
-          <Input id="mobileNumber" label="Mobile Number" disabled={isLoading} register={register} errors={errors} validation={{
-            pattern: {
-              value: /^[0-9]{10}$/,
-              message: "Enter a valid 10-digit mobile number",
-            },
-          }} />
+        {!isPasswordEmpty && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className={`absolute top-7 right-5 hover:cursor-pointer`}
+          >
+            {showPassword ? <FaEye /> : <FaEyeSlash />}
+          </button>
+        )}
+      </div>
+      <div className="relative">
+        <Input
+          id="confirmPassword"
+          label="Confirm Password"
+          disabled={isLoading}
+          type={showConfirmPassword ? "text" : "password"}
+          register={register}
+          errors={errors}
+          validation={{
+            required: "Confirm password is required",
+            validate: (value: string) =>
+              value === passwordValue || "Passwords do not match",
+          }}
+        />
+        {!isConfirmPasswordEmpty && (
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className={`absolute top-7 right-5 hover:cursor-pointer`}
+          >
+            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+          </button>
+        )}
+      </div>
+      <Input id="mobileNumber" label="Mobile Number" disabled={isLoading} register={register} errors={errors} validation={{
+        pattern: {
+          value: /^[0-9]{10}$/,
+          message: "Enter a valid 10-digit mobile number",
+        },
+      }} />
     </div>
   );
 
   const footerContent = (
     <div className="flex flex-col gap-2  mb-16 md:mb-0">
-      <hr className='border border-gray-300'/>
+      <hr className='border border-gray-300' />
       <Button outline label="Continue with Google" icon={FcGoogle} onClick={handleGoogleSign} />
       <div className="text-neutral-500 text-center mt-4 font-light">
         <p>Already have an account?

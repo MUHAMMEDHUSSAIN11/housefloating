@@ -9,6 +9,15 @@ export const makeStore = () => {
     });
 };
 
+// Singleton store instance for client-side use
+export let store: AppStore | undefined;
+
+export const initializeStore = () => {
+    const _store = makeStore();
+    store = _store;
+    return _store;
+};
+
 // Infer the type of makeStore
 export type AppStore = ReturnType<typeof makeStore>;
 // Infer the `RootState` and `AppDispatch` types from the store itself

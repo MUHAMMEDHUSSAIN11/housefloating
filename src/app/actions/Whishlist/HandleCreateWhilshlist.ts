@@ -1,20 +1,10 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import apiClient from '@/middleware/apiClient';
 
 const Handlecreatewhishlist = async (boatId: number, userId: number): Promise<boolean> => {
     try {
-        const token = Cookies.get('token');
-        if (!token) {
-            console.error('No access token found');
-            return false;
-        }
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API}/api/Wishlists/toggleWishlist`, {
+        const response = await apiClient.post(`/api/Wishlists/toggleWishlist`, {
             boatId: boatId,
             userId: userId
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
         });
 
         if (response.status === 200) {
