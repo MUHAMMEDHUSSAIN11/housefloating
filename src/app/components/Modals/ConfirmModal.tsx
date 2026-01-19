@@ -15,7 +15,7 @@ import validateOTP from '@/app/actions/validateOTP';
 import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
-import { BoatCruisesId, BookingType } from '@/app/enums/enums';
+import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
 import HandleCancelOnlineBooking from '@/app/actions/OnlinePayments/HandleCancelOnlineBooking';
@@ -155,7 +155,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     bookingDate: new Date().toISOString(),
                     childCount: finalMinorCount,
                     contactNumber: cleanedPhoneNumber,
-                    cruiseTypeId: modeOfTravel === 'Day Cruise' ? BoatCruisesId.dayCruise : modeOfTravel === 'Overnight Cruise' ? BoatCruisesId.overNightCruise : BoatCruisesId.nightStay,
+                    cruiseTypeId: modeOfTravel === BoatCruises.dayCruise ? BoatCruisesId.dayCruise : modeOfTravel === BoatCruises.dayNight ? BoatCruisesId.dayNight : BoatCruisesId.nightStay,
                     guestPlace: boatDetails.boardingPoint,
                     guestUserId: user?.id || 0,
                     isVeg: isVeg,

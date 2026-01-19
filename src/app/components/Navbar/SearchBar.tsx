@@ -192,7 +192,7 @@ const SearchBar = () => {
   const getDateDisplayText = (): string => {
     if (!selectedDateRange.startDate) return '';
 
-    if (selectedCruise === BoatCruisesId.overNightCruise) {
+    if (selectedCruise === BoatCruisesId.dayNight) {
       return format(selectedDateRange.startDate, 'MMM d, yyyy');
     }
 

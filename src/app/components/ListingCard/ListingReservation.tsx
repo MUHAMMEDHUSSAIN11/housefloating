@@ -1,6 +1,6 @@
 'use client';
 
-import { BoatCruisesId, CheckInOutTimes, BookingType, BookingStatuses } from "@/app/enums/enums";
+import { BoatCruisesId, CheckInOutTimes, BookingType, BookingStatuses, BoatCruises } from "@/app/enums/enums";
 import Button from "../Misc/Button";
 import format from "date-fns/format";
 import addDays from "date-fns/addDays";
@@ -30,9 +30,9 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
   setIsVeg,
   selectedDate
 }) => {
-  const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? "Day Cruise"
-    : cruiseTypeId === BoatCruisesId.overNightCruise ? "Overnight Cruise"
-      : "Night Stay Cruise";
+  const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? BoatCruises.dayCruise
+    : cruiseTypeId === BoatCruisesId.dayNight ? BoatCruises.dayNight
+      : BoatCruises.nightStay;
 
     const formattedStartDate = format(selectedDate, 'dd MMM');
     const dateDisplay = cruiseTypeId === BoatCruisesId.dayCruise
@@ -49,10 +49,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
           checkIn: CheckInOutTimes.SharingDayCruiseCheckIn,
           checkOut: CheckInOutTimes.SharingDayCruiseCheckOut,
         };
-      } else if (cruiseTypeId === BoatCruisesId.overNightCruise) {
+      } else if (cruiseTypeId === BoatCruisesId.dayNight) {
         return {
-          checkIn: CheckInOutTimes.SharingOvernightCheckIn,
-          checkOut: CheckInOutTimes.SharingOvernightCheckOut,
+          checkIn: CheckInOutTimes.SharingDayNightCheckIn,
+          checkOut: CheckInOutTimes.SharingDayNightCheckOut,
         };
       } else {
         return {
@@ -67,10 +67,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
           checkIn: CheckInOutTimes.PrivateDayCruiseCheckIn,
           checkOut: CheckInOutTimes.PrivateDayCruiseCheckOut,
         };
-      } else if (cruiseTypeId === BoatCruisesId.overNightCruise) {
+      } else if (cruiseTypeId === BoatCruisesId.dayNight) {
         return {
-          checkIn: CheckInOutTimes.PrivateOvernightCheckIn,
-          checkOut: CheckInOutTimes.PrivateOvernightCheckOut,
+          checkIn: CheckInOutTimes.PrivateDayNightCheckIn,
+          checkOut: CheckInOutTimes.PrivateDayNightCheckOut,
         };
       } else {
         return {

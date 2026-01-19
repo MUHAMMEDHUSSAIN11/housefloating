@@ -36,7 +36,7 @@ interface SearchStore {
 }
 
 const useSearchStore = create<SearchStore>((set, get) => ({
-    selectedCruise: BoatCruisesId.overNightCruise,
+    selectedCruise: BoatCruisesId.dayNight,
     selectedType: null,
     selectedDateRange: { startDate: null, endDate: null },
     selectedCategory: Categories.All,
