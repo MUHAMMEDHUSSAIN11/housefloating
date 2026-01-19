@@ -158,7 +158,6 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
                 <span className="text-lg font-bold text-black">₹{totalPrice}</span>
-                <span className="text-xs text-gray-500">{selectedDate.getDate()}</span>
                 <span className="text-xs text-gray-500">/{cruiseTypeId === BoatCruisesId.dayCruise? 'day' : cruiseTypeId === BookingType.sharing ? `for ${roomCount} bedroom`:`for ${guestCount} guest `}</span>
               </div>
             </div>
