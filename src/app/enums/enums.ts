@@ -40,13 +40,13 @@ export enum BookingType {
 
 export enum BoatCruisesId {
     dayCruise = 1,
-    overNightCruise = 2,
+    dayNight = 2,
     nightStay = 3,
 }
 
 export enum BoatCruises {
     dayCruise = "Day Cruise",
-    overNightCruise = "Overnight Cruise",
+    dayNight = "Day Night",
     nightStay = "Night Stay",
 }
 
@@ -60,8 +60,8 @@ export enum CheckInOutTimes {
     SharingDayCruiseCheckIn = "1:30 PM",
     SharingDayCruiseCheckOut = "5:30 PM",
 
-    SharingOvernightCheckIn = "1:30 PM",
-    SharingOvernightCheckOut = "9:00 AM",
+    SharingDayNightCheckIn = "1:30 PM",
+    SharingDayNightCheckOut = "9:00 AM",
 
     SharingNightStayCheckIn = "6:00 PM",
     SharingNightStayCheckOut = "9:00 AM",
@@ -69,8 +69,8 @@ export enum CheckInOutTimes {
     PrivateDayCruiseCheckIn = "11:00 AM",
     PrivateDayCruiseCheckOut = "5:00 PM",
 
-    PrivateOvernightCheckIn = "12:00 PM",
-    PrivateOvernightCheckOut = "9:00 AM",
+    PrivateDayNightCheckIn = "12:00 PM",
+    PrivateDayNightCheckOut = "9:00 AM",
 
     PrivateNightStayCheckIn = "6:00 PM",
     PrivateNightStayCheckOut = "9:00 AM",
