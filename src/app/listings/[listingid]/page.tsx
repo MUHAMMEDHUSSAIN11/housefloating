@@ -28,8 +28,8 @@ export interface BoatDetails {
   bedroomCount: number;
   boatCode: string;
   guestCount: number;
-  maxAdulCount: number;
-  minAdulCount: number;
+  maxAdultCount: number;
+  minAdultCount: number;
   maxChildCount: number;
   bathroomCount: number;
   prices: Prices;

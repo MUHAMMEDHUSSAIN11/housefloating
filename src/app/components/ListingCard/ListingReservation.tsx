@@ -30,6 +30,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
   setIsVeg,
   selectedDate
 }) => {
+  const isSharing = bookingTypeId === BookingType.sharing;
   const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? BoatCruises.dayCruise
     : cruiseTypeId === BoatCruisesId.dayNight ? BoatCruises.dayNight
       : BoatCruises.nightStay;
@@ -41,7 +42,6 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
 
   // Function to get check-in and check-out times based on booking type and cruise type
   const getCheckInOutTimes = (): { checkIn: string; checkOut: string } => {
-    const isSharing = bookingTypeId === BookingType.sharing;
 
     if (isSharing) {
       if (cruiseTypeId === BoatCruisesId.dayCruise) {
@@ -117,7 +117,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
             </div>
             <div className="col-span-2 pt-2 pl-4 border-t-2 border-gray-300">
               <div className="text-xl font-semibold">₹{totalPrice}</div>
-               <span className="text-xs text-gray-500">{cruiseTypeId === BoatCruisesId.dayCruise? 'Per Day Cruise' : cruiseTypeId === BookingType.sharing ? `for ${roomCount} bedroom`:`for ${guestCount} guest `}</span>
+               <span className="text-xs text-gray-500">{bookingTypeId === BookingType.sharing ? `${guestCount} guest - for ${roomCount} bedroom` : `for ${guestCount} guest`}</span>
             </div>
           </div>
           <div className="w-full">
@@ -158,7 +158,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
                 <span className="text-lg font-bold text-black">₹{totalPrice}</span>
-                <span className="text-xs text-gray-500">/{cruiseTypeId === BoatCruisesId.dayCruise? 'day' : cruiseTypeId === BookingType.sharing ? `for ${roomCount} bedroom`:`for ${guestCount} guest `}</span>
+                <span className="text-xs text-gray-500">/{bookingTypeId === BookingType.sharing ? `${guestCount} guest - for ${roomCount} bedroom` : `for ${guestCount} guest`}</span>
               </div>
             </div>
             <div className="flex-1 max-w-150">
