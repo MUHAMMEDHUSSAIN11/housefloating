@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Container from '../components/Misc/Container';
 import ListingCard from '../components/ListingCard/ListingCard';
@@ -204,7 +204,6 @@ const HouseBoatsContent = () => {
       </Container>
     );
   }
-
   return (
     <Container>
       <div className="pb-20 pt-40 lg:pt-28">

@@ -1,13 +1,18 @@
 'use client';
 
-import { BoatCruisesId, CheckInOutTimes, BookingType } from "@/app/enums/enums";
+import { BoatCruisesId, CheckInOutTimes, BookingType, BookingStatuses, BoatCruises } from "@/app/enums/enums";
 import Button from "../Misc/Button";
+import format from "date-fns/format";
+import addDays from "date-fns/addDays";
 
 interface ListingReservationProps {
   totalPrice: number;
   onSubmit: () => void;
   cruiseTypeId?: number;
   bookingTypeId?: number | null;
+  selectedDate: Date;
+  roomCount: number;
+  guestCount: number;
   disabled?: boolean;
   isVeg: boolean;
   setIsVeg: (value: boolean) => void;
@@ -18,13 +23,21 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
   onSubmit,
   cruiseTypeId,
   bookingTypeId,
+  roomCount,
+  guestCount,
   disabled,
   isVeg,
-  setIsVeg
+  setIsVeg,
+  selectedDate
 }) => {
-  const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? "Day Cruise"
-    : cruiseTypeId === BoatCruisesId.overNightCruise ? "Overnight Cruise"
-      : "Night Stay Cruise";
+  const cruiseType = cruiseTypeId === BoatCruisesId.dayCruise ? BoatCruises.dayCruise
+    : cruiseTypeId === BoatCruisesId.dayNight ? BoatCruises.dayNight
+      : BoatCruises.nightStay;
+
+    const formattedStartDate = format(selectedDate, 'dd MMM');
+    const dateDisplay = cruiseTypeId === BoatCruisesId.dayCruise
+    ? formattedStartDate
+    : `${formattedStartDate} - ${format(addDays(selectedDate, 1), 'dd MMM')}`;
 
   // Function to get check-in and check-out times based on booking type and cruise type
   const getCheckInOutTimes = (): { checkIn: string; checkOut: string } => {
@@ -36,10 +49,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
           checkIn: CheckInOutTimes.SharingDayCruiseCheckIn,
           checkOut: CheckInOutTimes.SharingDayCruiseCheckOut,
         };
-      } else if (cruiseTypeId === BoatCruisesId.overNightCruise) {
+      } else if (cruiseTypeId === BoatCruisesId.dayNight) {
         return {
-          checkIn: CheckInOutTimes.SharingOvernightCheckIn,
-          checkOut: CheckInOutTimes.SharingOvernightCheckOut,
+          checkIn: CheckInOutTimes.SharingDayNightCheckIn,
+          checkOut: CheckInOutTimes.SharingDayNightCheckOut,
         };
       } else {
         return {
@@ -54,10 +67,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
           checkIn: CheckInOutTimes.PrivateDayCruiseCheckIn,
           checkOut: CheckInOutTimes.PrivateDayCruiseCheckOut,
         };
-      } else if (cruiseTypeId === BoatCruisesId.overNightCruise) {
+      } else if (cruiseTypeId === BoatCruisesId.dayNight) {
         return {
-          checkIn: CheckInOutTimes.PrivateOvernightCheckIn,
-          checkOut: CheckInOutTimes.PrivateOvernightCheckOut,
+          checkIn: CheckInOutTimes.PrivateDayNightCheckIn,
+          checkOut: CheckInOutTimes.PrivateDayNightCheckOut,
         };
       } else {
         return {
@@ -75,7 +88,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
       <div className="hidden md:block bg-white rounded-xl border border-neutral-200 sticky top-36 shadow-md">
         <div className="flex flex-col items-center gap-4 p-4 border-neutral-200">
           <div className="flex flex-row w-full gap-4">
-            <div className="font-semibold">{cruiseType}</div>
+            <div className="font-semibold">
+              {cruiseType}
+              <div className="text-sm font-medium text-neutral-500">{dateDisplay}</div>
+            </div>
             <div className="flex items-center ml-2 gap-2">
               <label className="inline-flex items-center cursor-pointer group">
                 <input type="radio" className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
@@ -101,7 +117,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
             </div>
             <div className="col-span-2 pt-2 pl-4 border-t-2 border-gray-300">
               <div className="text-xl font-semibold">₹{totalPrice}</div>
-              <div className="text-xs">per day cruise</div>
+               <span className="text-xs text-gray-500">{cruiseTypeId === BoatCruisesId.dayCruise? 'Per Day Cruise' : cruiseTypeId === BookingType.sharing ? `for ${roomCount} bedroom`:`for ${guestCount} guest `}</span>
             </div>
           </div>
           <div className="w-full">
@@ -113,7 +129,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
         <div className="flex flex-col">
           <div className="flex items-center justify-between mr-1 mb-1">
-            <span className="text-sm font-medium text-gray-700">{cruiseType}</span>
+            <span className="text-sm font-medium text-gray-700">
+              {cruiseType}
+              <div className="text-sm font-medium text-neutral-500">{dateDisplay}</div>
+            </span>
             <div className="flex items-center gap-3">
               <label className="flex items-center gap-1 cursor-pointer">
                 <input
@@ -139,10 +158,10 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
                 <span className="text-lg font-bold text-black">₹{totalPrice}</span>
-                <span className="text-xs text-gray-500">/{cruiseTypeId === BoatCruisesId.dayCruise ? 'day' : 'night'}</span>
+                <span className="text-xs text-gray-500">/{cruiseTypeId === BoatCruisesId.dayCruise? 'day' : cruiseTypeId === BookingType.sharing ? `for ${roomCount} bedroom`:`for ${guestCount} guest `}</span>
               </div>
             </div>
-            <div className="flex-1 max-w-[150">
+            <div className="flex-1 max-w-150">
               <Button
                 disabled={disabled}
                 label="Book Now"

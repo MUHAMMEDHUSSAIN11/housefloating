@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
+import { signIn } from "next-auth/react";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
 import Modal from "./Modal";
@@ -61,7 +62,7 @@ const LoginModal = () => {
     };
 
     const handleGoogleSign = async () => {
-        toast.error("Google Login not yet implemented with new API");
+        signIn('google');
     }
 
     const onToggle = useCallback(() => {
@@ -114,7 +115,7 @@ const LoginModal = () => {
 
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3 mb-12 md:mb-0">
-            <hr className='border border-gray-300'/>
+            <hr className='border border-gray-300' />
             <Button outline label="Continue with Google" icon={FcGoogle} onClick={handleGoogleSign} />
             <div className="text-neutral-500 text-center mt-4 font-light">
                 <p>Are you new here?

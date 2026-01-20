@@ -8,6 +8,7 @@ import ScrollToTopButton from './components/Misc/ScrolltoTop'
 import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
 import BottomNavbar from './components/BottomNavbar/BottomNavbar'
+import GoogleSync from './components/Auth/GoogleSync'
 
 export const inter = Inter({
   subsets: ['latin'],
@@ -60,6 +61,7 @@ export default async function RootLayout({ children, }: { children: React.ReactN
           reverseOrder={false}
         />
         <StoreProvider>
+          <GoogleSync />
           <Navbar />
           <LoginModal />
           <RegisterModal />

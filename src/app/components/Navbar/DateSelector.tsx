@@ -33,7 +33,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   const handleDateClick = (day: Date) => {
     if (isBefore(day, today)) return;
 
-    if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay || selectedCruise === BoatCruisesId.overNightCruise) {
+    if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay || selectedCruise === BoatCruisesId.dayNight) {
       setTempStartDate(day);
       setTempEndDate(null);
       onSelect({ startDate: day, endDate: null });
@@ -80,10 +80,10 @@ const DateSelector: React.FC<DateSelectorProps> = ({
           <input
             type="radio"
             className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
-            checked={selectedCruise === BoatCruisesId.overNightCruise}
-            onChange={() => handleCruiseChange(BoatCruisesId.overNightCruise)}
+            checked={selectedCruise === BoatCruisesId.dayNight}
+            onChange={() => handleCruiseChange(BoatCruisesId.dayNight)}
           />
-          <span className="ml-1 text-10 sm:text-md font-medium text-gray-900 group-hover:text-blue-600 transition-colors">{BoatCruises.overNightCruise}</span>
+          <span className="ml-1 text-[10 sm:text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">{BoatCruises.dayNight}</span>
         </label>
 
         <label className="inline-flex items-center cursor-pointer group">

@@ -63,7 +63,7 @@ const Listingpage = ({ params }: { params: Promise<Iparams> }) => {
   const startDateParam = searchParams?.get('startDate');
   const endDateParam = searchParams?.get('endDate');
   const cruiseTypeIdParam = searchParams?.get('cruiseTypeId');
-  const bookingTypeIdParam = searchParams?.get('type');
+  const bookingTypeIdParam = searchParams?.get('bookingTypeId');
 
   const startDate = startDateParam ? new Date(startDateParam) : null;
   const endDate = endDateParam ? new Date(endDateParam) : null;

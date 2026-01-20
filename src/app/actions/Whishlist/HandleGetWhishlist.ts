@@ -1,5 +1,4 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import apiClient from '@/middleware/apiClient';
 
 export interface WishlistItem {
     id: number;
@@ -22,16 +21,7 @@ export interface WishlistResponse {
 
 const HandleGetWhishlist = async (): Promise<WishlistResponse | null> => {
     try {
-        const token = Cookies.get('token');
-        if (!token) {
-            console.error('No access token found');
-            return null;
-        }
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/api/Wishlists/getAllWishlists`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
+        const response = await apiClient.get(`/api/Wishlists/getAllWishlists`);
         if (response.status === 200) {
             return response.data.data;
         }
