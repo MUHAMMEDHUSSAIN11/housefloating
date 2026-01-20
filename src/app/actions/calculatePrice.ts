@@ -1,4 +1,4 @@
-import { BookingType } from "../enums/enums";
+import { amount, BookingType } from "../enums/enums";
 
 const CalculatePrice = async (
   finalAdultCount: number,
@@ -33,8 +33,9 @@ const CalculatePrice = async (
         totalPrice += finalChildCount * childAddonPrice;
       }
     }
+  const strikeThroughPrice = Math.round(totalPrice * amount.commissionPercentage);
 
-  return Math.round(totalPrice);
+  return Math.round(strikeThroughPrice);
 }
 
 export default CalculatePrice;

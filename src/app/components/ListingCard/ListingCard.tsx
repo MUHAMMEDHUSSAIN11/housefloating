@@ -47,7 +47,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   const [imageError, setImageError] = useState(false);
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
-  const offerPrice = useMemo(() => data.price, [data.price]);
+  const offerPrice = useMemo(() => Math.round(data.price * amount.commissionPercentage), [data.price]);
 
   const imageUrl = !imageError && data.boatImage
     ? data.boatImage
