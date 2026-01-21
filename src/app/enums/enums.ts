@@ -16,9 +16,9 @@ export enum amount {
     weekendPrice = 2000,
     preChristmas = 1.71,
     christmasSeason = 2.20,
-    offerPrice = 1.1,
+    offerPrice = 1.25,
     summerVaccationPrice = 2500,
-
+    commissionPercentage = 1.15,
     //need to be removed in upcoming sprints
     dayCruiseReduction = 500
 }

@@ -186,9 +186,9 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             <div className="flex items-center gap-3">
               <Calendar className={`w-5 h-5 ${mobileActiveSection === 'date' ? 'text-blue-500' : ''}`} />
               <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pick Dates</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pick Dates & Cruise</p>
                 <p className="font-bold text-gray-900 truncate max-w-[200]">
-                  {selectedDateRange.startDate ? getDateDisplayText() : 'Select Dates'}
+                  {selectedDateRange.startDate ? getDateDisplayText() : 'Select Dates'}  {selectedCruise && `• ${BoatCruisesId[selectedCruise]}`}
                 </p>
               </div>
             </div>
