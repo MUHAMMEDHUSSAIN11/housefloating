@@ -8,11 +8,6 @@ import SearchBarMobileModal from '../Modals/SearchBarMobileModal';
 import DesktopSearchBar from './DesktopSearchBar';
 import useSearchStore from '@/app/hooks/useSearchStore';
 
-interface DateRange {
-  startDate: Date | null;
-  endDate: Date | null;
-}
-
 const categoryOptions = [
   { id: Categories.All, label: 'All Category' },
   { id: Categories.Deluxe, label: 'Deluxe' },
@@ -214,7 +209,7 @@ const SearchBar = () => {
                 {getSelectedLabel(selectedType)} • {getCategoryLabel(selectedCategory)}
               </span>
               <span className={`text-xs ${showErrors && (errors.type || errors.category || errors.date) ? 'text-red-500' : 'text-gray-500'}`}>
-                {getDateDisplayText()} • {roomCount} {roomCount === 1 ? 'room' : 'rooms'}
+                {getDateDisplayText()} • {roomCount} {roomCount === 1 ? 'room' : 'rooms'} {selectedCruise && `• ${BoatCruisesId[selectedCruise]}`}
               </span>
             </div>
           ) : (
