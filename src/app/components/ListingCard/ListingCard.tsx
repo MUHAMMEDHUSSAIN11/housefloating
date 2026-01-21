@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { amount } from '@/app/enums/enums'
+import { amount, BookingType } from '@/app/enums/enums'
 import { Heart } from 'lucide-react'
 import useLoginModal from '@/app/hooks/useLoginModal'
 import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
@@ -30,7 +30,7 @@ interface ListingCardProps {
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
-  bookingTypeId?: number;
+  bookingTypeId: number;
 }
 
 const ListingCard: React.FC<ListingCardProps> = React.memo(({
@@ -38,7 +38,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   startDate,
   endDate,
   cruiseTypeId,
-  bookingTypeId
+  bookingTypeId,
 }) => {
   const loginModal = useLoginModal();
   const { user } = useAuth();
@@ -60,11 +60,12 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
-    if(bookingTypeId) params.append('bookingTypeId',bookingTypeId?.toString())
+    if(bookingTypeId) params.append('bookingTypeId',bookingTypeId.toString())
 
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
   }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
+  const isSharing = bookingTypeId === BookingType.sharing;
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -150,6 +151,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
               </div>
               <div className="font-semibold text-gray-700 text-sm">
                 <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
               </div>
             </div>
           </div>
