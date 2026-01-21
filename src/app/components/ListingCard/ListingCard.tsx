@@ -30,7 +30,7 @@ interface ListingCardProps {
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
-  bookingTypeId: number;
+  bookingTypeId?: number;
 }
 
 const ListingCard: React.FC<ListingCardProps> = React.memo(({
@@ -60,7 +60,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
-    if(bookingTypeId) params.append('bookingTypeId',bookingTypeId.toString())
+    if(bookingTypeId) params.append('bookingTypeId',bookingTypeId?.toString());
 
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
