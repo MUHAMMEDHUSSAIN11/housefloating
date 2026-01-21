@@ -162,7 +162,6 @@ const SearchBar = () => {
           calculatedEndDate = new Date(selectedDateRange.startDate);
           calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
         }
-        // For Overnight Cruise, we do NOT set calculatedEndDate, so endDate is not appended to params.
 
         if (calculatedEndDate) {
           params.append('endDate', FormatToLocalDateTime(calculatedEndDate));

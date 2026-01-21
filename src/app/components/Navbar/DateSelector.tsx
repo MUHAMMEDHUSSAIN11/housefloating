@@ -73,7 +73,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
             checked={selectedCruise === BoatCruisesId.dayCruise}
             onChange={() => handleCruiseChange(BoatCruisesId.dayCruise)}
           />
-          <span className="ml-1 text-[10 sm:text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">{BoatCruises.dayCruise}</span>
+          <span className="ml-1 text-10 sm:text-md font-medium text-gray-900 group-hover:text-blue-600 transition-colors">{BoatCruises.dayCruise}</span>
         </label>
 
         <label className="inline-flex items-center cursor-pointer group">
@@ -93,11 +93,11 @@ const DateSelector: React.FC<DateSelectorProps> = ({
             checked={selectedCruise === BoatCruisesId.nightStay}
             onChange={() => handleCruiseChange(BoatCruisesId.nightStay)}
           />
-          <span className="ml-1 text-[10 sm:text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">{BoatCruises.nightStay}</span>
+          <span className="ml-1 text-10 sm:text-md font-medium text-gray-900 group-hover:text-blue-600 transition-colors">{BoatCruises.nightStay}</span>
         </label>
       </div>
 
-      <hr className="my-2" />
+      <hr className="my-2 border border-gray-300" />
 
       {/* Scrollable Month List */}
       <div className={`${inline ? 'max-h-[270]' : 'max-h-[380]'} overflow-y-auto pr-2 custom-scrollbar`}>

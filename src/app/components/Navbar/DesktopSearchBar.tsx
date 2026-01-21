@@ -81,7 +81,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
               className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${showErrors && errors.type
                 ? 'border-2 border-red-500 bg-red-50'
                 : 'hover:bg-blue-500 hover:text-white'
-                } ${selectedType ? 'font-bold' : ''} text-black`}
+                } ${selectedType ? 'text-black font-semibold' : ''} text-black`}
             >
               <div className="flex items-center gap-1 lg:gap-2">
                 {selectedType === BookingType.private
@@ -128,7 +128,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
               className={`w-full px-1 sm:px-4 py-5 sm:py-4 rounded-full text-left transition-colors duration-200 ${showErrors && errors.category
                 ? 'border-2 border-red-500 bg-red-50'
                 : 'hover:bg-blue-500 hover:text-white'
-                } text-black font-bold`}
+                } text-black font-semibold`}
             >
               <div className="flex items-center gap-1 lg:gap-2">
                 <Ship className={`w-4 h-4 shrink-0 ${showErrors && errors.category ? 'text-red-500' : ''}`} />
@@ -188,7 +188,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
               className={`w-full px-1 sm:px-4 py-5 sm:py-4 text-left transition-colors duration-200 rounded-full ${showErrors && errors.date
                 ? 'border-2 border-red-500 bg-red-50 text-red-500'
                 : 'text-black hover:text-white hover:bg-blue-500'
-                } ${selectedDateRange.startDate ? 'font-bold' : ''}`}
+                } ${selectedDateRange.startDate ? 'text-black font-semibold' : ''}`}
             >
               <div className="flex items-center gap-1 lg:gap-2">
                 <Calendar className={`w-4 h-4 shrink-0 ${showErrors && errors.date ? 'text-red-500' : ''}`} />
