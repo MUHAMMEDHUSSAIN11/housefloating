@@ -81,15 +81,19 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   const onCreateReservation = useCallback(() => {
     if (user) {
-      if (finalAdultCount <= boatDetails.maxAdultCount) {
+      const isSharing = bookingTypeId === BookingType.sharing;
+      const currentMaxAdults = isSharing ? (roomCount * boatDetails.maxAdultCount) : boatDetails.maxAdultCount;
+      const currentMaxChildren = isSharing ? (roomCount * boatDetails.maxChildCount) : boatDetails.maxChildCount;
+
+      if (finalAdultCount <= currentMaxAdults && finalChildCount <= currentMaxChildren) {
         return bookingConfirmModal.onOpen();
       } else {
-        toast.error("Maximum number of Guests exceeded!!")
+        toast.error("Maximum number of Guests exceeded!!");
       }
     } else {
       return loginModal.onOpen();
     }
-  }, [user, bookingConfirmModal, loginModal, finalAdultCount])
+  }, [user, bookingConfirmModal, loginModal, finalAdultCount, finalChildCount, roomCount, bookingTypeId, boatDetails.maxAdultCount, boatDetails.maxChildCount])
 
   const Map = dynamic(() => import('../../components/Misc/Map'), {
     ssr: false
