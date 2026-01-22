@@ -74,7 +74,7 @@ const BottomNavbar = () => {
     const activeTab = getActiveTab();
 
     return (
-        <div className={`fixed ${isListingPage ? 'top-16 border-b border-t' : 'bottom-0 border-t ' } left-0 right-0 bg-white border-gray-200 md:hidden z-40`}>
+        <div className={`fixed ${isListingPage ? 'hidden' : 'bottom-0 border-t ' } left-0 right-0 bg-white border-gray-200 md:hidden z-40`}>
             <div className='flex flex-row justify-around items-center py-2 px-1'>
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
