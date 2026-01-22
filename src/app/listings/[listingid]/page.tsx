@@ -98,7 +98,7 @@ const Listingpage = ({ params }: { params: Promise<Iparams> }) => {
   }
 
   return isLoading ? (
-    <div className='pt-40 md:pt-24 text-lg'>
+    <div className='pt-24 md:pt-40 text-lg'>
       <ListingSkeleton />
     </div>
   ) : !fetchedBoatData || error ? (
