@@ -6,7 +6,7 @@ import useLoginModal from '../../hooks/useLoginModal';
 import useBookingConfirmModal from '../../hooks/useBookingConfirmModal';
 import ListingReservation from '../../components/ListingCard/ListingReservation';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
-import DayCruiseSteps from '../../components/Descriptions/DayCruiseSteps';
+import PrivateDayCruiseSteps from '../../components/Descriptions/PrivateDayCruiseSteps';
 import Occupancy from '../../components/Descriptions/Occupancy';
 import Updated from '../../components/Hero/Updated';
 import Footer from '../../components/Hero/Footer';
@@ -19,9 +19,12 @@ import { BoatCruises, BoatCruisesId, BookingType, Categories, coordinates } from
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
-import OverNightSteps from '../../components/Descriptions/OverNightSteps';
-import NightStaySteps from '@/app/components/Descriptions/NightStaySteps';
+import PrivateDayNightSteps from '../../components/Descriptions/PrivateDayNightSteps';
+import PrivateNightStaySteps from '@/app/components/Descriptions/PrivateNightStaySteps';
 import useAuth from '@/app/hooks/useAuth';
+import SharingDayNightSteps from '@/app/components/Descriptions/SharingDayNightSteps';
+import SharingNightStaySteps from '@/app/components/Descriptions/SharingNightStaySteps';
+import SharingDayCruiseSteps from '@/app/components/Descriptions/SharingDayCruiseSteps';
 
 export interface ListingClientProps {
   boatDetails: BoatDetails;
@@ -137,19 +140,19 @@ const ListingClient: React.FC<ListingClientProps> = ({
                   <>
                     {bookingTypeId !== BookingType.sharing && <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    <OverNightSteps />
+                    {bookingTypeId !== BookingType.sharing ? <SharingDayNightSteps /> : <PrivateDayNightSteps />}
                   </>
                 ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
                     {bookingTypeId !== BookingType.sharing && <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    <NightStaySteps />
+                    {bookingTypeId !== BookingType.sharing ? <SharingNightStaySteps /> : <PrivateNightStaySteps />}
                   </>
                 ) : (
                   <>
                     {bookingTypeId !== BookingType.sharing && <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} childAddonPrice={boatDetails.prices.childAddOnDayPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    <DayCruiseSteps />
+                    {bookingTypeId !== BookingType.sharing ? <SharingDayCruiseSteps /> : <PrivateDayCruiseSteps />}
                   </>
                 )}
                 <div className="hidden md:block">
@@ -189,7 +192,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 <HouseRules />
               </div>
             </div>
-            <div className='md:order-last md:col-span-3'>
+            {!bookingConfirmModal.isOpen&&<div className='md:order-last md:col-span-3'>
               <ListingReservation
                 totalPrice={totalPrice}
                 cruiseTypeId={cruiseTypeId}
@@ -202,7 +205,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 isVeg={isVeg}
                 setIsVeg={setIsVeg}
               />
-            </div>
+            </div>}
           </div>
         </div>
       </div>

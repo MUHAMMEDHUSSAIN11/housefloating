@@ -1,5 +1,4 @@
 import apiClient from "@/middleware/apiClient";
-import jsCookie from "js-cookie";
 
 export interface CreateOnlineBookingData {
     adultCount: number | string;

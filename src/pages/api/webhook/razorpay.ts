@@ -1,11 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import crypto from 'crypto';
 import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreateOnlinePayment';
+import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 import { PaymentModes } from '@/app/enums/enums';
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "dummy_webhook_secret";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).send('Method Not Allowed');
     }
@@ -62,17 +67,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (event === 'payment.failed') {
         const paymentEntity = payload.payment.entity;
         const metadata = paymentEntity.notes || {};
+        const bookingId = Number(metadata.onlineBookingId);
+        const token = metadata.authToken;
 
-        const reservationId = metadata.reservationId;
-        const boatId = metadata.boatId;
-        const boatName = metadata.boatName;
-        const bookingDate = metadata.bookingDate;
-        const userEmail = metadata.userEmail;
-        const contactNumber = metadata.contactNumber;
+        if (bookingId) {
+            console.log('Payment failed for booking:', bookingId, '. Cleaning up...');
+            try {
+                await HandleDeleteOnlineBooking({ bookingId }, token);
+            } catch (error) {
+                console.error('Error deleting booking on payment failure:', error);
+            }
+        }
 
         return res.status(200).json({ status: 'ok' });
     }
 
     res.status(200).json({ status: 'ignored' });
 }
- 

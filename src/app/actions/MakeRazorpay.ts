@@ -37,8 +37,8 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             return;
         }
 
-        const advanceAmount = options.totalPrice * amountEnum.advance;
-        const remainingAmount = options.totalPrice * amountEnum.remaining;
+        const advanceAmount = Math.round(options.totalPrice * amountEnum.advance);
+        const remainingAmount = Math.round(options.totalPrice * amountEnum.remaining);
 
         const token = jsCookie.get('token');
         const finalMetadata = {
@@ -49,7 +49,7 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             authToken: token,
         };
 
-        const { data: order } = await axios.post('/api/razorpay/route', {
+        const { data: order } = await axios.post('/api/razorpay/order', {
             amount: advanceAmount,
             metadata: finalMetadata
         });
@@ -58,7 +58,7 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             amount: order.amount,
             currency: order.currency,
-            name: "House Floating",
+            name: "BAYTCODE TECHNOLOGIES PVT LTD",
             description: options.description,
             image: options.image || '/placeholder-boat.jpg',
             order_id: order.id,
