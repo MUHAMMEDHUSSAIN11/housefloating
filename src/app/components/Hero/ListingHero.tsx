@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import useSearchStore from '@/app/hooks/useSearchStore';
 import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
-import { BoatCruisesId } from '@/app/enums/enums';
+import { amount, BoatCruisesId } from '@/app/enums/enums';
 
 
 interface HeroListing {
@@ -111,7 +111,7 @@ const ListingHero: React.FC = () => {
                     {item.boatName}
                   </h3>
                   <p className="text-sm font-semibold text-gray-900">
-                    ₹{item.basePrice.toLocaleString('en-IN')}
+                    ₹{Math.round(item.basePrice * amount.commissionPercentage)}
                     <span className="text-sm font-normal text-gray-600 ml-1">
                       per day
                     </span>

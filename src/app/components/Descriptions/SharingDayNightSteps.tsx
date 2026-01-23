@@ -55,7 +55,7 @@ const SharingDayNightSteps = () => {
                                 </div>
                                 <div className="grow pl-4">
                                     <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Cruising</h2>
-                                    <p className="text-sm text-gray-900 mt-2">Time: 02:00 PM</p>
+                                    <p className="text-sm text-gray-900 mt-2">Time: 01:30 PM</p>
                                     <p className="leading-relaxed">Relax and enjoy the scenic canals, rivers, and backwaters during the cruise.</p>
                                 </div>
                             </div>

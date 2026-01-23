@@ -25,6 +25,7 @@ import useAuth from '@/app/hooks/useAuth';
 import SharingDayNightSteps from '@/app/components/Descriptions/SharingDayNightSteps';
 import SharingNightStaySteps from '@/app/components/Descriptions/SharingNightStaySteps';
 import SharingDayCruiseSteps from '@/app/components/Descriptions/SharingDayCruiseSteps';
+import SharingTermsAndConditions from '@/app/components/Descriptions/SharingTermsAndConditions';
 
 export interface ListingClientProps {
   boatDetails: BoatDetails;
@@ -138,21 +139,21 @@ const ListingClient: React.FC<ListingClientProps> = ({
               <div className='w-full'>
                 {cruiseTypeId === BoatCruisesId.dayNight ? (
                   <>
-                    {bookingTypeId !== BookingType.sharing && <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    {bookingTypeId !== BookingType.sharing ? <SharingDayNightSteps /> : <PrivateDayNightSteps />}
+                    {bookingTypeId == BookingType.sharing ? <SharingDayNightSteps /> : <PrivateDayNightSteps />}
                   </>
                 ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
-                    {bookingTypeId !== BookingType.sharing && <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    {bookingTypeId !== BookingType.sharing ? <SharingNightStaySteps /> : <PrivateNightStaySteps />}
+                    {bookingTypeId == BookingType.sharing ? <SharingNightStaySteps /> : <PrivateNightStaySteps />}
                   </>
                 ) : (
                   <>
-                    {bookingTypeId !== BookingType.sharing && <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} childAddonPrice={boatDetails.prices.childAddOnDayPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} childAddonPrice={boatDetails.prices.childAddOnDayPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    {bookingTypeId !== BookingType.sharing ? <SharingDayCruiseSteps /> : <PrivateDayCruiseSteps />}
+                    {bookingTypeId == BookingType.sharing ? <SharingDayCruiseSteps /> : <PrivateDayCruiseSteps />}
                   </>
                 )}
                 <div className="hidden md:block">
