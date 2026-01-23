@@ -6,6 +6,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).end();
     }
 
+    console.log("Razorpay Order Request Body:", req.body);
+
     if (req.method !== 'POST') {
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
