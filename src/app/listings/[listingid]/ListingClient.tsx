@@ -189,7 +189,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 <HouseRules />
               </div>
             </div>
-            <div className='md:order-last md:col-span-3'>
+            {!bookingConfirmModal.isOpen&&<div className='md:order-last md:col-span-3'>
               <ListingReservation
                 totalPrice={totalPrice}
                 cruiseTypeId={cruiseTypeId}
@@ -202,7 +202,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 isVeg={isVeg}
                 setIsVeg={setIsVeg}
               />
-            </div>
+            </div>}
           </div>
         </div>
       </div>

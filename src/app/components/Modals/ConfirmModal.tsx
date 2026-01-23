@@ -18,7 +18,7 @@ import { BoatDetails } from '@/app/listings/[listingid]/page';
 import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
-import HandleCancelOnlineBooking from '@/app/actions/OnlinePayments/HandleCancelOnlineBooking';
+import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -202,13 +202,12 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 setIsLoading(false);
                                 console.error('Payment Error/Cancelled:', err);
 
-                                // Silently cancel the booking
-                                const cancellationData = {
+                                // Silently delete the booking
+                                const deletionData = {
                                     bookingId: bookingId,
-                                    tripDate: finalCheckInDate
                                 };
-                                HandleCancelOnlineBooking(cancellationData).catch(cancelErr => {
-                                    console.error('Failed to cancel booking after payment failure:', cancelErr);
+                                HandleDeleteOnlineBooking(deletionData).catch(deleteErr => {
+                                    console.error('Failed to delete booking after payment failure:', deleteErr);
                                 });
                             }
                         });
@@ -267,11 +266,11 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     <p className="text-gray-900">Total Price: {finalPrice}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
                 </div>
-                <p className="text-gray-900 font-bold mt-2"> Thank you for your payment!</p>
+                {/* <p className="text-gray-900 font-bold mt-2"> Thank you for your payment!</p>
                 <p className="text-gray-900"> Your booking request is being processed. We’ll update you soon.</p>
                 <p className="text-gray-900">Please note that some boats may be unavailable due to Offline or Spot Bookings.</p>
                 <p className="text-gray-900">Look out for a confirmation message on your WhatsApp or Email!</p>
-                <p className="text-gray-900">If the chosen boat is unavailable, we'll quickly provide a list of alternative options for you to consider.</p>
+                <p className="text-gray-900">If the chosen boat is unavailable, we'll quickly provide a list of alternative options for you to consider.</p> */}
             </div>
         )
     }

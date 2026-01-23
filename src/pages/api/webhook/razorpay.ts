@@ -6,6 +6,10 @@ import { PaymentModes } from '@/app/enums/enums';
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "dummy_webhook_secret";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).send('Method Not Allowed');
     }
@@ -75,4 +79,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json({ status: 'ignored' });
 }
- 

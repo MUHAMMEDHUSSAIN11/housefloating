@@ -49,7 +49,7 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             authToken: token,
         };
 
-        const { data: order } = await axios.post('/api/razorpay/route', {
+        const { data: order } = await axios.post('/api/razorpay/order', {
             amount: advanceAmount,
             metadata: finalMetadata
         });
