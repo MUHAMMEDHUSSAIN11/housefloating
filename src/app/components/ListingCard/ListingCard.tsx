@@ -137,8 +137,10 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
             />
           </div>
 
-          <div className="font-semibold text-sm md:text-md mt-2">
-            {data.boatCategory}, {data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}
+          <div className="font-semibold text-sm md:text-md mt-2 flex">
+            {data.boatCategory} •
+            {!isSharing?<div className='ml-1'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
+            :<div className='ml-1'>SharingBoat</div>}
           </div>
 
           <div className='flex flex-col gap-1'>
