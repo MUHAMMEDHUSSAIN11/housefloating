@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Aboutimage = () => {
   return (
     <div className="relative h-96 sm:h-120 md:h-144 lg:h-192 xl:h-240">
