@@ -6,11 +6,12 @@ import { FaAnchor } from 'react-icons/fa';
 import { IoIosBoat } from 'react-icons/io';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Search } from 'lucide-react';
 
 const steps = [
-  { icon: <IoIosBoat size={25} />, title: "Choose a Houseboat", desc: "Find your ideal floating haven" },
-  { icon: <MdCheckCircle size={25} />, title: "Booking Confirmation", desc: "Submit your booking request for confirmation." },
-  { icon: <MdPayment size={25} />, title: "Payment", desc: "Make the payment to confirm your reservation." },
+  { icon: <Search size={25} />, title: "Start your Search", desc: "Select Private or Sharing and travel date" },
+  { icon: <IoIosBoat size={25} />, title: "Choose a Houseboat", desc: "Select your preferred houseboat" },
+  { icon: <MdPayment size={25} />, title: "Payment", desc: "Make the payment of 30% in advance and confirm the booking" },
   { icon: <FaAnchor size={25} />, title: "Enjoy the Ride", desc: "Embark on an unforgettable adventure." },
 ];
 
