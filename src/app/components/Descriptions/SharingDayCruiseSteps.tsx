@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
 import AdditionalInfo from './AdditionalInfo';
 
-const DayCruiseSteps = () => {
+const SharingDayCruiseSteps = () => {
   return (
     <div>
       <section className="p-2 sm:pl-3 body-font">
@@ -20,7 +19,7 @@ const DayCruiseSteps = () => {
                 </div>
                 <div className="grow pl-4">
                   <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Cruise Starts</h2>
-                  <p className="text-sm text-gray-900 mt-2">Time: 11:00 AM</p>
+                  <p className="text-sm text-gray-900 mt-2">Time: 1:00 PM</p>
                   <p className="leading-relaxed">Board the cruise and begin your day adventure.</p>
                 </div>
               </div>
@@ -33,7 +32,7 @@ const DayCruiseSteps = () => {
                 </div>
                 <div className="grow pl-4">
                   <h2 className="font-medium title-font text-sm text-gray-900 mb-1 tracking-wider">Lunch</h2>
-                  <p className="text-sm text-gray-900 mt-2">Time: 12:00 PM</p>
+                  <p className="text-sm text-gray-900 mt-2">Time: 1:30 PM</p>
                   <p className="leading-relaxed">Enjoy a delicious lunch onboard.</p>
                 </div>
               </div>
@@ -70,4 +69,4 @@ const DayCruiseSteps = () => {
   );
 };
 
-export default DayCruiseSteps;
+export default SharingDayCruiseSteps;

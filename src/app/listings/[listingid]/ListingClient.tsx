@@ -6,7 +6,7 @@ import useLoginModal from '../../hooks/useLoginModal';
 import useBookingConfirmModal from '../../hooks/useBookingConfirmModal';
 import ListingReservation from '../../components/ListingCard/ListingReservation';
 import ConfirmModal from '../../components/Modals/ConfirmModal';
-import DayCruiseSteps from '../../components/Descriptions/DayCruiseSteps';
+import PrivateDayCruiseSteps from '../../components/Descriptions/PrivateDayCruiseSteps';
 import Occupancy from '../../components/Descriptions/Occupancy';
 import Updated from '../../components/Hero/Updated';
 import Footer from '../../components/Hero/Footer';
@@ -19,8 +19,8 @@ import { BoatCruises, BoatCruisesId, BookingType, Categories, coordinates } from
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
-import OverNightSteps from '../../components/Descriptions/OverNightSteps';
-import NightStaySteps from '@/app/components/Descriptions/NightStaySteps';
+import PrivateDayNightSteps from '../../components/Descriptions/PrivateDayNightSteps';
+import PrivateNightStaySteps from '@/app/components/Descriptions/PrivateNightStaySteps';
 import useAuth from '@/app/hooks/useAuth';
 
 export interface ListingClientProps {
@@ -137,19 +137,19 @@ const ListingClient: React.FC<ListingClientProps> = ({
                   <>
                     {bookingTypeId !== BookingType.sharing && <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    <OverNightSteps />
+                    <PrivateDayNightSteps />
                   </>
                 ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
                     {bookingTypeId !== BookingType.sharing && <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    <NightStaySteps />
+                    <PrivateNightStaySteps />
                   </>
                 ) : (
                   <>
                     {bookingTypeId !== BookingType.sharing && <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} childAddonPrice={boatDetails.prices.childAddOnDayPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
-                    <DayCruiseSteps />
+                    <PrivateDayCruiseSteps />
                   </>
                 )}
                 <div className="hidden md:block">

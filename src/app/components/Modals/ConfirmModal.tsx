@@ -15,6 +15,7 @@ import validateOTP from '@/app/actions/validateOTP';
 import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
+import { amount } from '@/app/enums/enums';
 import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
@@ -81,8 +82,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
         } else if (step === STEPS.OTP) {
             return 'verify OTP';
         }
-        return 'Proceed to Payment';
-    }, [step]);
+        return `Proceed To Pay Advance`;
+    }, [step,finalPrice]);
 
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -262,15 +263,13 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 <div className="bg-white p-4 rounded-lg shadow-md">
                     <p className="text-lg font-semibold">{boatDetails.boatCode}</p>
                     <p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>
-                    <p className="text-gray-900">Booking Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
-                    <p className="text-gray-900">Total Price: {finalPrice}</p>
+                    <p className="text-gray-900">Trip Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
+                    <p className="text-gray-900">Total Price: ₹{finalPrice}</p>
+                    <p className="text-gray-900 flex">Advance Amount:<span className='ml-1 font-semibold text-black'>₹{Math.round(finalPrice * amount.advance)}</span></p>
+                    <p className="text-md font-light text-red-500">Balance Amount Pay at Boat</p>
+                    <p className="text-gray-900">Balance Amount: ₹{Math.round(finalPrice * amount.remaining)}</p>
                 </div>
-                {/* <p className="text-gray-900 font-bold mt-2"> Thank you for your payment!</p>
-                <p className="text-gray-900"> Your booking request is being processed. We’ll update you soon.</p>
-                <p className="text-gray-900">Please note that some boats may be unavailable due to Offline or Spot Bookings.</p>
-                <p className="text-gray-900">Look out for a confirmation message on your WhatsApp or Email!</p>
-                <p className="text-gray-900">If the chosen boat is unavailable, we'll quickly provide a list of alternative options for you to consider.</p> */}
             </div>
         )
     }
@@ -284,7 +283,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
     return (
         <Modal
             isOpen={BookingConfirmModal.isOpen}
-            title="Confirmation"
+            title={step === STEPS.SUMMARY ? "Review Booking" : "Confirm your order"}
             actionLabel={actionLabel}
             disabled={isLoading}
             onClose={BookingConfirmModal.onClose}

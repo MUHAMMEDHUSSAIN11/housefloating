@@ -4,6 +4,7 @@ import { BoatCruisesId, CheckInOutTimes, BookingType, BookingStatuses, BoatCruis
 import Button from "../Misc/Button";
 import format from "date-fns/format";
 import addDays from "date-fns/addDays";
+import { is } from "date-fns/locale";
 
 interface ListingReservationProps {
   totalPrice: number;
@@ -89,7 +90,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
         <div className="flex flex-col items-center gap-4 p-4 border-neutral-200">
           <div className="flex flex-row w-full gap-4">
             <div className="font-semibold">
-              {cruiseType}
+              {cruiseType} •{isSharing ? ` Sharing` : ` Private`}
               <div className="text-sm font-medium text-neutral-500">{dateDisplay}</div>
             </div>
             <div className="flex items-center ml-2 gap-2">
@@ -130,7 +131,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
         <div className="flex flex-col">
           <div className="flex items-center justify-between mr-1 mb-1">
             <span className="text-sm font-medium text-gray-700">
-              {cruiseType}
+              {cruiseType} •{isSharing ? ` Sharing` : ` Private`}
               <div className="text-sm font-medium text-neutral-500">{dateDisplay}</div>
             </span>
             <div className="flex items-center gap-3">

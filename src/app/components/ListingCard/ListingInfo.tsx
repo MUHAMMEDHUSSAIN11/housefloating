@@ -35,7 +35,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxChildCount,
       <div className='flex flex-col gap-2'>
         <div className="text-xl font-semibold">{title},{boardingPoint}</div>
         <div className="text-sm flex flex-row items-center gap-2">
-          <div>{roomCount} Bedrooms</div>.
+          <div>{roomCount} Bedrooms</div>•
           <div>{bathroomCount} Bathrooms</div>
         </div>
       </div>

@@ -1,15 +1,18 @@
-import apiClient from "@/middleware/apiClient";
+import axios from "axios";
+import jsCookie from "js-cookie";
 
 interface HandleDeleteOnlineBookingProps {
     bookingId: number;
 }
 
-const HandleDeleteOnlineBooking = async ({ bookingId }: HandleDeleteOnlineBookingProps) => {
+const HandleDeleteOnlineBooking = async ({ bookingId }: HandleDeleteOnlineBookingProps, authToken?: string) => {
     try {
-        const response = await apiClient.delete(`/api/OnlineBookings/deleteOnlineBooking`,{
-            params: { 
-                bookingId
-            },
+        const token = authToken || jsCookie.get('token');
+        const response = await axios.delete(`${process.env.NEXT_PUBLIC_API}/api/OnlineBookings/deleteOnlineBooking`, {
+            params: { bookingId },
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
 
         if (response.status >= 200 && response.status < 300) {

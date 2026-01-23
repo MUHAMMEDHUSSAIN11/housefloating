@@ -57,10 +57,10 @@ export enum PaymentModes {
 }
 
 export enum CheckInOutTimes {
-    SharingDayCruiseCheckIn = "1:30 PM",
-    SharingDayCruiseCheckOut = "5:30 PM",
+    SharingDayCruiseCheckIn = "1:00 PM",
+    SharingDayCruiseCheckOut = "5:00 PM",
 
-    SharingDayNightCheckIn = "1:30 PM",
+    SharingDayNightCheckIn = "1:00 PM",
     SharingDayNightCheckOut = "9:00 AM",
 
     SharingNightStayCheckIn = "6:00 PM",
