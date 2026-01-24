@@ -163,33 +163,34 @@ const ListingClient: React.FC<ListingClientProps> = ({
                   <Map center={coordinates} />
                 </div>
 
+                {/* FoodMenu */}
                 {
                   (() => {
                     if (boatDetails.boatCategoryId === Categories.Deluxe) {
                       return (
                         <>
-                          <hr className='border border-gray-300' />
+                          <hr className='border border-gray-300 mt-2' />
                           <DeluxeFood bookingType={cruiseTypeId} />
                         </>
                       )
                     } else if (boatDetails.boatCategoryId === Categories.Premium) {
                       return (
                         <>
-                          <hr className='border border-gray-300' />
+                          <hr className='border border-gray-300 mt-2' />
                           <PremiumFood bookingType={cruiseTypeId} />
                         </>
                       )
                     } else {
                       return (
                         <>
-                          <hr className='border border-gray-300' />
+                          <hr className='border border-gray-300 mt-2' />
                           <LuxuryFood bookingType={cruiseTypeId} />
                         </>
                       )
                     }
                   })()
                 }
-                <hr className='border border-gray-300' />
+                <hr className='border border-gray-300 mt-2' />
                 <HouseRules />
               </div>
             </div>

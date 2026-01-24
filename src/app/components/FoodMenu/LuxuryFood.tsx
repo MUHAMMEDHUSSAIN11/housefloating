@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { FoodProps } from './DeluxeFood';
-import { BoatCruisesId, TravelMode } from '@/app/enums/enums';
+import { BoatCruisesId } from '@/app/enums/enums';
 
 const LuxuryFood: React.FC<FoodProps> = ({ bookingType }) => {
     const [isVeg, setIsVeg] = useState(true);
