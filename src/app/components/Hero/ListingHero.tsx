@@ -186,7 +186,7 @@ const ListingHero: React.FC = () => {
       <section className="bg-gray-50 min-h-screen">
         <div className="pt-56 md:pt-40 pb-12">
           {/* Skeleton Sections */}
-          <SkeletonSection title="Houseboats" />
+          <SkeletonSection title="Favourite Picks" />
         </div>
       </section>
     );
@@ -200,7 +200,7 @@ const ListingHero: React.FC = () => {
   return (
     <section className="bg-gray-50 h-auto">
       <div className="pt-48 lg:pt-36 ">
-        {/* Houseboats Section */}
+        {/* Favourite Picks Section */}
         <GridSection title="Favourite Picks" items={listings} />
       </div>
     </section>
