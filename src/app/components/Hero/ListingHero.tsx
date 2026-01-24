@@ -201,7 +201,7 @@ const ListingHero: React.FC = () => {
     <section className="bg-gray-50 h-auto">
       <div className="pt-48 lg:pt-36 ">
         {/* Houseboats Section */}
-        <GridSection title="Favourite Pricks" items={listings} />
+        <GridSection title="Favourite Picks" items={listings} />
       </div>
     </section>
   );
