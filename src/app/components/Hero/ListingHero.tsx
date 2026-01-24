@@ -14,6 +14,8 @@ interface HeroListing {
   boatId: number;
   basePrice: number;
   boatName: string;
+  boatCategory: string;
+  roomCount: number;
   thumbnailImage: string;
 }
 
@@ -108,12 +110,12 @@ const ListingHero: React.FC = () => {
                 {/* Content */}
                 <div className="p-4">
                   <h3 className="text-sm font-medium text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                    {item.boatName}
+                    {item.boatCategory} • {item.roomCount} Bedroom
                   </h3>
                   <p className="text-sm font-semibold text-gray-900">
                     ₹{Math.round(item.basePrice * amount.commissionPercentage)}
                     <span className="text-sm font-normal text-gray-600 ml-1">
-                      per day
+                      For DayNight
                     </span>
                   </p>
                 </div>
