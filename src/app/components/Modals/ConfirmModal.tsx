@@ -20,6 +20,8 @@ import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
 import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
+import FormatToLocalDate from '../Misc/FormatToLocalDate';
+import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -149,11 +151,13 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             try {
                 const isSharing = bookingTypeId === BookingType.sharing;
                 const finalRoomCount = isSharing ? roomCount : undefined;
+                const tripDateLocal = FormatToLocalDate(finalCheckInDate);
+                const localBookingDate = FormatToLocalDateTime(new Date());
 
                 const bookingData = {
                     adultCount: finalHeadCount,
                     boatId: boatDetails.boatId,
-                    bookingDate: new Date().toISOString(),
+                    bookingDate: localBookingDate,
                     childCount: finalMinorCount,
                     contactNumber: cleanedPhoneNumber,
                     cruiseTypeId: modeOfTravel === BoatCruises.dayCruise ? BoatCruisesId.dayCruise : modeOfTravel === BoatCruises.dayNight ? BoatCruisesId.dayNight : BoatCruisesId.nightStay,
@@ -161,7 +165,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     guestUserId: user?.id || 0,
                     isVeg: isVeg,
                     price: finalPrice,
-                    tripDate: finalCheckInDate.toISOString(),
+                    tripDate: tripDateLocal,
                     boardingPoint: boatDetails.boardingPoint,
                     isSharing: isSharing,
                     roomCount: finalRoomCount

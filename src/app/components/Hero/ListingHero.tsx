@@ -6,7 +6,7 @@ import GetRandomBoats from '@/app/actions/GetRandomBoats/GetRandomBoats';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import useSearchStore from '@/app/hooks/useSearchStore';
-import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
+import FormatToLocalDate from '../Misc/FormatToLocalDate';
 import { amount, BoatCruisesId } from '@/app/enums/enums';
 
 
@@ -52,7 +52,7 @@ const ListingHero: React.FC = () => {
       params.append('rooms', roomCount.toString());
 
       if (selectedDateRange.startDate) {
-        params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
+        params.append('startDate', FormatToLocalDate(selectedDateRange.startDate));
         let calculatedEndDate: Date | null = selectedDateRange.endDate;
 
         if (selectedCruise === BoatCruisesId.dayCruise) {
@@ -63,7 +63,7 @@ const ListingHero: React.FC = () => {
         }
 
         if (calculatedEndDate) {
-          params.append('endDate', FormatToLocalDateTime(calculatedEndDate));
+          params.append('endDate', FormatToLocalDate(calculatedEndDate));
         }
       }
       params.append('cruise', selectedCruise.toString());

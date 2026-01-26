@@ -3,7 +3,7 @@ import { Users, User, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
 import { usePathname, useRouter } from 'next/navigation';
-import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
+import FormatToLocalDate from '../Misc/FormatToLocalDate';
 import SearchBarMobileModal from '../Modals/SearchBarMobileModal';
 import DesktopSearchBar from './DesktopSearchBar';
 import useSearchStore from '@/app/hooks/useSearchStore';
@@ -147,7 +147,7 @@ const SearchBar = () => {
 
       // Add date parameters
       if (selectedDateRange.startDate) {
-        params.append('startDate', FormatToLocalDateTime(selectedDateRange.startDate));
+        params.append('startDate', FormatToLocalDate(selectedDateRange.startDate));
 
         let calculatedEndDate: Date | null = selectedDateRange.endDate;
 
@@ -159,7 +159,7 @@ const SearchBar = () => {
         }
 
         if (calculatedEndDate) {
-          params.append('endDate', FormatToLocalDateTime(calculatedEndDate));
+          params.append('endDate', FormatToLocalDate(calculatedEndDate));
         }
       }
 
