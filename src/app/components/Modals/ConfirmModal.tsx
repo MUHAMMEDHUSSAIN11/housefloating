@@ -254,6 +254,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     shouldAutoFocus={true}
                     onChange={setOtp}
                     numInputs={4}
+                    inputType='number'
                     renderSeparator={<span>-</span>}
                     renderInput={(props) => <input {...props} />} />
             </div>
