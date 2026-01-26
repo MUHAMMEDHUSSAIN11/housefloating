@@ -4,9 +4,9 @@ import Footer from '../components/Hero/Footer';
 
 const Page = () => {
     return (
-        <div className="pt-24 font-sans text-wrap">
-            <div className="max-w-screen-lg mx-auto p-2">
-                <div className="flex flex-col gap-6">
+        <div className="pt-36 font-sans text-wrap">
+            <div className="max-w-5xl mx-auto p-2">
+                <div className="flex flex-col gap-6 pr-5">
                     <h2 className="text-3xl text-center font-semibold mb-5">Cancellation Policies</h2>
                     <ol className="pl-6">
                         <li className="mb-4">
@@ -25,7 +25,7 @@ const Page = () => {
                             </p>
                             <ul className="list-disc pl-8">
                                 <li className="mb-2">
-                                    <span className="text-red-600 font-bold">90% refund</span> for cancellation <span className="font-semibold">15 days</span> prior to travel.
+                                    <span className="text-red-600 font-bold">70% refund</span> for cancellation <span className="font-semibold">15 days</span> prior to travel.
                                 </li>
                                 <li className="mb-2">
                                     <span className="text-red-600 font-bold">50% refund</span> for cancellation <span className="font-semibold">7 days</span> prior to travel.
@@ -61,19 +61,6 @@ const Page = () => {
                             </ul>
                         </li>
 
-                        <li className="mb-4">
-                            <p className="text-gray-800">
-                                <span className="font-bold">Modify Your Reservation:</span>
-                            </p>
-                            <p className="text-gray-800 pl-8 text-justify">
-                                Please give us at least 10 days' notice if you decide to change the dates before check-in. No changes can be made in the six days leading up to check-in. If a day cruise houseboat is scheduled for you, the boat's cruise capacity will determine how many people can be accommodated.
-                            </p>
-                            <p className="text-gray-800 pl-8 text-justify">
-                                By paying additional fees, the number of passengers on a day cruise can be increased up to the boat's maximum cruise capacity. However, the cost may go up if you change the houseboat, and that depends on availability and date.
-                            </p>
-                            <p className="text-gray-800 pl-8 text-justify">
-                                Modifications are subject to the cost and the houseboat's availability. If the same houseboat or rate is not available, amendments cannot be made. We suggest that you book a new reservation in this case.                            </p>
-                        </li>
                         <li className="mb-8">
                             <p className="text-lg font-semibold mb-2 text-justify">
                                 Please Note: No Cancellation Refunds or Amendments are allowed for bookings during the following periods:
@@ -90,17 +77,11 @@ const Page = () => {
                                 </li>
                             </ul>
                         </li>
-                        <li className="mb-8">
-                            <p className=" text-md font-semibold mb-2">
-                                Once a booking is rescheduled, no further amendments or reschedules are allowed.
-                                The full advance amount will be considered as cancellation fees with no refund provided.
-                            </p>
-                        </li>
                     </ol>
                 </div>
             </div>
             <Updated />
-            <hr />
+            <hr className='border border-gray-300'/>
             <Footer />
         </div>
     );

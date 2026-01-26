@@ -1,93 +1,76 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Heart, } from 'lucide-react';
-import getWishlists, { WishList } from '../actions/getWishLists';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase/clientApp';
-import removeWishlist from '../actions/removeWishlist';
+import { Heart } from 'lucide-react';
+import HandleGetWhishlist, { WishlistItem } from '../actions/Whishlist/HandleGetWhishlist';
+import Handlecreatewhishlist from '../actions/Whishlist/HandleCreateWhilshlist';
 import * as NProgress from "nprogress";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-
+import useAuth from '../hooks/useAuth';
 
 const Page = () => {
-  const [wishlistItems, setWishlistItems] = useState<WishList[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const router = useRouter();
 
-
-  const handlePush = (boatId: string) => {
-    //start done needs to be rechecked
+  const handlePush = (boatId: number) => {
     router.push(`/listings/${boatId}`);
     NProgress.start();
     NProgress.done();
   };
 
-
-  useEffect(() => {
+  const fetchWishlistData = async () => {
     if (user) {
-      const fetchWishlistData = async () => {
-        try {
-          setLoading(true);
-          const userWishlists = await getWishlists(user.uid);
-          setWishlistItems(userWishlists);
-        } catch (error) {
-          console.error('Error fetching wishlist:', error);
-        } finally {
-          setLoading(false);
+      try {
+        setLoading(true);
+        const response = await HandleGetWhishlist();
+        if (response && response.items) {
+          setWishlistItems(response.items);
+        } else {
+          setWishlistItems([]);
         }
-      };
-
-      fetchWishlistData();
+      } catch (error) {
+        console.error('Error fetching wishlist:', error);
+        toast.error('Failed to load wishlist');
+      } finally {
+        setLoading(false);
+      }
     } else {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchWishlistData();
   }, [user]);
 
-  const handleRemoveFromWishlist = async (boatId: string) => {
-    // Check if item exists in wishlist
-    if (!wishlistItems.find(x => x.BoatId === boatId)) {
-      // toast.error("Boat already removed from wishlists"); // Uncomment if you have toast
-      return;
-    }
+  const handleRemoveFromWishlist = async (boatId: number) => {
+    if (!user) return;
 
     try {
-      // Optimistically update UI first
-      setWishlistItems(prev => prev.filter(item => item.BoatId !== boatId));
+      // Optimistically update UI
+      setWishlistItems(prev => prev.filter(item => item.boatId !== boatId));
 
-      // Then make the API call
-      const success = await removeWishlist(boatId, user?.uid);
+      const success = await Handlecreatewhishlist(boatId, Number(user.id));
 
       if (success) {
         toast('Removed from wishlist', {
           icon: '💔',
         });
       } else {
-        // Revert the optimistic update on failure
-        const userWishlists = await getWishlists(user?.uid);
-        setWishlistItems(userWishlists);
-        // toast.error('Failed to remove from wishlist. Please try again.');
+        toast.error('Failed to remove from wishlist');
+        // Revert update
+        fetchWishlistData();
       }
     } catch (error) {
-      console.error('Error in handleRemoveFromWishlist:', error);
-      // Revert the optimistic update on error
-      const userWishlists = await getWishlists(user?.uid);
-      setWishlistItems(userWishlists);
-      // toast.error('Failed to remove from wishlist. Please try again.');
+      console.error('Error removing from wishlist:', error);
+      toast.error('Something went wrong');
+      fetchWishlistData();
     }
   };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
 
   if (loading) {
     return (
@@ -112,9 +95,8 @@ const Page = () => {
   }
 
   return (
-    <div className="min-h-screen  bg-white pt-40 md:pt-24">
+    <div className="min-h-screen bg-white pt-40 md:pt-24">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-semibold text-gray-900 mb-1">Wishlists</h1>
@@ -122,7 +104,6 @@ const Page = () => {
           </div>
         </div>
 
-        {/* Empty State */}
         {wishlistItems.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
@@ -137,49 +118,44 @@ const Page = () => {
             </Link>
           </div>
         ) : (
-          /* Wishlist Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {wishlistItems.map((item) => (
-              <div key={item.BoatId} onClick={() => handlePush(item.BoatId)} className="group cursor-pointer">
+              <div key={item.id} onClick={() => handlePush(item.boatId)} className="group cursor-pointer">
                 <div className="relative mb-3">
-                  {/* Image Container */}
                   <div className="relative h-64 w-full overflow-hidden rounded-xl bg-gray-100">
                     <Image
-                      src={item.Image}
-                      alt={item.BoatName}
+                      src={item.boat.imageUrl || '/placeholder-boat.jpg'}
+                      alt={item.boat.boatName || 'Boat'}
+                      fill
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
 
-                    {/* Heart Icon */}
                     <button
-                      className="absolute top-3 right-3 p-2 hover:scale-110 transition-transform"
+                      className="absolute top-3 right-3 p-2 hover:scale-110 transition-transform z-10"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRemoveFromWishlist(item.BoatId);
+                        handleRemoveFromWishlist(item.boatId);
                       }}
                     >
                       <Heart
                         className="h-6 w-6 text-red-500 fill-red-500"
                       />
                     </button>
-
                   </div>
 
-                  {/* Content */}
                   <div className="pt-2">
                     <div className="flex items-start justify-between mb-1">
                       <h3 className="font-medium text-gray-900 truncate pr-2 flex-1">
-                        {item.BoatName}
+                        {item.boat.boatName || 'Unnamed Boat'}
                       </h3>
                     </div>
 
                     <p className="text-gray-600 text-sm mb-2">
-                      Wishlisted on {formatDate(item.CreatedOn)}
+                      {item.boat.category} • {item.boat.bedroomCount} Bedroom{item.boat.bedroomCount !== 1 ? 's' : ''}
                     </p>
 
                     <p className="text-gray-900">
-                      <span className="font-semibold">₹{item.dayCruisePrice}</span>
-                      <span className="text-gray-600 font-normal"> per day</span>
+                      <span className="font-semibold text-blue-600">View Boat</span>
                     </p>
                   </div>
                 </div>

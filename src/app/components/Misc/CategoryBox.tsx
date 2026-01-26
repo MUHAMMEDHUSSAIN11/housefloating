@@ -1,7 +1,5 @@
 'use client';
 
-
-import { useCallback } from "react";
 import { IconType } from "react-icons";
 
 interface CategoryBoxProps {

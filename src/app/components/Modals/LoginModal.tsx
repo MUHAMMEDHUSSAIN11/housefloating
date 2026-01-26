@@ -1,99 +1,69 @@
 ﻿'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { AiFillFacebook } from "react-icons/ai";
+import { signIn } from "next-auth/react";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
 import Modal from "./Modal";
 import Input from "../Inputs/Input";
 import Heading from "../Misc/Heading";
 import Button from "../Misc/Button";
-import { useSignInWithEmailAndPassword, useSignInWithFacebook, useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { auth, firestore } from "@/app/firebase/clientApp";
-import { User } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { FIREBASE_ERRORS } from "@/app/firebase/errors";
 import toast from "react-hot-toast";
-
-
-
+import Login from "@/app/actions/Login/Login";
+import { useRouter } from "next/navigation";
+import useAuth from "@/app/hooks/useAuth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginModal = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
     const [isLoading, setIsLoading] = useState(false);
-    const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
-    const [signInWithGoogle, googleUserCred, googleLoading, googleerror] = useSignInWithGoogle(auth);
-    const [SignInWithFacebook, fbUserCred, fbLoading, fberror] = useSignInWithFacebook(auth);
+    const router = useRouter();
+    const { login } = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
 
-    const { register, handleSubmit, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { Email: '', Password: '' }, });
+    const { register, handleSubmit, watch, formState: { errors, }, } = useForm<FieldValues>({ defaultValues: { email: '', password: '' }, });
 
+    const passwordValue = watch("password");
+    const isPasswordEmpty = !passwordValue;
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const { Email, Password } = data;
+        const { email, password } = data;
         setIsLoading(true);
-        if (error) {
-            const error = null;
-        }
+
         try {
-            const result = await signInWithEmailAndPassword(Email, Password);
-            if (result) {
-                toast.success("Logged in");
-                loginModal.onClose();
+            const response = await Login({
+                email: email,
+                password: password,
+            });
+
+            if (response && response.status === 200 && response.data) {
+                const { user, accessToken } = response.data.data;
+
+                if (user && accessToken) {
+                    login(user, accessToken);
+                    toast.success("Login Successful");
+                    loginModal.onClose();
+                    router.refresh();
+                } else {
+                    console.error("Missing user or accessToken in response", response.data);
+                    toast.error("Signin succeeded but invalid response structure");
+                }
+            } else {
+                toast.error("Login failed");
             }
         } catch (error) {
             console.log(error);
+            toast.error("Login failed");
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
-
     const handleGoogleSign = async () => {
-        const isGooglesignSuccess = await signInWithGoogle()
-        if (isGooglesignSuccess) {
-            loginModal.onClose();
-            toast.success("Logged in")
-        }
+        signIn('google');
     }
-
-
-    const handleFbSign = async () => {
-
-        const isFBsignSuccess = await SignInWithFacebook()
-        if (isFBsignSuccess) {
-            loginModal.onClose();
-            toast.success("Logged in")
-        }else
-        {
-            console.log(isFBsignSuccess);
-        }
-    }
-
-    //creates User Document of users logged in through direct gmail
-    const createGoogleUserDocument = async (user: User) => {
-        const userDocRef = doc(firestore, 'Users', user.uid)
-        await setDoc(userDocRef, JSON.parse(JSON.stringify(user)))
-    }
-    useEffect(() => {
-        if (googleUserCred) {
-            createGoogleUserDocument(googleUserCred?.user)
-        }
-    }, [googleUserCred])
-
-
-    //creates User Document of users logged in through direct fb
-
-    const createFbUserDocument = async (user: User) => {
-        const userDocRef = doc(firestore, 'Users', user.uid)
-        await setDoc(userDocRef, JSON.parse(JSON.stringify(user)))
-    }
-    useEffect(() => {
-        if (fbUserCred) {
-            createFbUserDocument(fbUserCred?.user)
-        }
-    }, [fbUserCred])
-
 
     const onToggle = useCallback(() => {
         loginModal.onClose();
@@ -103,15 +73,49 @@ const LoginModal = () => {
     const bodyContent = (
         <div className="flex flex-col gap-4">
             <Heading title="Welcome back" subtitle="Login to your account!" />
-            <Input id="Email" label="Email" type="email" disabled={isLoading} register={register} errors={errors} required />
-            <Input id="Password" label="Password" type="password" disabled={isLoading} register={register} errors={errors} required />
-            {error && <p className="text-center text-red-500 text-xs">{FIREBASE_ERRORS['Firebase:Error (auth/user-not-found).']}</p>}
+            <Input
+                id="email"
+                label="Email Id"
+                type="email"
+                disabled={isLoading}
+                register={register}
+                errors={errors}
+                validation={{
+                    required: "Email is required",
+                    pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Enter a valid email address",
+                    },
+                }}
+            />
+            <div className="relative">
+                <Input
+                    id="password"
+                    label="Password"
+                    disabled={isLoading}
+                    type={showPassword ? "text" : "password"}
+                    register={register}
+                    errors={errors}
+                    validation={{
+                        required: "Password is required",
+                    }}
+                />
+                {!isPasswordEmpty && (
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={`absolute top-7 right-5 hover:cursor-pointer`}
+                    >
+                        {showPassword ? <FaEye /> : <FaEyeSlash />}
+                    </button>
+                )}
+            </div>
         </div>
     );
 
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3 mb-12 md:mb-0">
-            <hr />
+            <hr className='border border-gray-300' />
             <Button outline label="Continue with Google" icon={FcGoogle} onClick={handleGoogleSign} />
             <div className="text-neutral-500 text-center mt-4 font-light">
                 <p>Are you new here?

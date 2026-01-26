@@ -1,146 +1,115 @@
 'use client'
 
-import React, { useCallback, useEffect, useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import Button from '../Misc/Button'
-import { Timestamp } from 'firebase/firestore'
-import { amount } from '@/app/enums/enums'
+import { amount, BookingType } from '@/app/enums/enums'
 import { Heart } from 'lucide-react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '@/app/firebase/clientApp'
 import useLoginModal from '@/app/hooks/useLoginModal'
-import checkWishlistStatus from '@/app/actions/checkWishlistStatus'
-import createWishlist from '@/app/actions/createWishlist'
+import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
+import useAuth from '@/app/hooks/useAuth'
+import Handlecreatewhishlist from '@/app/actions/Whishlist/HandleCreateWhilshlist'
+import HandleGetWhishlist from '@/app/actions/Whishlist/HandleGetWhishlist'
 import toast from 'react-hot-toast'
-import removeWishlist from '@/app/actions/removeWishlist'
-import { useDebouncedWishlist } from '@/app/hooks/useDebouncedWishlist' // Import the hook
 
-export interface FirestoreListing {
-  id: string,
-  docId: string,
-  bathroomCount: number,
-  category: string,
-  description: string,
-  guestCount: number,
-  images: string[],
-  roomCount: number,
-  title: string,
-  price: number,
-  reservations: Timestamp[],
-  guestTitle: string,
-  dayCruisePrice: number,
+interface BoatCardDetails {
+  boatId: number;
+  boatCategoryId: number;
+  boatCategory: string;
+  boatImage: string | null;
+  bedroomCount: number;
+  price: number;
+  boatCode: string;
+  guestCount: number | null;
+  cruiseTypeId: number;
+  cruiseType: string;
 }
 
 interface ListingCardProps {
-  data: FirestoreListing
-  onAction?: (id: string) => void;
-  disabled?: boolean;
-  actionLabel?: string;
-  actionId?: string;
+  data: BoatCardDetails;
+  startDate?: string | null;
+  endDate?: string | null;
+  cruiseTypeId?: number;
+  bookingTypeId?: number;
 }
 
-const ListingCard: React.FC<ListingCardProps> = React.memo(({ data, onAction, disabled, actionId = "", actionLabel }) => {
+const ListingCard: React.FC<ListingCardProps> = React.memo(({
+  data,
+  startDate,
+  endDate,
+  cruiseTypeId,
+  bookingTypeId,
+}) => {
   const loginModal = useLoginModal();
-  const [user] = useAuthState(auth);
+  const { user } = useAuth();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const debouncedWishlistOperation = useDebouncedWishlist(300); // 300ms debounce
+  const [imageError, setImageError] = useState(false);
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
-  const offerPrice = useMemo(() => data.dayCruisePrice, [data.dayCruisePrice]);
+  const offerPrice = useMemo(() => Math.round(data.price * amount.commissionPercentage), [data.price]);
 
-  const handleCancel: any = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.stopPropagation();
+  const imageUrl = !imageError && data.boatImage
+    ? data.boatImage
+    : '/placeholder-boat.jpg';
 
-      if (disabled) {
-        return;
-      }
-      onAction?.(actionId)
-    }, [disabled, onAction, actionId]);
+  const listingUrl = useMemo(() => {
+    const params = new URLSearchParams();
 
-  // Check if item is already in user's wishlist
+
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
+    if(bookingTypeId) params.append('bookingTypeId',bookingTypeId?.toString());
+
+    const queryString = params.toString();
+    return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
+  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
+  const isSharing = bookingTypeId === BookingType.sharing;
+
   useEffect(() => {
-    const fetchWishlistStatus = async () => {
-      try {
-        const querySnapshot = await checkWishlistStatus(user, data);
-        if (querySnapshot && typeof querySnapshot !== 'boolean') {
-          setIsWishlisted(!querySnapshot.empty);
-        } else {
-          setIsWishlisted(false);
+    const checkStatus = async () => {
+      if (user) {
+        const wishlistData = await HandleGetWhishlist();
+        if (wishlistData && wishlistData.items) {
+          const isFound = wishlistData.items.some(item => item.boatId === data.boatId);
+          setIsWishlisted(isFound);
         }
-      } catch (error) {
-        console.error('Error fetching wishlist status:', error);
-        setIsWishlisted(false);
       }
     };
+    checkStatus();
+  }, [user, data.boatId]);
 
-    fetchWishlistStatus();
-  }, [user, data.docId]);
-
-
-
-  // Handle heart icon click with debouncing
-  const handleHeartClick = useCallback(async (e: any) => {
+  const handleHeartClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-
-    if (isLoading) return;
 
     if (!user) {
       loginModal.onOpen();
       return;
     }
 
-    // Optimistically update UI and show immediate feedback
-    const previousState = isWishlisted;
-    setIsWishlisted(!isWishlisted);
+    if (isLoading) return;
 
-    // Show immediate toast feedback
-    if (previousState) {
-      toast('Removed from wishlist', {
-        icon: '💔',
-      });
-    } else {
-      toast('Added to wishlist', {
-        icon: '❤️',
-      });
-    }
-
-    // Debounce the actual API call
-    debouncedWishlistOperation(
-      isWishlisted ? 'remove' : 'add',
-      data.docId,
-      async () => {
-        setIsLoading(true);
-        try {
-          let success;
-          if (previousState) {
-            success = await removeWishlist(data.docId, user.uid);
-          } else {
-            success = await createWishlist(data, user);
-          }
-
-          if (!success) {
-            // Revert optimistic update on failure
-            setIsWishlisted(previousState);
-            toast.error('Operation failed. Please try again.');
-          }
-        } catch (error) {
-          // Revert optimistic update on error
-          setIsWishlisted(previousState);
-          toast.error('Operation failed. Please try again.');
-        } finally {
-          setIsLoading(false);
-        }
+    setIsLoading(true);
+    try {
+      const success = await Handlecreatewhishlist(data.boatId, Number(user.id));
+      if (success) {
+        setIsWishlisted(!isWishlisted);
+        toast.success(!isWishlisted ? 'Added to wishlist' : 'Removed from wishlist');
+      } else {
+        toast.error('Something went wrong');
       }
-    );
-  }, [isWishlisted, isLoading, user, loginModal, debouncedWishlistOperation, data]);
-
+    } catch (error) {
+      console.error('Wishlist error:', error);
+      toast.error('Failed to update wishlist');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="col-span-1 group relative">
-      {/* Heart Icon */}
       <div
         className={`absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 hover:bg-white transition cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleHeartClick}
@@ -149,58 +118,50 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({ data, onAction, di
           size={16}
           className={`transition ${isWishlisted
             ? 'text-red-500 fill-red-500'
-            : 'text-gray-700 hover:text-red-500 hover:fill-red-500'
-            } ${isLoading ? 'animate-pulse' : ''}`}
+            : 'text-gray-700 hover:text-red-500'
+            }`}
         />
       </div>
 
-      <Link href={`/listings/${data.docId}`} className="block cursor-pointer">
-        <div className="flex flex-col gap-1.5 w-full">
-          {/* Smaller aspect ratio for more compact cards */}
-          <div className="aspect-[4/3] w-full relative overflow-hidden rounded-lg">
+      <Link href={listingUrl} className="block cursor-pointer">
+        <div className="flex flex-col w-full">
+          <div className="aspect-4/3 w-full relative overflow-hidden rounded-lg bg-gray-200">
             <Image
               fill
               className="object-cover h-full w-full group-hover:scale-110 transition"
-              src={data.images[0]}
-              alt="Listing"
+              src={imageUrl}
+              alt={`${data.boatCategory} Houseboat`}
               sizes="(max-width: 768px) 50vw, 33vw"
               priority={false}
+              onError={() => setImageError(true)}
             />
           </div>
 
-          {/* Smaller text and spacing */}
-          <div className="font-semibold text-md">
-            {data.guestTitle},{data.roomCount} Bedrooms
+          <div className="font-semibold text-sm md:text-md mt-2 flex">
+            {data.boatCategory} •
+            {!isSharing?<div className='ml-1'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
+            :<div className='ml-1'>SharingBoat</div>}
           </div>
 
-          <div className='flex flex-row items-center gap-1'>
-            <div className='font-medium text-sm text-gray-600'>{data.category}</div>
-          </div>
-
-          <div className="flex flex-row items-center gap-1">
-            <div className="font-light text-sm">Starting From</div>
-            <div className="text-gray-500 line-through text-xs">₹ {strikeThroughPrice} /-</div>
-          </div>
-
-          <div className='flex flex-row items-center gap-1'>
-            <div className="font-semibold text-md">₹ {offerPrice} /-</div>
+          <div className='flex flex-col gap-1'>
+            <div className="text-gray-700 text-xs">
+              {data.guestCount || 2} Adult <span>·</span> {data.cruiseType}
+            </div>
+            <div className='flex gap-1 items-center'>
+              <div className="text-gray-500 line-through text-sm">
+                ₹{FormatIndianCurrency(strikeThroughPrice)}
+              </div>
+              <div className="font-semibold text-gray-700 text-sm">
+                <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+              </div>
+            </div>
           </div>
         </div>
       </Link>
-
-      {/* Action button outside Link to prevent nested interactive elements */}
-      {onAction && actionLabel && (
-        <div className="mt-2">
-          <Button
-            disabled={disabled}
-            small
-            label={actionLabel}
-            onClick={handleCancel}
-          />
-        </div>
-      )}
     </div>
-  )
+  );
 });
+
 ListingCard.displayName = "ListingCard";
 export default ListingCard;

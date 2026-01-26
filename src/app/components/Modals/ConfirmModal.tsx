@@ -8,19 +8,20 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import OtpInput from 'react-otp-input';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '@/app/firebase/clientApp';
-import { DocumentData, DocumentSnapshot, Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation'
-import { BookingStatus } from '@/app/enums/enums';
 import * as NProgress from 'nprogress';
 import sendotp from '@/app/actions/getOTP';
 import validateOTP from '@/app/actions/validateOTP';
-import RequestBooking from '@/app/actions/RequestBooking';
 import { toast } from 'react-hot-toast';
-import SendRequestTelegram from '@/app/actions/SendRequestTelegram';
-
-
+import useAuth from '@/app/hooks/useAuth';
+import { BoatDetails } from '@/app/listings/[listingid]/page';
+import { amount } from '@/app/enums/enums';
+import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
+import MakeRazorpay from '@/app/actions/MakeRazorpay';
+import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
+import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
+import FormatToLocalDate from '../Misc/FormatToLocalDate';
+import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -29,22 +30,26 @@ enum STEPS {
 }
 
 interface confirmModalProps {
-    listing: { reservedDates: Date[], getboat: DocumentSnapshot<DocumentData> },
+    boatDetails: BoatDetails,
     modeOfTravel: string,
     finalPrice: number,
     finalHeadCount: number,
-    finalBookingDate: Date,
-    finalMinorCount: number
+    finalCheckInDate: Date,
+    finalCheckOutDate: Date,
+    finalMinorCount: number,
+    isVeg: boolean,
+    bookingTypeId: number | null,
+    roomCount: number,
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, finalPrice, finalHeadCount, finalBookingDate, finalMinorCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, finalMinorCount, isVeg, bookingTypeId, roomCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
     const [isLoading, setIsLoading] = useState(false);
     const [otp, setOtp] = useState('');
-    const [user] = useAuthState(auth);
+    const { user } = useAuth();
     const router = useRouter();
 
     const handlePush = () => {
@@ -53,11 +58,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
         NProgress.done();
     };
 
-    //need to redesign this as inputs are custom react npm's..
     const { register, handleSubmit, setValue, watch, formState: { errors, }, } = useForm<FieldValues>();
 
     const phonenumber = watch('phonenumber');
-    // const otp = watch('otp');
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -81,13 +84,12 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
         } else if (step === STEPS.OTP) {
             return 'verify OTP';
         }
-        return 'Confirm';
-    }, [step]);
+        return `Proceed To Pay Advance`;
+    }, [step,finalPrice]);
 
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-        const cleanedPhoneNumber = data.phonenumber.replace(/-/g, ''); // Remove hyphens
-        //sending OTP
+        const cleanedPhoneNumber = data.phonenumber.replace(/-/g, '');
         if (step === STEPS.PHONENUMBER) {
             if (cleanedPhoneNumber.length < 8) {
                 toast.error("Invalid phonenumber");
@@ -118,7 +120,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
 
         }
 
-        // Validating the OTP
         if (step === STEPS.OTP) {
             try {
                 setIsLoading(true);
@@ -136,7 +137,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
                         toast.error('OTP verification failed');
                     }
                 } else {
-                    // API call failed
                     toast.error('Error verifying OTP');
                 }
             } catch (error) {
@@ -145,48 +145,93 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
             }
         }
 
-        //Raising the request for booking
         if (step === STEPS.SUMMARY) {
-            setIsLoading(true);
-            // Create a new reservation document
-            const reservationData = {
-                Contactnumber: data.phonenumber,
-                BookingDate: finalBookingDate,
-                HeadCount: finalHeadCount,
-                Price: finalPrice as number,
-                Email: user?.email,
-                BoatId: listing.getboat.id,
-                BoatName: listing.getboat.data()?.title,
-                BoatTitle: listing.getboat.data()?.guestTitle,
-                MinorCount: finalMinorCount,
-                Mode: modeOfTravel,
-                Payment: false,
-                Category: listing.getboat.data()?.category,
-                Status: BookingStatus.Requested,
-                Image: listing.getboat.data()?.images[0],
-                CreatedOn: Timestamp.fromDate(new Date()),
-                BoatOwnerPhoneNumber: listing.getboat.data()?.phoneNumber,
-                CruiseType: modeOfTravel
-            };
+            setIsLoading(true)
 
-            await RequestBooking(reservationData)
-                .then(() => {
+            try {
+                const isSharing = bookingTypeId === BookingType.sharing;
+                const finalRoomCount = isSharing ? roomCount : undefined;
+                const tripDateLocal = FormatToLocalDate(finalCheckInDate);
+                const localBookingDate = FormatToLocalDateTime(new Date());
+
+                const bookingData = {
+                    adultCount: finalHeadCount,
+                    boatId: boatDetails.boatId,
+                    bookingDate: localBookingDate,
+                    childCount: finalMinorCount,
+                    contactNumber: cleanedPhoneNumber,
+                    cruiseTypeId: modeOfTravel === BoatCruises.dayCruise ? BoatCruisesId.dayCruise : modeOfTravel === BoatCruises.dayNight ? BoatCruisesId.dayNight : BoatCruisesId.nightStay,
+                    guestPlace: null,
+                    guestUserId: user?.id || 0,
+                    isVeg: isVeg,
+                    price: finalPrice,
+                    tripDate: tripDateLocal,
+                    boardingPoint: boatDetails.boardingPoint,
+                    isSharing: isSharing,
+                    roomCount: finalRoomCount
+                };
+
+                let bookingResponse;
+                try {
+                    bookingResponse = await HandleCreateOnlineBooking(bookingData);
+                } catch (err) {
+                    toast.error('Failed to create booking');
                     setIsLoading(false);
-                    // toast.success('Boat enquiry raised successfully.');
-                    toast('Boat enquiry raised successfully! Confirmation will be received once booking is Approved!.', {
-                        icon: '👏',
-                        duration: 6000,
-                    });
-                    BookingConfirmModal.onClose();
-                    setStep(STEPS.PHONENUMBER);
-                    handlePush();
-                    SendRequestTelegram(finalBookingDate, finalHeadCount, finalMinorCount, finalPrice, data.phonenumber,
-                        modeOfTravel, listing.getboat.data()?.title, listing.getboat.data()?.category, listing.getboat.data()?.roomCount,
-                        listing.getboat.data()?.phoneNumber);
-                })
-                .catch((error) => {
-                    toast.error('something went wrong! Please contact our team');
-                });
+                    return;
+                }
+
+                if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
+                    const bookingId = bookingResponse.data.bookingId;
+                    const metadata = {
+                        onlineBookingId: bookingId
+                    };
+
+                    try {
+                        await MakeRazorpay({
+                            totalPrice: finalPrice,
+                            description: `Booking for ${boatDetails.boatCode}`,
+                            image: boatDetails.boatImages?.[0] || '/placeholder-boat.jpg',
+                            prefill: {
+                                name: user?.name || '',
+                                email: user?.email || '',
+                                contact: cleanedPhoneNumber,
+                            },
+                            metadata: metadata,
+                            onSuccess: () => {
+                                setIsLoading(false);
+                                BookingConfirmModal.onClose();
+                                setStep(STEPS.PHONENUMBER);
+                                handlePush();
+                            },
+                            onError: (err: any) => {
+                                setIsLoading(false);
+                                console.error('Payment Error/Cancelled:', err);
+
+                                // Silently delete the booking
+                                const deletionData = {
+                                    bookingId: bookingId,
+                                };
+                                HandleDeleteOnlineBooking(deletionData).catch(deleteErr => {
+                                    console.error('Failed to delete booking after payment failure:', deleteErr);
+                                });
+                            }
+                        });
+                    } catch (paymentErr) {
+                        console.error('Payment Initialization Error:', paymentErr);
+                        setIsLoading(false);
+                        toast.error('Failed to initialize payment gateway');
+                    }
+                } else {
+                    console.error('Invalid booking response:', bookingResponse);
+                    toast.error('Failed to create booking - Please try again');
+                    setIsLoading(false);
+                }
+
+            } catch (error) {
+                console.error('Payment/Booking Error:', error);
+                setIsLoading(false);
+                toast.error('Something went wrong during payment initialization');
+            }
         }
     }
 
@@ -220,30 +265,29 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ listing, modeOfTravel, fina
             <div className='flex flex-col gap-4 font-sans'>
                 <Heading title='Your Order Summary' />
                 <div className="bg-white p-4 rounded-lg shadow-md">
-                    <p className="text-lg font-semibold">{listing.getboat.data()?.guestTitle}</p>
-                    <p className="text-gray-900">{listing.getboat.data()?.roomCount} Bedroom, {listing.getboat.data()?.category}</p>
-                    <p className="text-gray-900">Booking Date: {finalBookingDate.toDateString()}</p>
-                    <p className="text-gray-900">Total Price: {finalPrice}</p>
+                    <p className="text-lg font-semibold">{boatDetails.boatCode}</p>
+                    <p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>
+                    <p className="text-gray-900">Trip Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
+                    <p className="text-gray-900">Total Price: ₹{finalPrice}</p>
+                    <p className="text-gray-900 flex">Advance Amount:<span className='ml-1 font-semibold text-black'>₹{Math.round(finalPrice * amount.advance)}</span></p>
+                    <p className="text-md font-light text-red-500">Balance Amount Pay at Boat</p>
+                    <p className="text-gray-900">Balance Amount: ₹{Math.round(finalPrice * amount.remaining)}</p>
                 </div>
-                <p className="text-gray-900"> We’ll update you soon. Thanks for waiting!!</p>
-                <p className="text-gray-900">Please note that some boats may be unavailable due to Offline or Spot Bookings.</p>
-                <p className="text-gray-900">Look out for a confirmation message on your WhatsApp or Email!</p>
-                <p className="text-gray-900">If the chosen boat is unavailable, we'll quickly provide a list of alternative options for you to consider.</p>
             </div>
         )
     }
 
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3">
-            <hr />
+            <hr className='border border-gray-300'/>
         </div>
     )
 
     return (
         <Modal
             isOpen={BookingConfirmModal.isOpen}
-            title="Confirmation"
+            title={step === STEPS.SUMMARY ? "Review Booking" : "Confirm your order"}
             actionLabel={actionLabel}
             disabled={isLoading}
             onClose={BookingConfirmModal.onClose}

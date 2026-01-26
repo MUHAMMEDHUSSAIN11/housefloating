@@ -2,49 +2,86 @@
 
 import React from 'react';
 import Link from 'next/link';
-import GetHeroListings, { HeroListing } from '@/app/actions/getHeroListings';
+import GetRandomBoats from '@/app/actions/GetRandomBoats/GetRandomBoats';
 import useSWR from 'swr';
+import { useRouter } from 'next/navigation';
+import useSearchStore from '@/app/hooks/useSearchStore';
+import FormatToLocalDate from '../Misc/FormatToLocalDate';
+import { amount, BoatCruisesId } from '@/app/enums/enums';
 
+
+interface HeroListing {
+  boatId: number;
+  basePrice: number;
+  boatName: string;
+  boatCategory: string;
+  roomCount: number;
+  thumbnailImage: string;
+}
 
 interface GridSectionProps {
   title: string;
-  path: string;
   items: HeroListing[];
 }
 
 
 const ListingHero: React.FC = () => {
 
-  const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetHeroListings, {
+  const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetRandomBoats, {
     revalidateOnFocus: false,
-    dedupingInterval: 600000, // Cache for 5 minutes
-    errorRetryCount: 3, // Retry failed requests
-    refreshInterval: 0, // Don't auto-refresh (or set to 60000 for 1-minute refresh)
+    dedupingInterval: 600000,
+    errorRetryCount: 3,
+    refreshInterval: 0,
   });
 
+  const router = useRouter();
+  const {
+    validateFields,
+    selectedType,
+    selectedCategory,
+    roomCount,
+    selectedDateRange,
+    selectedCruise,
+  } = useSearchStore();
 
-  const GridSection: React.FC<GridSectionProps> = ({ title, items, path }) => (
-    <div className="mb-12">
+  const handleBoatClick = () => {
+    if (validateFields()) {
+      const params = new URLSearchParams();
+      if (selectedType) params.append('type', selectedType.toString());
+      if (selectedCategory) params.append('category', selectedCategory.toString());
+      params.append('rooms', roomCount.toString());
+
+      if (selectedDateRange.startDate) {
+        params.append('startDate', FormatToLocalDate(selectedDateRange.startDate));
+        let calculatedEndDate: Date | null = selectedDateRange.endDate;
+
+        if (selectedCruise === BoatCruisesId.dayCruise) {
+          calculatedEndDate = selectedDateRange.startDate;
+        } else if (selectedCruise === BoatCruisesId.nightStay) {
+          calculatedEndDate = new Date(selectedDateRange.startDate);
+          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
+        }
+
+        if (calculatedEndDate) {
+          params.append('endDate', FormatToLocalDate(calculatedEndDate));
+        }
+      }
+      params.append('cruise', selectedCruise.toString());
+      router.push(`/houseBoats?${params.toString()}`);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const GridSection: React.FC<GridSectionProps> = ({ title, items }) => (
+    <div className="mb-5">
       {/* Section Title */}
       <div className="px-4 sm:px-6 lg:px-8 mb-6">
-        <Link href={`/${path}`}
-          className="inline-flex items-center text-xl sm:text-2xl text-black font-medium hover:text-blue-600 transition-colors duration-300 group"
+        <div
+          className="inline-flex items-center text-xl sm:text-2xl text-black font-medium transition-colors duration-300 group"
         >
           <h2 className="mr-3">{title}</h2>
-          <svg
-            className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </Link>
+        </div>
       </div>
 
       {/* Scrollable Grid - Hidden scrollbar on mobile */}
@@ -57,32 +94,32 @@ const ListingHero: React.FC = () => {
           `}</style>
           <div className="flex space-x-4 pb-4 min-w-max">
             {items.map((item) => (
-              <Link
-                key={item.id}
-                href="/houseBoats"
-                className="flex-shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
+              <div
+                key={item.boatId}
+                onClick={handleBoatClick}
+                className="shrink-0 w-48 bg-white rounded-xl overflow-y-auto shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
               >
                 {/* Image */}
                 <div className="relative h-40 overflow-hidden">
                   <img
-                    src={item.image}
-                    alt={item.title}
+                    src={item.thumbnailImage}
+                    alt={item.boatName}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 {/* Content */}
                 <div className="p-4">
                   <h3 className="text-sm font-medium text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                    {item.title}
+                    {item.boatCategory} • {item.roomCount} Bedroom
                   </h3>
                   <p className="text-sm font-semibold text-gray-900">
-                    ₹{item.dayCruisePrice.toLocaleString('en-IN')}
+                    ₹{Math.round(item.basePrice * amount.commissionPercentage)}
                     <span className="text-sm font-normal text-gray-600 ml-1">
-                      per day
+                      For DayNight
                     </span>
                   </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -92,7 +129,7 @@ const ListingHero: React.FC = () => {
 
   // Skeleton Loading Component
   const SkeletonCard = () => (
-    <div className="flex-shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
+    <div className="shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
       {/* Image Skeleton */}
       <div className="h-40 bg-gray-200"></div>
 
@@ -149,25 +186,22 @@ const ListingHero: React.FC = () => {
       <section className="bg-gray-50 min-h-screen">
         <div className="pt-56 md:pt-40 pb-12">
           {/* Skeleton Sections */}
-          <SkeletonSection title="Houseboats" />
+          <SkeletonSection title="Favourite Picks" />
         </div>
       </section>
     );
   }
 
+  // If no listings, maybe return null or empty?
+  if (listings.length === 0) {
+    return null;
+  }
+
   return (
     <section className="bg-gray-50 h-auto">
-      <div className="pt-56 md:pt-40 ">
-
-        {/* Houseboats Section */}
-        <GridSection title="Houseboats" items={listings} path="houseBoats" />
-
-        {/* Shikara Section */}
-        {/* <GridSection title="Shikara" items={shikaras} path="shikara" /> */}
-
-        {/* Kayaks Section */}
-        {/* <GridSection title="Kayaks" items={kayaks} path="kayaks" /> */}
-
+      <div className="pt-48 lg:pt-36 ">
+        {/* Favourite Picks Section */}
+        <GridSection title="Favourite Picks" items={listings} />
       </div>
     </section>
   );

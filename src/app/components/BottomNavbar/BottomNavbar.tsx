@@ -1,17 +1,17 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { Heart, ShoppingCart } from 'lucide-react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter, usePathname } from 'next/navigation';
-import { auth } from '@/app/firebase/clientApp';
 import useLoginModal from '@/app/hooks/useLoginModal';
 import NProgress from 'nprogress';
+import useAuth from '@/app/hooks/useAuth';
 
 const BottomNavbar = () => {
-    const [user] = useAuthState(auth);
+    const { user } = useAuth();
     const [pendingNavigation, setPendingNavigation] = useState('');
     const router = useRouter();
     const pathname = usePathname();
+    const isListingPage = pathname?.startsWith('/listings/');
     const loginModal = useLoginModal();
 
     // Determine active tab based on current pathname
@@ -74,19 +74,19 @@ const BottomNavbar = () => {
     const activeTab = getActiveTab();
 
     return (
-        <div className='fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50'>
+        <div className={`fixed ${isListingPage ? 'hidden' : 'bottom-0 border-t ' } left-0 right-0 bg-white border-gray-200 md:hidden z-40`}>
             <div className='flex flex-row justify-around items-center py-2 px-1'>
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
-                    
+
                     return (
-                        <button
+                        <button  
                             key={tab.id}
                             onClick={tab.onClick}
                             className='flex flex-col items-center justify-center flex-1 py-2 px-1 transition-colors duration-200'
                         >
-                            <div className='flex flex-col items-center space-y-1'>
+                            <div className='flex flex-col items-center space-y-1 hover:text-blue-400'>
                                 <Icon
                                     className={`w-6 h-6 ${isActive ? tab.color : 'text-gray-400'
                                         } transition-colors duration-200`}
