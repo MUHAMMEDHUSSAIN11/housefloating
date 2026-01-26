@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import Image from 'next/image';
 import Button from '../components/Misc/Button';
-import { IoBoat, IoCalendarNumberSharp, IoCheckmarkCircle, IoPersonSharp, IoTime } from 'react-icons/io5';
+import { IoBoat, IoCalendarNumberSharp, IoPersonSharp } from 'react-icons/io5';
 import { BookingStatuses } from '../enums/enums';
 import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
@@ -89,22 +89,18 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
                   <IoCalendarNumberSharp className="text-blue-600" size={20} />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 uppercase tracking-wide">Trip Date</p>
-                  <p className="font-semibold text-gray-900">{formatDate(new Date(details.tripDate))}</p>
+                  <p className="text-xs text-gray-600 uppercase tracking-wide">Booking Date</p>
+                  <p className="font-semibold text-gray-900">{formatDate(new Date(details.bookingDate))}</p>
                 </div>
               </div>
 
-              <div className='flex items-center gap-3 p-3 bg-gray-50 rounded-lg'>
+              <div className='flex items-center gap-3 p-3 bg-blue-50 rounded-lg'>
                 <div className="shrink-0">
-                  {'Confirmed' == "Confirmed" ? (
-                    <IoCheckmarkCircle className="text-green-600" size={20} />
-                  ) : (
-                    <IoTime className="text-orange-500" size={20} />
-                  )}
+                  <IoCalendarNumberSharp className="text-blue-600" size={20} />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 uppercase tracking-wide">Status</p>
-                  <p className="font-semibold text-gray-900">{details.bookingStatus}</p>
+                  <p className="text-xs text-gray-600 uppercase tracking-wide">Trip Date</p>
+                  <p className="font-semibold text-gray-900">{formatDate(new Date(details.tripDate))}</p>
                 </div>
               </div>
 
