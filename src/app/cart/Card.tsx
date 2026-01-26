@@ -166,7 +166,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
                     <span className='text-yellow-700 font-medium'>Remaining Amount</span>
                     <span className='text-lg font-bold text-yellow-900'>₹{details.price - details.advanceAmount}</span>
                   </div>
-                  <p className='text-xs text-yellow-600'>To be paid at check-in</p>
+                  <p className='text-md text-red-600'>To be paid at before check-in</p>
                 </div>
               </div>
             </div>
