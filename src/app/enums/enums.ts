@@ -1,6 +1,7 @@
 export enum BookingStatuses {
     Booked = 1,
     Cancelled = 2,
+    PaymentPending = 3,
 }
 
 export enum Categories {
