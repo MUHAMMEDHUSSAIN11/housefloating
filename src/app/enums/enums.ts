@@ -10,6 +10,11 @@ export enum Categories {
     All = 4,
 }
 
+export enum BoatBookingTypes {
+    onlineBooked = 'Online',
+    onlineShared = 'OnlineShared'
+}
+
 export enum amount {
     advance = 0.3,
     remaining = 0.7,
