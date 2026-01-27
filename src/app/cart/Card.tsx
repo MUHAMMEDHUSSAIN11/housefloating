@@ -43,6 +43,8 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
         return "bg-green-100 text-green-800 border-green-200";
       case BookingStatuses.Cancelled:
         return "bg-red-100 text-red-800 border-red-200";
+        case BookingStatuses.PaymentPending:
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
@@ -70,7 +72,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             </span>
           </div>
           <div className="absolute top-4 right-4">
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold border bg-yellow-100 text-yellow-800 border-yellow-200`}>
+            <span className={`px-3 py-1 rounded-full text-xs font-semibold border bg-blue-100 text-blue-800 border-blue-200`}>
               {bookingType}
             </span>
           </div>
@@ -178,12 +180,11 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
             </div>
 
             {/* Action Buttons */}
-            <div className='space-y-3 mt-2 md:mt-6 pb-0'>
+            <div className='space-y-3 mt-2 pb-0'>
               {onAction && actionLabel && (
                 <Button
                   disabled={details.bookingStatusId === BookingStatuses.Cancelled || !IsDateOver}
-                  outline
-                  small
+                  color='bg-red-500/80'
                   label={actionLabel}
                   onClick={handleCancel}
                 />
