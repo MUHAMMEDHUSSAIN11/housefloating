@@ -22,6 +22,7 @@ import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreate
 import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 import FormatToLocalDate from '../Misc/FormatToLocalDate';
 import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
+import { sendAllEmails } from '@/app/actions/Emailsender/emailsender';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -85,7 +86,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             return 'verify OTP';
         }
         return `Proceed To Pay Advance`;
-    }, [step,finalPrice]);
+    }, [step, finalPrice]);
 
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -182,6 +183,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
                 if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
                     const bookingId = bookingResponse.data.bookingId;
+                    const boatName = bookingResponse.data.boatName;
                     const metadata = {
                         onlineBookingId: bookingId
                     };
@@ -198,6 +200,27 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             },
                             metadata: metadata,
                             onSuccess: () => {
+                                const emailData = {
+                                    boatCode: boatDetails.boatCode,
+                                    boatName: boatName || boatDetails.boatCode,
+                                    boatImage: boatDetails.boatImages?.[0],
+                                    bookingDate: localBookingDate,
+                                    bookingId: bookingId,
+                                    cruiseType: modeOfTravel,
+                                    tripDate: tripDateLocal,
+                                    guestName: user?.name || 'Guest',
+                                    guestPhone: cleanedPhoneNumber,
+                                    guestEmail: user?.email,
+                                    ownerEmail: boatDetails.ownerEmail,
+                                    totalPrice: finalPrice,
+                                    advanceAmount: Math.round(finalPrice * amount.advance),
+                                    remainingAmount: Math.round(finalPrice * amount.remaining),
+                                };
+
+                                sendAllEmails(emailData).catch(err => {
+                                    console.error('Email sending failed:', err);
+                                });
+
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
                                 setStep(STEPS.PHONENUMBER);
@@ -281,7 +304,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3">
-            <hr className='border border-gray-300'/>
+            <hr className='border border-gray-300' />
         </div>
     )
 
