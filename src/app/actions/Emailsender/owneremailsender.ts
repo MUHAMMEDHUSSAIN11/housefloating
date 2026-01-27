@@ -11,6 +11,11 @@ export async function sendOwnerEmail(data: any) {
         bookingDate,
         bookingId,
         cruiseType,
+        boatCategory,
+        boatRoomCount,
+        bookingType,
+        adultCount,
+        childCount,
         tripDate,
         guestName,
         guestPhone,
@@ -31,16 +36,14 @@ export async function sendOwnerEmail(data: any) {
                 <p style="font-size: 16px;">Hello Owner,</p>
                 
                 <div style="font-size: 1.1em; line-height: 1.6; margin: 20px 0; color: #1a1a1a;">
-                    Your boat <strong>${boatName}</strong> on <strong>${tripDate}</strong> for <strong>${cruiseType}</strong> with <strong>${guestName}</strong> has been booked. 
-                    Guest phone number is <strong>${guestPhone}</strong>.
+                    Your boat <strong>${boatName}</strong> on <strong>${new Date(tripDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</strong> for <strong>${cruiseType}</strong> with <strong>${guestName}</strong> has been booked. 
                 </div>
 
                 <div style="display: flex; gap: 20px; align-items: flex-start; background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 24px;">
                     ${boatImage ? `<img src="${boatImage}" alt="${boatName}" style="width: 140px; height: 90px; object-fit: cover; border-radius: 6px;">` : ''}
                     <div>
-                        <h3 style="margin: 0; color: #333; font-size: 18px;">${boatName}</h3>
+                        <h3 style="margin: 0; color: #333; font-size: 18px;">${boatName},${boatCategory},${bookingType}</h3>
                         <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Booking ID: <strong>#${bookingId}</strong></p>
-                        <p style="margin: 2px 0 0; color: #666; font-size: 14px;">Boat Code: <strong>${boatCode}</strong></p>
                     </div>
                 </div>
                 
@@ -51,12 +54,28 @@ export async function sendOwnerEmail(data: any) {
                             <tr><td style="padding: 6px 0; color: #777;">Trip Date</td><td style="padding: 6px 0; font-weight: 500;">${new Date(tripDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td></tr>
                             <tr><td style="padding: 6px 0; color: #777;">Booking Date</td><td style="padding: 6px 0; font-weight: 500;">${new Date(bookingDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td></tr>
                             <tr><td style="padding: 6px 0; color: #777;">Cruise Type</td><td style="padding: 6px 0; font-weight: 500;">${cruiseType}</td></tr>
+                            <tr><td style="padding: 6px 0; color: #777;">Adult Count</td><td style="padding: 6px 0; font-weight: 500;">${adultCount}</td></tr>
+                            <tr><td style="padding: 6px 0; color: #777;">Child Count</td><td style="padding: 6px 0; font-weight: 500;">${childCount}</td></tr>
                         </table>
                     </div>
                 </div>
 
                 <div style="border: 2px solid #28a745; padding: 20px; border-radius: 8px; background-color: #f6fffa;">
                     <h3 style="margin: 0 0 15px; color: #28a745; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;">Payment Information</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 15px; margin-bottom: 15px;">
+                        <tr>
+                            <td style="padding: 6px 0; color: #155724;">Total Amount</td>
+                            <td style="padding: 6px 0; text-align: right; font-weight: 700; color: #155724; font-size: 18px;">₹${totalPrice}</td>
+                        </tr>
+                        <tr style="border-top: 1px dashed #28a745;">
+                            <td style="padding: 6px 0; color: #333;">Advance (30%)</td>
+                            <td style="padding: 6px 0; text-align: right; font-weight: 600; color: #333;">₹${advanceAmount}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #333;">Remaining</td>
+                            <td style="padding: 6px 0; text-align: right; font-weight: 600; color: #333;">₹${remainingAmount}</td>
+                        </tr>
+                    </table>
                     <p style="margin: 8px 0; font-size: 15px; font-weight: bold; color: #155724;">This booking Housefloating confirm.</p>
                     <p style="margin: 8px 0; font-size: 14px; color: #333;">Advance 30% (₹${advanceAmount}) already taken by Housefloating.</p>
                     <p style="margin: 8px 0; font-size: 14px; color: #333;">Remaining amount (₹${remainingAmount}) guest paid before check in.</p>

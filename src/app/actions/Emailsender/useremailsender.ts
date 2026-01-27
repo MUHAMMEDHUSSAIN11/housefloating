@@ -9,8 +9,13 @@ export async function sendUserEmail(data: any) {
         boatName,
         boatImage,
         bookingId,
+        bookingType,
+        boatCategory,
+        boatRoomCount,
         cruiseType,
         tripDate,
+        adultCount,
+        childCount,
         totalPrice,
         advanceAmount,
         remainingAmount
@@ -26,12 +31,12 @@ export async function sendUserEmail(data: any) {
             
             <div style="padding: 30px;">
                 <p style="font-size: 18px; margin-top: 0;">Hi there,</p>
-                <p>Your booking for <strong>${boatName}</strong> has been successfully confirmed. We've reserved your spot for a memorable trip.</p>
+                <p>Your booking for <strong>${boatCode}</strong> has been successfully confirmed. We've reserved your spot for a memorable trip.</p>
                 
                 <div style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 25px 0;">
                     ${boatImage ? `<img src="${boatImage}" alt="${boatName}" style="width: 140px; height: 90px; object-fit: cover; border-radius: 8px;">` : ''}
                     <div>
-                        <h3 style="margin: 0; color: #007bff; font-size: 18px;">${boatName}</h3>
+                        <h3 style="margin: 0; color: #007bff; font-size: 18px;">${boatCode},${boatCategory},${bookingType}</h3>
                         <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Booking ID: <strong>#${bookingId}</strong></p>
                         <p style="margin: 2px 0 0; color: #666; font-size: 14px;">Boat Code: <strong>${boatCode}</strong></p>
                     </div>
@@ -40,8 +45,10 @@ export async function sendUserEmail(data: any) {
                 <div style="margin-bottom: 25px;">
                     <h3 style="font-size: 16px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px;">Trip Overview</h3>
                     <table style="width: 100%; border-collapse: collapse;">
-                        <tr><td style="padding: 8px 0; color: #6c757d;">Trip Date</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${tripDate}</td></tr>
+                        <tr><td style="padding: 8px 0; color: #6c757d;">Trip Date</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${new Date(tripDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td></tr>
                         <tr><td style="padding: 8px 0; color: #6c757d;">Cruise Type</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${cruiseType}</td></tr>
+                        <tr><td style="padding: 8px 0; color: #6c757d;">Adult Count</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${adultCount}</td></tr>
+                        <tr><td style="padding: 8px 0; color: #6c757d;">Child Count</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${childCount}</td></tr>
                         <tr><td style="padding: 15px 0 8px; color: #6c757d; font-size: 18px;">Total Price</td><td style="padding: 15px 0 8px; text-align: right; font-weight: 700; color: #28a745; font-size: 20px;">₹${totalPrice}</td></tr>
                     </table>
                 </div>

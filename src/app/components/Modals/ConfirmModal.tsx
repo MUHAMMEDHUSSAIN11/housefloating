@@ -15,7 +15,7 @@ import validateOTP from '@/app/actions/validateOTP';
 import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
-import { amount } from '@/app/enums/enums';
+import { amount, BoatBookingTypes } from '@/app/enums/enums';
 import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
@@ -183,7 +183,10 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
                 if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
                     const bookingId = bookingResponse.data.bookingId;
+                    const bookingType = bookingResponse.data.bookingType === BoatBookingTypes.onlineBooked ? 'Private' : 'Sharing';
                     const boatName = bookingResponse.data.boatName;
+                    const adultCount = bookingResponse.data.adultCount;
+                    const childCount = bookingResponse.data.childCount;
                     const metadata = {
                         onlineBookingId: bookingId
                     };
@@ -203,9 +206,14 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 const emailData = {
                                     boatCode: boatDetails.boatCode,
                                     boatName: boatName || boatDetails.boatCode,
+                                    boatCategory: boatDetails.boatCategory,
+                                    boatRoomCount: boatDetails.bedroomCount,
                                     boatImage: boatDetails.boatImages?.[0],
+                                    bookingType: bookingType,
                                     bookingDate: localBookingDate,
                                     bookingId: bookingId,
+                                    adultCount: adultCount,
+                                    childCount: childCount,
                                     cruiseType: modeOfTravel,
                                     tripDate: tripDateLocal,
                                     guestName: user?.name || 'Guest',
