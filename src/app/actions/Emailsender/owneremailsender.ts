@@ -42,7 +42,7 @@ export async function sendOwnerEmail(data: any) {
                 <div style="display: flex; gap: 20px; align-items: flex-start; background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 24px;">
                     ${boatImage ? `<img src="${boatImage}" alt="${boatName}" style="width: 140px; height: 90px; object-fit: cover; border-radius: 6px;">` : ''}
                     <div>
-                        <h3 style="margin: 0; color: #333; font-size: 18px;">${boatName},${boatCategory},${bookingType}</h3>
+                        <h3 style="margin: 0; color: #333; font-size: 18px;">${boatName}, ${boatCategory}${bookingType === 'Private' ? `, ${boatRoomCount} Rooms` : ''}, ${bookingType}</h3>
                         <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Booking ID: <strong>#${bookingId}</strong></p>
                     </div>
                 </div>

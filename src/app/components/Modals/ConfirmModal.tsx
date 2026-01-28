@@ -281,7 +281,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
         bodyContent = (
             <div className='flex flex-col gap-4'>
                 <Heading title="verify your phonenumber" />
-                <OtpInput value={otp} inputStyle={{ border: "1px solid transparent", borderRadius: "8px", width: "54px", height: "54px", fontSize: "12px", color: "#000", fontWeight: "400", caretColor: "blue" }}
+                <OtpInput value={otp} inputStyle={{ border: "1px solid #d1d5db", borderRadius: "8px", width: "54px", height: "54px", fontSize: "16px", color: "#000", fontWeight: "400", caretColor: "blue" }}
                     shouldAutoFocus={true}
                     onChange={setOtp}
                     numInputs={4}

@@ -34,9 +34,9 @@ export async function sendUserEmail(data: any) {
                 <p>Your booking for <strong>${boatCode}</strong> has been successfully confirmed. We've reserved your spot for a memorable trip.</p>
                 
                 <div style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 25px 0;">
-                    ${boatImage ? `<img src="${boatImage}" alt="${boatName}" style="width: 140px; height: 90px; object-fit: cover; border-radius: 8px;">` : ''}
+                    ${boatImage ? `<img src="${boatImage}" alt="${boatCode}" style="width: 140px; height: 90px; object-fit: cover; border-radius: 8px;">` : ''}
                     <div>
-                        <h3 style="margin: 0; color: #007bff; font-size: 18px;">${boatCode},${boatCategory},${bookingType}</h3>
+                        <h3 style="margin: 0; color: #007bff; font-size: 18px;">${boatCode}, ${boatCategory}${bookingType === 'Private' ? `, ${boatRoomCount} Rooms` : ''}, ${bookingType}</h3>
                         <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Booking ID: <strong>#${bookingId}</strong></p>
                         <p style="margin: 2px 0 0; color: #666; font-size: 14px;">Boat Code: <strong>${boatCode}</strong></p>
                     </div>

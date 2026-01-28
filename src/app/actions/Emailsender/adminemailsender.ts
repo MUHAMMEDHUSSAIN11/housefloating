@@ -41,7 +41,7 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
                 <div style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px solid #e9ecef; margin-bottom: 25px;">
                     ${boatImage ? `<img src="${boatImage}" alt="${boatName}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">` : ''}
                     <div style="flex: 1;">
-                        <h2 style="margin: 0 0 8px; color: #667eea; font-size: 20px;">${boatName},${boatCategory},${bookingType}</h2>
+                        <h2 style="margin: 0 0 8px; color: #667eea; font-size: 20px;">${boatName}, ${boatCategory}${bookingType === 'Private' ? `, ${boatRoomCount} Rooms` : ''}, ${bookingType}</h2>
                         <p style="margin: 4px 0; color: #666; font-size: 14px;">Booking ID: <strong style="color: #333;">#${bookingId}</strong></p>
                         <span style="display: inline-block; margin-top: 8px; background-color: #28a745; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">NEW BOOKING</span>
                     </div>
