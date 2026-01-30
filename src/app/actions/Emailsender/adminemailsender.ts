@@ -15,6 +15,7 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
         adultCount,
         childCount,
         guestEmail,
+        guestPlace,
         totalPrice,
         boatCategory,
         boatRoomCount,
@@ -82,6 +83,10 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
                             <tr style="border-bottom: 1px solid #f0f0f0;">
                                 <td style="padding: 10px 0; color: #6c757d; width: 40%;">Name</td>
                                 <td style="padding: 10px 0; font-weight: 600; color: #333;">${guestName}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #f0f0f0;">
+                                <td style="padding: 10px 0; color: #6c757d; width: 40%;">Place</td>
+                                <td style="padding: 10px 0; font-weight: 600; color: #333;">${guestPlace}</td>
                             </tr>
                             <tr style="border-bottom: 1px solid #f0f0f0;">
                                 <td style="padding: 10px 0; color: #6c757d;">Phone</td>

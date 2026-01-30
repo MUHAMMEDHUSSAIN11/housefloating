@@ -5,7 +5,6 @@ import { sendMail } from "@/app/lib/mail/mailer";
 export async function sendOwnerEmail(data: any) {
     const {
         ownerEmail,
-        boatCode,
         boatName,
         boatImage,
         bookingDate,
@@ -18,7 +17,7 @@ export async function sendOwnerEmail(data: any) {
         childCount,
         tripDate,
         guestName,
-        guestPhone,
+        guestPlace,
         totalPrice,
         advanceAmount,
         remainingAmount
@@ -36,7 +35,7 @@ export async function sendOwnerEmail(data: any) {
                 <p style="font-size: 16px;">Hello Owner,</p>
                 
                 <div style="font-size: 1.1em; line-height: 1.6; margin: 20px 0; color: #1a1a1a;">
-                    Your boat <strong>${boatName}</strong> on <strong>${new Date(tripDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</strong> for <strong>${cruiseType}</strong> with <strong>${guestName}</strong> has been booked. 
+                    Your boat <strong>${boatName}</strong> on <strong>${new Date(tripDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</strong> for <strong>${cruiseType}</strong> with <strong>${guestName}</strong> from ${guestPlace} has been booked. 
                 </div>
 
                 <div style="display: flex; gap: 20px; align-items: flex-start; background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 24px;">
