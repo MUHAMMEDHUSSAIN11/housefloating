@@ -237,7 +237,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             onSuccess: () => {
                                 const emailData = {
                                     boatCode: boatDetails.boatCode,
-                                    boatName: boatName || boatDetails.boatCode,
+                                    boatName: boatName,
                                     boatCategory: boatDetails.boatCategory,
                                     boatRoomCount: boatDetails.bedroomCount,
                                     boatImage: boatDetails.boatImages?.[0],
