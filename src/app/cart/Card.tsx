@@ -174,7 +174,8 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
                     <span className='text-xs sm:text-sm lg:text-md text-yellow-700 font-medium'>Remaining Amount</span>
                     <span className='text-sm sm:text-sm md:text-lg font-bold text-yellow-900'>₹{details.price - details.advanceAmount}</span>
                   </div>
-                  <p className='text-[10px] sm:text-xs md:text-md text-red-600'>To be paid at before check-in</p>
+                  <p className='text-[12px] sm:text-xs md:text-md text-red-600'>To be paid at before check-in</p>
+                  <p className='text-[10px] sm:text-xs md:text-md text-red-400'>(Card and Cheque not Accepted)</p>
                 </div>
               </div>
             </div>
