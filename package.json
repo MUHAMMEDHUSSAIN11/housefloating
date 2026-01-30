@@ -17,6 +17,7 @@
     "@types/nodemailer": "^7.0.9",
     "autoprefixer": "^10.4.23",
     "axios": "^1.13.2",
+    "country-state-city": "^3.2.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
     "encoding": "^0.1.13",
