@@ -7,6 +7,7 @@ export interface CreateOnlineBookingData {
     childCount: number | string;
     contactNumber: string;
     cruiseTypeId: number;
+    guestName: string;
     guestPlace: string | null;
     guestUserId: number | string;
     isVeg: boolean;

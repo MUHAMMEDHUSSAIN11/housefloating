@@ -1,6 +1,7 @@
 export enum BookingStatuses {
     Booked = 1,
     Cancelled = 2,
+    PaymentPending = 3,
 }
 
 export enum Categories {
@@ -8,6 +9,11 @@ export enum Categories {
     Premium = 2,
     Luxury = 3,
     All = 4,
+}
+
+export enum BoatBookingTypes {
+    onlineBooked = 'Online',
+    onlineShared = 'OnlineShared'
 }
 
 export enum amount {

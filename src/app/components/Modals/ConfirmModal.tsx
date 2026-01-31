@@ -4,7 +4,8 @@ import useBookingConfirmModal from '@/app/hooks/useBookingConfirmModal';
 import React, { useMemo, useState } from 'react'
 import Heading from '../Misc/Heading';
 import Modal from './Modal';
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { FieldValues, SubmitHandler, useForm, Controller } from 'react-hook-form';
+import Select from 'react-select';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import OtpInput from 'react-otp-input';
@@ -15,18 +16,23 @@ import validateOTP from '@/app/actions/validateOTP';
 import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
-import { amount } from '@/app/enums/enums';
+import { amount, BoatBookingTypes } from '@/app/enums/enums';
 import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
 import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 import FormatToLocalDate from '../Misc/FormatToLocalDate';
 import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
+import { sendAllEmails } from '@/app/actions/Emailsender/emailsender';
+import Input from '../Inputs/Input';
+import countries from 'world-countries';
+import { State } from 'country-state-city'
 
 enum STEPS {
     PHONENUMBER = 0,
     OTP = 1,
-    SUMMARY = 2,
+    GUESTDETAILS = 2,
+    SUMMARY = 3,
 }
 
 interface confirmModalProps {
@@ -58,7 +64,14 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
         NProgress.done();
     };
 
-    const { register, handleSubmit, setValue, watch, formState: { errors, }, } = useForm<FieldValues>();
+    const { register, handleSubmit, setValue, watch, control, formState: { errors, }, } = useForm<FieldValues>({
+        defaultValues: {
+            guestCountry: 'India',
+            guestState: '',
+            guestName: '',
+            phonenumber: ''
+        }
+    });
 
     const phonenumber = watch('phonenumber');
 
@@ -83,9 +96,11 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             return 'Get OTP';
         } else if (step === STEPS.OTP) {
             return 'verify OTP';
+        } else if (step === STEPS.GUESTDETAILS) {
+            return 'Confirm Details'
         }
         return `Proceed To Pay Advance`;
-    }, [step,finalPrice]);
+    }, [step, finalPrice]);
 
 
     const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -145,6 +160,18 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             }
         }
 
+        if (step === STEPS.GUESTDETAILS) {
+            if (data.guestName.trim() === "") {
+                toast.error("Guest name is required");
+                return;
+            }
+            if (data.guestCountry === 'India' && !data.guestState) {
+                toast.error("Please select a state");
+                return;
+            }
+            onNext();
+        }
+
         if (step === STEPS.SUMMARY) {
             setIsLoading(true)
 
@@ -154,6 +181,11 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 const tripDateLocal = FormatToLocalDate(finalCheckInDate);
                 const localBookingDate = FormatToLocalDateTime(new Date());
 
+                const guestName = data.guestName;
+                const country = data.guestCountry;
+                const state = data.guestState;
+                const guestPlace = state ? `${state}, ${country}` : country;
+
                 const bookingData = {
                     adultCount: finalHeadCount,
                     boatId: boatDetails.boatId,
@@ -161,7 +193,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     childCount: finalMinorCount,
                     contactNumber: cleanedPhoneNumber,
                     cruiseTypeId: modeOfTravel === BoatCruises.dayCruise ? BoatCruisesId.dayCruise : modeOfTravel === BoatCruises.dayNight ? BoatCruisesId.dayNight : BoatCruisesId.nightStay,
-                    guestPlace: null,
+                    guestName: guestName,
+                    guestPlace: guestPlace,
                     guestUserId: user?.id || 0,
                     isVeg: isVeg,
                     price: finalPrice,
@@ -182,6 +215,10 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
                 if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
                     const bookingId = bookingResponse.data.bookingId;
+                    const bookingType = bookingResponse.data.bookingType === BoatBookingTypes.onlineBooked ? 'Private' : 'Sharing';
+                    const boatName = bookingResponse.data.boatName;
+                    const adultCount = bookingResponse.data.adultCount;
+                    const childCount = bookingResponse.data.childCount;
                     const metadata = {
                         onlineBookingId: bookingId
                     };
@@ -198,6 +235,33 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             },
                             metadata: metadata,
                             onSuccess: () => {
+                                const emailData = {
+                                    boatCode: boatDetails.boatCode,
+                                    boatName: boatName,
+                                    boatCategory: boatDetails.boatCategory,
+                                    boatRoomCount: boatDetails.bedroomCount,
+                                    boatImage: boatDetails.boatImages?.[0],
+                                    bookingType: bookingType,
+                                    bookingDate: localBookingDate,
+                                    bookingId: bookingId,
+                                    adultCount: adultCount,
+                                    childCount: childCount,
+                                    cruiseType: modeOfTravel,
+                                    tripDate: tripDateLocal,
+                                    guestName: guestName,
+                                    guestPlace: guestPlace,
+                                    guestPhone: cleanedPhoneNumber,
+                                    guestEmail: user?.email,
+                                    ownerEmail: boatDetails.ownerEmail,
+                                    totalPrice: finalPrice,
+                                    advanceAmount: Math.round(finalPrice * amount.advance),
+                                    remainingAmount: Math.round(finalPrice * amount.remaining),
+                                };
+
+                                sendAllEmails(emailData).catch(err => {
+                                    console.error('Email sending failed:', err);
+                                });
+
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
                                 setStep(STEPS.PHONENUMBER);
@@ -250,7 +314,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
         bodyContent = (
             <div className='flex flex-col gap-4'>
                 <Heading title="verify your phonenumber" />
-                <OtpInput value={otp} inputStyle={{ border: "1px solid transparent", borderRadius: "8px", width: "54px", height: "54px", fontSize: "12px", color: "#000", fontWeight: "400", caretColor: "blue" }}
+                <OtpInput value={otp} inputStyle={{ border: "1px solid #d1d5db", borderRadius: "8px", width: "54px", height: "54px", fontSize: "16px", color: "#000", fontWeight: "400", caretColor: "blue" }}
                     shouldAutoFocus={true}
                     onChange={setOtp}
                     numInputs={4}
@@ -261,15 +325,150 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
         )
     }
 
-    if (step === STEPS.SUMMARY) {
+    if (step === STEPS.GUESTDETAILS) {
+        const selectedCountry = watch('guestCountry');
+
+        const countryOptions = countries
+            .map((country) => ({
+                value: country.name.common,
+                label: country.name.common,
+                flag: country.flag,
+                code: country.cca2.toLowerCase()
+            }))
+            .sort((a, b) => a.value.localeCompare(b.value));
+
+        const selectedCountryCode = countries.find(c => c.name.common === selectedCountry)?.cca2 || 'IN';
+        const dynamicStates = State.getStatesOfCountry(selectedCountryCode);
+
+        const stateOptions = dynamicStates
+            .map((state) => ({
+                value: state.name,
+                label: state.name
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+
         bodyContent = (
-            <div className='flex flex-col gap-4 font-sans'>
+            <div className="flex flex-col gap-4">
+                <Heading title="Confirm your details" subtitle="Please provide your name and location" />
+
+                <Input
+                    id="guestName"
+                    label="Guest Name"
+                    register={register}
+                    errors={errors}
+                    required
+                />
+
+                <div className="flex flex-col gap-1">
+                    <label className="text-sm font-semibold text-neutral-500 ml-1">Country</label>
+                    <Controller
+                        name="guestCountry"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                            <Select
+                                {...field}
+                                options={countryOptions}
+                                value={countryOptions.find(c => c.value === field.value) || null}
+                                onChange={(val: any) => {
+                                    field.onChange(val?.value || '');
+                                    // Reset state when country changes from India
+                                    if (val?.value !== 'India') {
+                                        setValue('guestState', '');
+                                    }
+                                }}
+                                placeholder="Select Country"
+                                formatOptionLabel={(option: any) => (
+                                    <div className="flex items-center gap-2">
+                                        <img
+                                            src={`https://flagcdn.com/w20/${option.code}.png`}
+                                            alt={option.value}
+                                            width="20"
+                                            className="rounded-sm"
+                                        />
+                                        <span>{option.label}</span>
+                                    </div>
+                                )}
+                                styles={{
+                                    control: (provided) => ({
+                                        ...provided,
+                                        padding: '5px',
+                                        borderRadius: '0.375rem',
+                                        borderWidth: '2px',
+                                        borderColor: '#d4d4d8',
+                                        boxShadow: 'none',
+                                        '&:hover': {
+                                            borderColor: '#000'
+                                        }
+                                    }),
+                                    menu: (provided) => ({
+                                        ...provided,
+                                        zIndex: 9999
+                                    })
+                                }}
+                            />
+                        )}
+                    />
+                </div>
+
+                {selectedCountry === 'India' && (
+                    <div className="flex flex-col gap-1">
+                        <label className="text-sm font-semibold text-neutral-500 ml-1">State / Province</label>
+                        <Controller
+                            name="guestState"
+                            control={control}
+                            rules={{ required: selectedCountry === 'India' }}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    options={stateOptions}
+                                    value={stateOptions.find(s => s.value === field.value) || null}
+                                    onChange={(val: any) => field.onChange(val?.value || '')}
+                                    placeholder="Select State / Province"
+                                    styles={{
+                                        control: (provided) => ({
+                                            ...provided,
+                                            padding: '5px',
+                                            borderRadius: '0.375rem',
+                                            borderWidth: '2px',
+                                            borderColor: '#d4d4d8',
+                                            boxShadow: 'none',
+                                            '&:hover': {
+                                                borderColor: '#000'
+                                            }
+                                        }),
+                                        menu: (provided) => ({
+                                            ...provided,
+                                            zIndex: 9999
+                                        })
+                                    }}
+                                />
+                            )}
+                        />
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    if (step === STEPS.SUMMARY) {
+        const guestName = watch('guestName');
+        const country = watch('guestCountry');
+        const state = watch('guestState');
+        const guestPlace = state ? `${state}, ${country}` : country;
+
+        bodyContent = (
+            <div className='flex flex-col gap-4 font-sans text-[15px]'>
                 <Heading title='Your Order Summary' />
-                <div className="bg-white p-4 rounded-lg shadow-md">
+                <div className="bg-white p-4 rounded-lg shadow-md flex flex-col gap-1">
                     <p className="text-lg font-semibold">{boatDetails.boatCode}</p>
                     <p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>
+                    <hr className="my-1 border-gray-100" />
+                    <p className="text-gray-900 font-medium">Guest: <span className="font-normal">{guestName}</span></p>
+                    <p className="text-gray-900 font-medium">Location: <span className="font-normal">{guestPlace}</span></p>
                     <p className="text-gray-900">Trip Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
+                    <hr className="my-1 border-gray-100" />
                     <p className="text-gray-900">Total Price: ₹{finalPrice}</p>
                     <p className="text-gray-900 flex">Advance Amount:<span className='ml-1 font-semibold text-black'>₹{Math.round(finalPrice * amount.advance)}</span></p>
                     <p className="text-md font-light text-red-500">Balance Amount Pay at Boat</p>
@@ -281,7 +480,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
     const footerContent = (
         <div className="flex flex-col gap-4 mt-3">
-            <hr className='border border-gray-300'/>
+            <hr className='border border-gray-300' />
         </div>
     )
 

@@ -34,6 +34,7 @@ export interface BoatDetails {
   bathroomCount: number;
   prices: Prices;
   availableRoomCount?: number;
+  ownerEmail: string;
 }
 
 interface Iparams {
