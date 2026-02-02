@@ -5,7 +5,7 @@ const Footer = () => {
     return (
 
         <footer className='bg-slate-100 '>
-            <div className="mx-auto w-full max-w-screen-xl p-4 py-10 lg:py-8">
+            <div className="mx-auto w-full max-w-7xl p-4 py-10 lg:py-8">
                 <div className="md:flex md:justify-between">
                     <div className="mb-6 md:mb-0">
                         <a href="" className="flex items-center">
@@ -41,7 +41,7 @@ const Footer = () => {
                 </div>
                 {/* <hr className="my-6 border-gray-200 sm:mx-auto lg:my-8" /> */}
                 <div className="sm:flex sm:items-center sm:justify-between py-12">
-                    <span className="text-sm text-gray-900 sm:text-center ">© 2025 <a href="" className="hover:underline">Housefloating™</a>. All Rights Reserved.
+                    <span className="text-sm text-gray-900 sm:text-center ">© 2026 <a href="" className="hover:underline">Housefloating™</a>. All Rights Reserved.
                     </span>
                     <div className="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
                         <a href="https://www.facebook.com/share/16nwjgPQJh/?mibextid=wwXIfr" className="text-gray-900">
