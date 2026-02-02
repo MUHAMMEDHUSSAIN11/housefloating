@@ -452,6 +452,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
     }
 
     if (step === STEPS.SUMMARY) {
+        const isSharing = bookingTypeId === BookingType.sharing;
         const guestName = watch('guestName');
         const country = watch('guestCountry');
         const state = watch('guestState');
@@ -462,12 +463,15 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 <Heading title='Your Order Summary' />
                 <div className="bg-white p-4 rounded-lg shadow-md flex flex-col gap-1">
                     <p className="text-lg font-semibold">{boatDetails.boatCode}</p>
-                    <p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>
+                    {isSharing
+                    ?<p className="text-gray-900">Sharing, {boatDetails.boatCategory}</p>
+                    :<p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>}
                     <hr className="my-1 border-gray-100" />
                     <p className="text-gray-900 font-medium">Guest: <span className="font-normal">{guestName}</span></p>
                     <p className="text-gray-900 font-medium">Location: <span className="font-normal">{guestPlace}</span></p>
                     <p className="text-gray-900">Trip Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
                     <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
+                    {isSharing&&<p className="text-gray-900">Room Count: {roomCount}</p>}
                     <hr className="my-1 border-gray-100" />
                     <p className="text-gray-900">Total Price: ₹{finalPrice}</p>
                     <p className="text-gray-900 flex">Advance Amount:<span className='ml-1 font-semibold text-black'>₹{Math.round(finalPrice * amount.advance)}</span></p>
