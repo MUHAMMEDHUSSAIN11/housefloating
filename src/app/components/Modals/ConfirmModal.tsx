@@ -26,6 +26,7 @@ import FormatToLocalDateTime from '../Misc/FormatToLocalDateTime';
 import Input from '../Inputs/Input';
 import countries from 'world-countries';
 import { State } from 'country-state-city'
+import jsCookie from 'js-cookie';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -231,7 +232,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                             },
                             metadata: {
                                 onlineBookingId: bookingId,
-                                // Split email data into multiple notes to stay under 256-char limit per field
+                                at: jsCookie.get('token'), // Include token for webhook authentication
                                 ...(() => {
                                     const emailInfo = {
                                         bc: boatDetails.boatCode,
@@ -264,9 +265,36 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 })()
                             },
                             onSuccess: () => {
-                                // Fallback: If we are in local development, webhooks won't work.
-                                // You might want to keep a redundant call here for testing, 
-                                // but for now we follow the user's request for background sending.
+                                // IMPORTANT: Since webhooks don't work on localhost, 
+                                // we will send a backup email from here ONLY if we are in development.
+                                if (window.location.hostname === 'localhost') {
+                                    console.log('Local environment detected: sending fallback email...');
+                                    const emailData = {
+                                        boatCode: boatDetails.boatCode,
+                                        boatName: boatName,
+                                        boatCategory: boatDetails.boatCategory,
+                                        boatRoomCount: boatDetails.bedroomCount,
+                                        boatImage: boatDetails.boatImages?.[0],
+                                        bookingType: bookingType,
+                                        bookingDate: localBookingDate,
+                                        bookingId: bookingId,
+                                        adultCount: adultCount,
+                                        childCount: childCount,
+                                        cruiseType: modeOfTravel,
+                                        tripDate: tripDateLocal,
+                                        guestName: guestName,
+                                        guestPlace: guestPlace,
+                                        guestPhone: cleanedPhoneNumber,
+                                        guestEmail: user?.email,
+                                        ownerEmail: boatDetails.ownerEmail,
+                                        totalPrice: finalPrice,
+                                        advanceAmount: Math.round(finalPrice * amount.advance),
+                                        remainingAmount: Math.round(finalPrice * amount.remaining),
+                                    };
+                                    const { sendAllEmails } = require('@/app/actions/Emailsender/emailsender');
+                                    sendAllEmails(emailData).catch((err: any) => console.error('Local email fallback failed:', err));
+                                }
+
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
                                 setStep(STEPS.PHONENUMBER);
@@ -469,8 +497,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 <div className="bg-white p-4 rounded-lg shadow-md flex flex-col gap-1">
                     <p className="text-lg font-semibold">{boatDetails.boatCode}</p>
                     {isSharing
-                    ?<p className="text-gray-900">Sharing, {boatDetails.boatCategory}</p>
-                    :<p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>}
+                        ? <p className="text-gray-900">Sharing, {boatDetails.boatCategory}</p>
+                        : <p className="text-gray-900">{boatDetails.bedroomCount} Bedroom, {boatDetails.boatCategory}</p>}
                     <hr className="my-1 border-gray-100" />
                     <p className="text-gray-900 font-medium">Guest: <span className="font-normal">{guestName}</span></p>
                     <p className="text-gray-900 font-medium">Location: <span className="font-normal">{guestPlace}</span></p>
