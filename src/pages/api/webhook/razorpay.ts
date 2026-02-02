@@ -44,24 +44,76 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             paymentModeId = PaymentModes.NetBanking;
         }
 
+        // 1. Prepare Payment Data and metadata
         const paymentData = {
-            advanceAmount: paymentEntity.amount / 100, // Razorpay amount is in paise
+            advanceAmount: paymentEntity.amount / 100,
             onlineBookingId: Number(metadata.onlineBookingId),
             paymentModeId: paymentModeId,
             remainingAmount: Number(metadata.remainingAmount),
             totalPrice: Number(metadata.totalPrice),
             transactionId: paymentEntity.id
         };
+        const token = metadata.authToken;
 
-        try {
-            const token = metadata.authToken; // Get token passed from frontend
-            console.log('Webhook calling HandleCreateOnlinePayment with token:', token ? 'Bearer Present' : 'NONE');
-            await HandleCreateOnlinePayment(paymentData, token);
-            return res.status(200).json({ status: 'ok' });
-        } catch (error) {
-            console.error('Error processing consolidated booking/payment webhook:', error);
-            return res.status(500).json({ error: 'Internal Server Error' });
+        // 2. Send Emails (Independent task)
+        const ed1 = metadata.ed1 || '';
+        const ed2 = metadata.ed2 || '';
+        const ed3 = metadata.ed3 || '';
+        const reconstructedDataRaw = ed1 + ed2 + ed3;
+
+        if (reconstructedDataRaw) {
+            try {
+                // Determine if emailData needs parsing
+                let parsed = JSON.parse(reconstructedDataRaw);
+
+                // De-minify keys if necessary (check for 'bc' key)
+                if (parsed.bc) {
+                    parsed = {
+                        boatCode: parsed.bc,
+                        boatName: parsed.bn,
+                        boatCategory: parsed.bCat,
+                        boatRoomCount: parsed.brc,
+                        boatImage: parsed.bi,
+                        bookingType: parsed.bt,
+                        bookingDate: parsed.bd,
+                        bookingId: parsed.bid,
+                        adultCount: parsed.ac,
+                        childCount: parsed.cc,
+                        cruiseType: parsed.ct,
+                        tripDate: parsed.td,
+                        guestName: parsed.gn,
+                        guestPlace: parsed.gp,
+                        guestPhone: parsed.gph,
+                        guestEmail: parsed.ge,
+                        ownerEmail: parsed.oe,
+                        totalPrice: parsed.tp,
+                        advanceAmount: parsed.aa,
+                        remainingAmount: parsed.ra,
+                    };
+                }
+
+                const { sendAllEmails } = require('@/app/actions/Emailsender/emailsender');
+                console.log('Webhook: Sending background emails for booking:', paymentData.onlineBookingId);
+                const emailResult = await sendAllEmails(parsed);
+                console.log('Webhook: Email sending result:', JSON.stringify(emailResult, null, 2));
+            } catch (emailError) {
+                console.error('Webhook: Background Email Sending Failed (Metadata might be malformed):', emailError);
+            }
+        } else {
+            console.warn('Webhook: No ed1/ed2/ed3 metadata found for booking:', paymentData.onlineBookingId);
         }
+
+        // 3. Record Payment (might fail if frontend won the race)
+        try {
+            console.log('Webhook: Recording payment for booking:', paymentData.onlineBookingId);
+            await HandleCreateOnlinePayment(paymentData, token);
+            console.log('Webhook: Payment recorded successfully');
+        } catch (error: any) {
+            // Log as warning only, because it often means the frontend already finished this
+            console.warn('Webhook: Payment recording skipped or failed (likely already recorded or session ended):', error?.message || error);
+        }
+
+        return res.status(200).json({ status: 'ok' });
     }
 
     if (event === 'payment.failed') {
