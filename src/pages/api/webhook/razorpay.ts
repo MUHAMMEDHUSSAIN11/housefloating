@@ -53,7 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             totalPrice: Number(metadata.totalPrice),
             transactionId: paymentEntity.id
         };
-        const token = metadata.authToken;
+        const token = metadata.at; // Use minified key 'at' for authToken from metadata
+        console.log('Webhook: Using token beginning with:', token ? token.substring(0, 10) : 'NULL');
 
         // 2. Send Emails (Independent task)
         const ed1 = metadata.ed1 || '';
