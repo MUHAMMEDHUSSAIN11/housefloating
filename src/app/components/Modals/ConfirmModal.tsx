@@ -265,36 +265,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 })()
                             },
                             onSuccess: () => {
-                                // IMPORTANT: Since webhooks don't work on localhost, 
-                                // we will send a backup email from here ONLY if we are in development.
-                                if (window.location.hostname === 'localhost') {
-                                    console.log('Local environment detected: sending fallback email...');
-                                    const emailData = {
-                                        boatCode: boatDetails.boatCode,
-                                        boatName: boatName,
-                                        boatCategory: boatDetails.boatCategory,
-                                        boatRoomCount: boatDetails.bedroomCount,
-                                        boatImage: boatDetails.boatImages?.[0],
-                                        bookingType: bookingType,
-                                        bookingDate: localBookingDate,
-                                        bookingId: bookingId,
-                                        adultCount: adultCount,
-                                        childCount: childCount,
-                                        cruiseType: modeOfTravel,
-                                        tripDate: tripDateLocal,
-                                        guestName: guestName,
-                                        guestPlace: guestPlace,
-                                        guestPhone: cleanedPhoneNumber,
-                                        guestEmail: user?.email,
-                                        ownerEmail: boatDetails.ownerEmail,
-                                        totalPrice: finalPrice,
-                                        advanceAmount: Math.round(finalPrice * amount.advance),
-                                        remainingAmount: Math.round(finalPrice * amount.remaining),
-                                    };
-                                    const { sendAllEmails } = require('@/app/actions/Emailsender/emailsender');
-                                    sendAllEmails(emailData).catch((err: any) => console.error('Local email fallback failed:', err));
-                                }
-
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
                                 setStep(STEPS.PHONENUMBER);
