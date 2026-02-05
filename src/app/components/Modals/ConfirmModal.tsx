@@ -289,7 +289,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                     remainingAmount: Math.round(finalPrice * amount.remaining),
                                 };
 
-                                // Trigger email sending in background
                                 const { sendAllEmails } = require('@/app/actions/Emailsender/emailsender');
                                 sendAllEmails(emailData).catch((err: any) => console.error('Frontend email failed:', err));
 
