@@ -2,6 +2,10 @@ import nodemailer from 'nodemailer';
 
 export const sendMail = async (to: string | string[], subject: string, html: string) => {
     try {
+        console.log('--- VERCEL MAILER DIAGNOSTICS ---');
+        console.log('User detected:', !!process.env.EMAIL_USER);
+        console.log('Pass detected:', !!process.env.EMAIL_PASS);
+
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
