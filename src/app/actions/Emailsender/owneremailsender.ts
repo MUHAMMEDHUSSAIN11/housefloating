@@ -75,9 +75,9 @@ export async function sendOwnerEmail(data: any) {
                             <td style="padding: 6px 0; text-align: right; font-weight: 600; color: #333;">₹${remainingAmount}</td>
                         </tr>
                     </table>
-                    <p style="margin: 8px 0; font-size: 15px; font-weight: bold; color: #155724;">This booking Housefloating confirm.</p>
-                    <p style="margin: 8px 0; font-size: 14px; color: #333;">Advance 30% (₹${advanceAmount}) already taken by Housefloating.</p>
-                    <p style="margin: 8px 0; font-size: 14px; color: #333;">Remaining amount (₹${remainingAmount}) guest paid before check in.</p>
+                    <p style="margin: 8px 0; font-size: 15px; font-weight: bold; color: #155724;">This booking has been confirmed on Housefloating.</p>
+                    <p style="margin: 8px 0; font-size: 14px; color: #333;">A 30% advance (₹${advanceAmount}) has already been collected by Housefloating.</p>
+                    <p style="margin: 8px 0; font-size: 14px; color: #333;">The remaining amount (₹${remainingAmount}) will be paid by the guest before check-in.</p>
                 </div>
 
                 <p style="font-size: 12px; color: #999; margin-top: 30px; text-align: center; border-top: 1px solid #eee; padding-top: 20px;">

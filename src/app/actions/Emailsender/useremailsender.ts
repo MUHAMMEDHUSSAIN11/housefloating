@@ -57,7 +57,7 @@ export async function sendUserEmail(data: any) {
                     <h4 style="margin: 0 0 10px; color: #155724;">Payment Summary</h4>
                     <p style="margin: 5px 0; font-size: 14px;"><strong>Advance Paid:</strong> ₹${advanceAmount}</p>
                     <p style="margin: 5px 0; font-size: 14px;"><strong>Balance Due:</strong> ₹${remainingAmount}</p>
-                    <p style="margin: 10px 0 0; font-size: 12px; font-style: italic; color: #666;">Note: Balance amount to be paid at the boat before check-in.</p>
+                    <p style="margin: 10px 0 0; font-size: 12px; font-style: italic; color: #666;">Note: The balance amount must be paid at the boat before check-in.</p>
                 </div>
 
                 <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; text-align: center;">

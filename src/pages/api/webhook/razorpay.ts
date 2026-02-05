@@ -3,8 +3,25 @@ import crypto from 'crypto';
 import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreateOnlinePayment';
 import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 import { PaymentModes } from '@/app/enums/enums';
+import { sendAllEmails } from '@/app/actions/Emailsender/emailsender';
 
-const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "dummy_webhook_secret";
+// 1. MUST disable body parsing for signature verification to work in Next.js
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
+
+// Helper function to read the raw body from the request stream
+async function getRawBody(req: NextApiRequest) {
+    const chunks = [];
+    for await (const chunk of req) {
+        chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+    }
+    return Buffer.concat(chunks);
+}
+
+const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'OPTIONS') {
@@ -15,125 +32,101 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).send('Method Not Allowed');
     }
 
-    const signature = req.headers['x-razorpay-signature'] as string;
-    const body = JSON.stringify(req.body);
+    console.log('🚀 Razorpay Webhook Process Started');
 
-    const expectedSignature = crypto
-        .createHmac('sha256', webhookSecret)
-        .update(body)
-        .digest('hex');
+    try {
+        // 2. Obtain the Raw Body buffer
+        const rawBody = await getRawBody(req);
+        const signature = req.headers['x-razorpay-signature'] as string;
 
-    if (signature !== expectedSignature) {
-        return res.status(400).send('Invalid signature');
-    }
-
-    const { event, payload } = req.body;
-    console.log('Razorpay Webhook Received Event:', event);
-
-    if (event === 'payment.captured') {
-        const paymentEntity = payload.payment.entity;
-
-        const metadata = paymentEntity.notes || {};
-
-        let paymentModeId = PaymentModes.UPI; // Default to UPI
-        if (paymentEntity.method === 'upi') {
-            paymentModeId = PaymentModes.UPI;
-        } else if (paymentEntity.method === 'card') {
-            paymentModeId = PaymentModes.Card;
-        } else if (paymentEntity.method === 'netbanking') {
-            paymentModeId = PaymentModes.NetBanking;
+        if (!webhookSecret) {
+            console.error('❌ Webhook Error: RAZORPAY_WEBHOOK_SECRET missing in environment');
+            return res.status(500).send('Configuration error');
         }
 
-        // 1. Prepare Payment Data and metadata
-        const paymentData = {
-            advanceAmount: paymentEntity.amount / 100,
-            onlineBookingId: Number(metadata.onlineBookingId),
-            paymentModeId: paymentModeId,
-            remainingAmount: Number(metadata.remainingAmount),
-            totalPrice: Number(metadata.totalPrice),
-            transactionId: paymentEntity.id
-        };
-        const token = metadata.at; // Use minified key 'at' for authToken from metadata
-        console.log('Webhook: Using token beginning with:', token ? token.substring(0, 10) : 'NULL');
+        // 3. Verify Signature using the Raw Body
+        const expectedSignature = crypto
+            .createHmac('sha256', webhookSecret)
+            .update(rawBody)
+            .digest('hex');
 
-        // 2. Send Emails (Independent task)
-        const ed1 = metadata.ed1 || '';
-        const ed2 = metadata.ed2 || '';
-        const ed3 = metadata.ed3 || '';
-        const reconstructedDataRaw = ed1 + ed2 + ed3;
+        if (signature !== expectedSignature) {
+            console.error('❌ Webhook Error: Invalid Signature Mismatch');
+            return res.status(400).send('Invalid signature');
+        }
 
-        if (reconstructedDataRaw) {
-            try {
-                // Determine if emailData needs parsing
-                let parsed = JSON.parse(reconstructedDataRaw);
+        // 4. Parse the body manually since bodyParser is disabled
+        const body = JSON.parse(rawBody.toString());
+        const { event, payload } = body;
+        console.log(`✅ Event Received: ${event}`);
 
-                // De-minify keys if necessary (check for 'bc' key)
-                if (parsed.bc) {
-                    parsed = {
-                        boatCode: parsed.bc,
-                        boatName: parsed.bn,
-                        boatCategory: parsed.bCat,
-                        boatRoomCount: parsed.brc,
-                        boatImage: parsed.bi,
-                        bookingType: parsed.bt,
-                        bookingDate: parsed.bd,
-                        bookingId: parsed.bid,
-                        adultCount: parsed.ac,
-                        childCount: parsed.cc,
-                        cruiseType: parsed.ct,
-                        tripDate: parsed.td,
-                        guestName: parsed.gn,
-                        guestPlace: parsed.gp,
-                        guestPhone: parsed.gph,
-                        guestEmail: parsed.ge,
-                        ownerEmail: parsed.oe,
-                        totalPrice: parsed.tp,
-                        advanceAmount: parsed.aa,
-                        remainingAmount: parsed.ra,
-                    };
+        if (event === 'payment.captured') {
+            const paymentEntity = payload.payment.entity;
+            const metadata = paymentEntity.notes || {};
+
+            const onlineBookingId = Number(metadata.onlineBookingId);
+            const token = metadata.at;
+
+            let paymentModeId = PaymentModes.UPI;
+            if (paymentEntity.method === 'card') paymentModeId = PaymentModes.Card;
+            else if (paymentEntity.method === 'netbanking') paymentModeId = PaymentModes.NetBanking;
+
+            const paymentData = {
+                advanceAmount: paymentEntity.amount / 100,
+                onlineBookingId: onlineBookingId,
+                paymentModeId: paymentModeId,
+                remainingAmount: Number(metadata.remainingAmount || 0),
+                totalPrice: Number(metadata.totalPrice || 0),
+                transactionId: paymentEntity.id
+            };
+
+            // Email Data Reconstruction from minified chunks
+            const emailChunks = (metadata.ed1 || '') + (metadata.ed2 || '') + (metadata.ed3 || '');
+            if (emailChunks) {
+                try {
+                    let parsed = JSON.parse(emailChunks);
+                    if (parsed.bc) {
+                        parsed = {
+                            boatCode: parsed.bc, boatName: parsed.bn, boatCategory: parsed.bCat,
+                            boatRoomCount: parsed.brc, boatImage: parsed.bi, bookingType: parsed.bt,
+                            bookingDate: parsed.bd, bookingId: parsed.bid, adultCount: parsed.ac,
+                            childCount: parsed.cc, cruiseType: parsed.ct, tripDate: parsed.td,
+                            guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
+                            guestEmail: parsed.ge, ownerEmail: parsed.oe, totalPrice: parsed.tp,
+                            advanceAmount: parsed.aa, remainingAmount: parsed.ra,
+                        };
+                    }
+                    console.log(`📧 Sending emails for booking #${onlineBookingId}`);
+                    await sendAllEmails(parsed);
+                } catch (err) {
+                    console.error('❌ Email Error:', err);
                 }
-
-                const { sendAllEmails } = require('@/app/actions/Emailsender/emailsender');
-                console.log('Webhook: Sending background emails for booking:', paymentData.onlineBookingId);
-                const emailResult = await sendAllEmails(parsed);
-                console.log('Webhook: Email sending result:', JSON.stringify(emailResult, null, 2));
-            } catch (emailError) {
-                console.error('Webhook: Background Email Sending Failed (Metadata might be malformed):', emailError);
             }
-        } else {
-            console.warn('Webhook: No ed1/ed2/ed3 metadata found for booking:', paymentData.onlineBookingId);
-        }
 
-        // 3. Record Payment (might fail if frontend won the race)
-        try {
-            console.log('Webhook: Recording payment for booking:', paymentData.onlineBookingId);
-            await HandleCreateOnlinePayment(paymentData, token);
-            console.log('Webhook: Payment recorded successfully');
-        } catch (error: any) {
-            // Log as warning only, because it often means the frontend already finished this
-            console.warn('Webhook: Payment recording skipped or failed (likely already recorded or session ended):', error?.message || error);
-        }
-
-        return res.status(200).json({ status: 'ok' });
-    }
-
-    if (event === 'payment.failed') {
-        const paymentEntity = payload.payment.entity;
-        const metadata = paymentEntity.notes || {};
-        const bookingId = Number(metadata.onlineBookingId);
-        const token = metadata.authToken;
-
-        if (bookingId) {
-            console.log('Payment failed for booking:', bookingId, '. Cleaning up...');
             try {
-                await HandleDeleteOnlineBooking({ bookingId }, token);
-            } catch (error) {
-                console.error('Error deleting booking on payment failure:', error);
+                console.log(`💾 Saving payment for booking #${onlineBookingId}`);
+                await HandleCreateOnlinePayment(paymentData, token);
+            } catch (err: any) {
+                console.warn('⚠️ Payment save issue (Frontend might have finished this):', err?.message || err);
             }
+
+            return res.status(200).json({ status: 'ok' });
         }
 
-        return res.status(200).json({ status: 'ok' });
-    }
+        if (event === 'payment.failed') {
+            const metadata = payload.payment.entity.notes || {};
+            const bookingId = Number(metadata.onlineBookingId);
+            if (bookingId) {
+                console.log(`🗑️ Cleaning failed booking #${bookingId}`);
+                await HandleDeleteOnlineBooking({ bookingId }, metadata.at).catch(e => console.error('❌ Failed to delete:', e));
+            }
+            return res.status(200).json({ status: 'ok' });
+        }
 
-    res.status(200).json({ status: 'ignored' });
+        res.status(200).json({ status: 'ignored' });
+
+    } catch (err: any) {
+        console.error('❌ Global Webhook Error:', err?.message || err);
+        return res.status(500).send('Internal Server Error');
+    }
 }

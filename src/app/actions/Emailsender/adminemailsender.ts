@@ -34,7 +34,7 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
             
             <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px 20px; margin: 0;">
                 <p style="margin: 0; font-size: 14px; color: #856404;">
-                    <strong>⚡ Action Required:</strong> New booking received from website. Please review and process.
+                    <strong>⚡ Action Required:</strong> A new booking has been received from the Housefloating. Please review and process it.
                 </p>
             </div>
 
