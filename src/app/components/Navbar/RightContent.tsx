@@ -63,15 +63,15 @@ const RightContent = () => {
                         {user && (
                             <>
                                 <UserMenuItem onClick={handleLogout} label="Logout" />
-                                <hr className='border border-gray-300' />
-                                <div className="sm:block lg:hidden px-4 py-3 hover:bg-neutral-100 transition">Contact Us</div>
+                                <UserMenuItem onClick={() => router.push('/contact')} label="Contact Us" />
                             </>
                         )}
                         {!user && (
                             <>
                                 <UserMenuItem onClick={loginModal.onOpen} label="Login" />
                                 <UserMenuItem onClick={registerModal.onOpen} label="Sign Up" />
-                                <div className="sm:block lg:hidden px-4 py-3 hover:bg-neutral-100 transition ">Contact Us</div>
+                                <UserMenuItem onClick={() => router.push('/contact')} label="Contact Us" />
+
                             </>
                         )}
                         {user && isAuthority(user.id ? String(user.id) : "") && (

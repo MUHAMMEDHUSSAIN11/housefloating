@@ -14,7 +14,7 @@ const Contact = () => {
                     <h2 className="text-2xl font-semibold">BaytCode Technologies Pvt Ltd</h2>
                     <p className='text-lg'>Alappuzha, Kerala, India</p>
                     <p className="text-blue-600"><a href="mailto: housefloatingonline@gmail.com">housefloatingonline@gmail.com</a></p>
-                    <p className="text-blue-600"><a href="tel: +918714038424">+91 8714038424</a></p>
+                    <p className="text-blue-600"><a href="tel: +919207777911">+91 9207777911</a></p>
                     <br/>
                 </div>
             </div>
