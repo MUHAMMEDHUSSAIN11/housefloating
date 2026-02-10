@@ -9,12 +9,9 @@ interface ListingInfoProps {
   roomCount: number;
   bathroomCount: number;
   setAdultCount: (value: number) => void;
-  setChildCount: (value: number) => void;
   adultCount: number;
-  childCount: number;
   travelMode: number;
   maxAdultCount: number;
-  maxChildCount: number;
   minAdultCount: number;
   title: string;
   boardingPoint: string;
@@ -24,9 +21,9 @@ interface ListingInfoProps {
   setRoomCount?: (value: number) => void;
 }
 
-const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxChildCount,
+const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
   bathroomCount, roomCount, setAdultCount,availableRoomCount,
-  setChildCount, adultCount, childCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount }) => {
+  adultCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount }) => {
 
   const isSharing = bookingTypeId === BookingType.sharing;
 
@@ -41,15 +38,9 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount, maxChildCount,
       </div>
       <hr className='border border-gray-300'/>
       <div className=''>
-        <Counter onChange={(value) => setAdultCount(value)} min={minAdultCount} max={isSharing?roomCountState*maxAdultCount:maxAdultCount} value={adultCount} title="Number of Adults" subtitle="Ages 12 and above" />
+        <Counter onChange={(value) => setAdultCount(value)} min={minAdultCount} max={isSharing?roomCountState*maxAdultCount:maxAdultCount} value={adultCount} title="Number of Adults" subtitle="Ages 10 and above" />
         {adultCount === (isSharing ? roomCountState*maxAdultCount : maxAdultCount) && (
           <div className='text-sm text-red-500 mt-1'>Maximum adult count reached</div>
-        )}
-      </div>
-      <div className=''>
-        <Counter onChange={(value) => setChildCount(value)} min={0} value={childCount} max={isSharing?roomCountState*maxChildCount:maxChildCount} title="Number of Childrens" subtitle="Ages 5 to 11" />
-        {childCount === (isSharing ? roomCountState*maxChildCount : maxChildCount) && (
-          <div className='text-sm text-red-500 mt-1'>Maximum child count reached</div>
         )}
       </div>
       {isSharing && setRoomCount && roomCountState !== undefined && (

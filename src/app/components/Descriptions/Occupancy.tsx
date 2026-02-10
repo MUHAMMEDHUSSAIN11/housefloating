@@ -1,16 +1,14 @@
 'use client';
 
-import { Baby, User, UserPlus, Users } from 'lucide-react';
+import { User, UserPlus, Users } from 'lucide-react';
 import React from 'react';
 
 interface OccupancyProps {
     Count: number,
     adult: number,
-    child: number,
     title: string,
     category: string,
     adultAddonPrice: number,
-    childAddonPrice: number,
 }
 
 const Occupancy: React.FC<OccupancyProps> = (props) => {
@@ -39,9 +37,6 @@ const Occupancy: React.FC<OccupancyProps> = (props) => {
                             <div className='flex gap-9 items-center'>
                                 <div className='flex items-center'>
                                     <User className='text-blue-400'/><p className="text-3xl font-semibold">{props.adult}</p>
-                                </div>
-                                <div className='flex items-center'>
-                                    <Baby className='text-blue-400'/><p className="text-3xl font-semibold">{props.child}</p>
                                 </div>
                             </div>
                             <p className="text-xs mt-1">Total available space</p>

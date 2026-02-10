@@ -42,14 +42,13 @@ interface confirmModalProps {
     finalHeadCount: number,
     finalCheckInDate: Date,
     finalCheckOutDate: Date,
-    finalMinorCount: number,
     isVeg: boolean,
     bookingTypeId: number | null,
     roomCount: number,
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, finalMinorCount, isVeg, bookingTypeId, roomCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, isVeg, bookingTypeId, roomCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
@@ -190,7 +189,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     adultCount: finalHeadCount,
                     boatId: boatDetails.boatId,
                     bookingDate: localBookingDate,
-                    childCount: finalMinorCount,
                     contactNumber: cleanedPhoneNumber,
                     cruiseTypeId: modeOfTravel === BoatCruises.dayCruise ? BoatCruisesId.dayCruise : modeOfTravel === BoatCruises.dayNight ? BoatCruisesId.dayNight : BoatCruisesId.nightStay,
                     guestName: guestName,
@@ -500,7 +498,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     <p className="text-gray-900 font-medium">Guest: <span className="font-normal">{guestName}</span></p>
                     <p className="text-gray-900 font-medium">Location: <span className="font-normal">{guestPlace}</span></p>
                     <p className="text-gray-900">Trip Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
-                    <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
+                    <p className="text-gray-900">Guest Count: {finalHeadCount}</p>
                     {isSharing && <p className="text-gray-900">Room Count: {roomCount}</p>}
                     <hr className="my-1 border-gray-100" />
                     <p className="text-gray-900">Total Price: ₹{finalPrice}</p>
