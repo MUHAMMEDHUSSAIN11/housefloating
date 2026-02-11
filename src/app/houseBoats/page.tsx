@@ -23,7 +23,13 @@ const HouseBoatsContent = () => {
   const endDate = endDateFromUrl ? new Date(endDateFromUrl) : null;
 
   const [paginationLoading, setPaginationLoading] = useState(false);
-  const [allListings, setAllListings] = useState<any[]>([]);
+  const [listing, setListing] = useState<{
+    exactMatch: any[];
+    greaterThanMatch: any[];
+  }>({
+    exactMatch: [],
+    greaterThanMatch: [],
+  });
   const [skip, setSkip] = useState(0);
   const take = 27;
   const [hasMore, setHasMore] = useState(true);
@@ -45,19 +51,24 @@ const HouseBoatsContent = () => {
       Take: take,
     });
 
-    if (result && result.data && result.data.items && result.data.items.length > 0) {
-      const processedData = result.data.items.map((boat: any) => ({
+    if (result && result.data && result.data.totalCount > 0) {
+      const processedExact = (result.data.exactMatch || []).map((boat: any) => ({
+        ...boat,
+        boatImage: boat.boatImage || '/placeholder-boat.jpg',
+      }));
+      const processedGreater = (result.data.greaterThanMatch || []).map((boat: any) => ({
         ...boat,
         boatImage: boat.boatImage || '/placeholder-boat.jpg',
       }));
 
       return {
-        items: processedData,
-        totalResults: result.data.totalResults,
+        exactMatch: processedExact,
+        greaterThanMatch: processedGreater,
+        totalCount: result.data.totalCount,
       };
     }
 
-    return { items: [], totalResults: 0 };
+    return { exactMatch: [], greaterThanMatch: [], totalCount: 0 };
   };
 
   const { data: initialData, error, isLoading } = useSWR(
@@ -72,7 +83,7 @@ const HouseBoatsContent = () => {
   );
 
   useEffect(() => {
-    setAllListings([]);
+    setListing({ exactMatch: [], greaterThanMatch: [] });
     setSkip(0);
     setHasMore(true);
     isFetchingRef.current = false;
@@ -81,12 +92,16 @@ const HouseBoatsContent = () => {
 
   useEffect(() => {
     if (initialData && !isInitializedRef.current) {
-      if (initialData.items.length > 0) {
-        setAllListings(initialData.items);
-        setHasMore(initialData.items.length < initialData.totalResults);
+      const totalItems = initialData.exactMatch.length + initialData.greaterThanMatch.length;
+      if (totalItems > 0) {
+        setListing({
+          exactMatch: initialData.exactMatch,
+          greaterThanMatch: initialData.greaterThanMatch
+        });
+        setHasMore(totalItems >= take && totalItems < initialData.totalCount);
         setSkip(take);
       } else {
-        setAllListings([]);
+        setListing({ exactMatch: [], greaterThanMatch: [] });
         setHasMore(false);
         setSkip(0);
       }
@@ -113,16 +128,26 @@ const HouseBoatsContent = () => {
             Take: take,
           });
 
-          if (result && result.data && result.data.items && result.data.items.length > 0) {
-            const processedData = result.data.items.map((boat: any) => ({
+          if (result && result.data && result.data.totalCount > 0) {
+            const processedExact = (result.data.exactMatch || []).map((boat: any) => ({
+              ...boat,
+              boatImage: boat.boatImage || '/placeholder-boat.jpg',
+            }));
+            const processedGreater = (result.data.greaterThanMatch || []).map((boat: any) => ({
               ...boat,
               boatImage: boat.boatImage || '/placeholder-boat.jpg',
             }));
 
-            setAllListings((prev) => {
-              const updated = [...prev, ...processedData];
-              setHasMore(updated.length < result.data.totalResults);
-              return updated;
+            setListing((prev) => {
+              const updatedExact = [...prev.exactMatch, ...processedExact];
+              const updatedGreater = [...prev.greaterThanMatch, ...processedGreater];
+              const currentTotal = updatedExact.length + updatedGreater.length;
+              const newItemsCount = processedExact.length + processedGreater.length;
+              setHasMore(newItemsCount >= take && currentTotal < result.data.totalCount);
+              return {
+                exactMatch: updatedExact,
+                greaterThanMatch: updatedGreater
+              };
             });
           } else {
             setHasMore(false);
@@ -141,7 +166,7 @@ const HouseBoatsContent = () => {
   }, [skip]);
 
   useEffect(() => {
-    if (isLoading || paginationLoading || !hasMore || allListings.length === 0) return;
+    if (isLoading || paginationLoading || !hasMore || (listing.exactMatch.length === 0 && listing.greaterThanMatch.length === 0)) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -163,7 +188,7 @@ const HouseBoatsContent = () => {
     return () => {
       if (currentObserver) observer.unobserve(currentObserver);
     };
-  }, [isLoading, paginationLoading, hasMore, allListings.length, take]);
+  }, [isLoading, paginationLoading, hasMore, listing.exactMatch.length, listing.greaterThanMatch.length, take]);
 
   if (isLoading) {
     return (
@@ -193,7 +218,7 @@ const HouseBoatsContent = () => {
     );
   }
 
-  if (!allListings || allListings.length === 0) {
+  if (!listing.exactMatch.length && !listing.greaterThanMatch.length) {
     return (
       <Container>
         <div className="w-full h-screen">
@@ -204,33 +229,58 @@ const HouseBoatsContent = () => {
       </Container>
     );
   }
+
+  const totalListingsCount = listing.exactMatch.length + listing.greaterThanMatch.length;
+
   return (
     <Container>
-      <div className="pb-20 pt-40 lg:pt-28">
-        <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
-          {allListings.map((listing: any) => (
-            <ListingCard
-              key={listing.boatId}
-              data={listing}
-              startDate={startDateFromUrl}
-              endDate={endDateFromUrl}
-              cruiseTypeId={cruiseFromUrl}
-              bookingTypeId={typeFromUrl}
-            />
-          ))}
-        </div>
+      <div className="pb-20 pt-40 lg:pt-36">
 
-        {allListings.length > 0 && (
+        {listing.exactMatch.length > 0 && (
+          <div className="mb-12 ">
+            <Heading title='Exact Matches' large/>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+              {listing.exactMatch.map((listing: any) => (
+                <ListingCard
+                  key={listing.boatId}
+                  data={listing}
+                  startDate={startDateFromUrl}
+                  endDate={endDateFromUrl}
+                  cruiseTypeId={cruiseFromUrl}
+                  bookingTypeId={typeFromUrl}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {listing.greaterThanMatch.length > 0 && (
+          <div className="mb-8 ">
+            <Heading title='Better Matches' large/>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+              {listing.greaterThanMatch.map((listing: any) => (
+                <ListingCard
+                  key={listing.boatId}
+                  data={listing}
+                  startDate={startDateFromUrl}
+                  endDate={endDateFromUrl}
+                  cruiseTypeId={cruiseFromUrl}
+                  bookingTypeId={typeFromUrl}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {hasMore && totalListingsCount > 0 && (
           <div ref={observerRef} className="w-full">
-            {paginationLoading ? (
-              <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+            {paginationLoading && (
+              <div className="pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
                 {[...Array(3)].map((_, i) => (
                   <ListingCardSkeleton key={i} />
                 ))}
               </div>
-            ) : !hasMore && allListings.length > 0 ? (
-              <div className="text-gray-400 w-full text-center py-8">No more boats available</div>
-            ) : null}
+            )}
           </div>
         )}
       </div>
@@ -239,6 +289,9 @@ const HouseBoatsContent = () => {
 };
 
 import { Suspense } from 'react';
+import Heading from '../components/Misc/Heading';
+import { BiRightArrow } from 'react-icons/bi';
+import { FcRight } from 'react-icons/fc';
 
 const Page = () => {
   return (

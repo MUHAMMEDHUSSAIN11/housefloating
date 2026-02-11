@@ -71,6 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             if (paymentEntity.method === 'card') paymentModeId = PaymentModes.Card;
             else if (paymentEntity.method === 'netbanking') paymentModeId = PaymentModes.NetBanking;
 
+            // 5. Payment Data for Backend Save
             const paymentData = {
                 advanceAmount: paymentEntity.amount / 100,
                 onlineBookingId: onlineBookingId,
@@ -80,7 +81,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 transactionId: paymentEntity.id
             };
 
-            // Email Data Reconstruction from minified chunks
+            // 6. Save Payment to Backend First
+            try {
+                console.log(`💾 Saving payment for booking #${onlineBookingId}`);
+                await HandleCreateOnlinePayment(paymentData, token);
+            } catch (err: any) {
+                // If it fails with 409 or similar, it might be already processed
+                console.warn('⚠️ Payment save note:', err?.message || err);
+            }
+
+            // 7. Reconstruct Email Data and Send Emails
             const emailChunks = (metadata.ed1 || '') + (metadata.ed2 || '') + (metadata.ed3 || '');
             if (emailChunks) {
                 try {
@@ -90,24 +100,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             boatCode: parsed.bc, boatName: parsed.bn, boatCategory: parsed.bCat,
                             boatRoomCount: parsed.brc, boatImage: parsed.bi, bookingType: parsed.bt,
                             bookingDate: parsed.bd, bookingId: parsed.bid, adultCount: parsed.ac,
-                            childCount: parsed.cc, cruiseType: parsed.ct, tripDate: parsed.td,
+                            cruiseType: parsed.ct, tripDate: parsed.td, roomCount: parsed.rc,
                             guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
                             guestEmail: parsed.ge, ownerEmail: parsed.oe, totalPrice: parsed.tp,
                             advanceAmount: parsed.aa, remainingAmount: parsed.ra,
                         };
                     }
                     console.log(`📧 Sending emails for booking #${onlineBookingId}`);
+                    // Trigger emails and wait for them - This is now the last major step
                     await sendAllEmails(parsed);
                 } catch (err) {
                     console.error('❌ Email Error:', err);
                 }
-            }
-
-            try {
-                console.log(`💾 Saving payment for booking #${onlineBookingId}`);
-                await HandleCreateOnlinePayment(paymentData, token);
-            } catch (err: any) {
-                console.warn('⚠️ Payment save issue (Frontend might have finished this):', err?.message || err);
             }
 
             return res.status(200).json({ status: 'ok' });
