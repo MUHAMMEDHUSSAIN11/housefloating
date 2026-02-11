@@ -42,14 +42,13 @@ interface confirmModalProps {
     finalHeadCount: number,
     finalCheckInDate: Date,
     finalCheckOutDate: Date,
-    finalMinorCount: number,
     isVeg: boolean,
     bookingTypeId: number | null,
     roomCount: number,
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, finalMinorCount, isVeg, bookingTypeId, roomCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, isVeg, bookingTypeId, roomCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
@@ -177,7 +176,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
             try {
                 const isSharing = bookingTypeId === BookingType.sharing;
-                const finalRoomCount = isSharing ? roomCount : undefined;
+                const finalRoomCount = roomCount;
                 const tripDateLocal = FormatToLocalDate(finalCheckInDate);
                 const localBookingDate = FormatToLocalDateTime(new Date());
 
@@ -190,7 +189,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     adultCount: finalHeadCount,
                     boatId: boatDetails.boatId,
                     bookingDate: localBookingDate,
-                    childCount: finalMinorCount,
                     contactNumber: cleanedPhoneNumber,
                     cruiseTypeId: modeOfTravel === BoatCruises.dayCruise ? BoatCruisesId.dayCruise : modeOfTravel === BoatCruises.dayNight ? BoatCruisesId.dayNight : BoatCruisesId.nightStay,
                     guestName: guestName,
@@ -218,7 +216,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     const bookingType = bookingResponse.data.bookingType === BoatBookingTypes.onlineBooked ? 'Private' : 'Sharing';
                     const boatName = bookingResponse.data.boatName;
                     const adultCount = bookingResponse.data.adultCount;
-                    const childCount = bookingResponse.data.childCount;
 
                     try {
                         await MakeRazorpay({
@@ -244,7 +241,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                         bd: localBookingDate,
                                         bid: bookingId,
                                         ac: adultCount,
-                                        cc: childCount,
                                         ct: modeOfTravel,
                                         td: tripDateLocal,
                                         gn: guestName,
@@ -253,6 +249,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                         ge: user?.email,
                                         oe: boatDetails.ownerEmail,
                                         tp: finalPrice,
+                                        rc: roomCount,
                                         aa: Math.round(finalPrice * amount.advance),
                                         ra: Math.round(finalPrice * amount.remaining),
                                     };
@@ -265,33 +262,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 })()
                             },
                             onSuccess: () => {
-                                // Send emails immediately from frontend
-                                const emailData = {
-                                    boatCode: boatDetails.boatCode,
-                                    boatName: boatName,
-                                    boatCategory: boatDetails.boatCategory,
-                                    boatRoomCount: boatDetails.bedroomCount,
-                                    boatImage: boatDetails.boatImages?.[0],
-                                    bookingType: bookingType,
-                                    bookingDate: localBookingDate,
-                                    bookingId: bookingId,
-                                    adultCount: adultCount,
-                                    childCount: childCount,
-                                    cruiseType: modeOfTravel,
-                                    tripDate: tripDateLocal,
-                                    guestName: guestName,
-                                    guestPlace: guestPlace,
-                                    guestPhone: cleanedPhoneNumber,
-                                    guestEmail: user?.email,
-                                    ownerEmail: boatDetails.ownerEmail,
-                                    totalPrice: finalPrice,
-                                    advanceAmount: Math.round(finalPrice * amount.advance),
-                                    remainingAmount: Math.round(finalPrice * amount.remaining),
-                                };
-
-                                const { sendAllEmails } = require('@/app/actions/Emailsender/emailsender');
-                                sendAllEmails(emailData).catch((err: any) => console.error('Frontend email failed:', err));
-
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
                                 setStep(STEPS.PHONENUMBER);
@@ -500,8 +470,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     <p className="text-gray-900 font-medium">Guest: <span className="font-normal">{guestName}</span></p>
                     <p className="text-gray-900 font-medium">Location: <span className="font-normal">{guestPlace}</span></p>
                     <p className="text-gray-900">Trip Date: {new Date(finalCheckInDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</p>
-                    <p className="text-gray-900">Guest Count: {finalHeadCount + finalMinorCount}</p>
-                    {isSharing && <p className="text-gray-900">Room Count: {roomCount}</p>}
+                    <p className="text-gray-900">Guest Count: {finalHeadCount}</p>
+                    <p className="text-gray-900">Room Count: {roomCount}</p>
                     <hr className="my-1 border-gray-100" />
                     <p className="text-gray-900">Total Price: ₹{finalPrice}</p>
                     <p className="text-gray-900 flex">Advance Amount:<span className='ml-1 font-semibold text-black'>₹{Math.round(finalPrice * amount.advance)}</span></p>

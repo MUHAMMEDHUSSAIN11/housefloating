@@ -6,7 +6,6 @@ export async function sendUserEmail(data: any) {
     const {
         guestEmail,
         boatCode,
-        boatName,
         boatImage,
         bookingId,
         bookingType,
@@ -15,8 +14,8 @@ export async function sendUserEmail(data: any) {
         cruiseType,
         tripDate,
         adultCount,
-        childCount,
         totalPrice,
+        roomCount,
         advanceAmount,
         remainingAmount
     } = data;
@@ -48,7 +47,7 @@ export async function sendUserEmail(data: any) {
                         <tr><td style="padding: 8px 0; color: #6c757d;">Trip Date</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${new Date(tripDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td></tr>
                         <tr><td style="padding: 8px 0; color: #6c757d;">Cruise Type</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${cruiseType}</td></tr>
                         <tr><td style="padding: 8px 0; color: #6c757d;">Adult Count</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${adultCount}</td></tr>
-                        <tr><td style="padding: 8px 0; color: #6c757d;">Child Count</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${childCount}</td></tr>
+                        <tr><td style="padding: 8px 0; color: #6c757d;">Room Count</td><td style="padding: 8px 0; text-align: right; font-weight: 500;">${roomCount}</td></tr>
                         <tr><td style="padding: 15px 0 8px; color: #6c757d; font-size: 18px;">Total Price</td><td style="padding: 15px 0 8px; text-align: right; font-weight: 700; color: #28a745; font-size: 20px;">₹${totalPrice}</td></tr>
                     </table>
                 </div>

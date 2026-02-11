@@ -42,54 +42,64 @@ const ListingClient: React.FC<ListingClientProps> = ({
   cruiseTypeId,
   bookingTypeId,
 }) => {
+  const isSharing = bookingTypeId === BookingType.sharing;
   const { user } = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
+  const [roomCount, setRoomCount] = useState((isSharing&&boatDetails.availableRoomCount)?boatDetails.availableRoomCount:boatDetails.bedroomCount);
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
-  const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.guestCount || 1);
-  const [finalChildCount, setFinalChildCount] = useState(0);
+  const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.bedroomCount * 2);
   const [isVeg, setIsVeg] = useState(false);
-  const [roomCount, setRoomCount] = useState(1);
   const adultAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.adultAddOnDayPrice
     : cruiseTypeId === BoatCruisesId.dayNight ? boatDetails.prices.adultAddonDayNightPrice
       : boatDetails.prices.adultAddonNightStayPrice;
-  const childAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.childAddOnDayPrice
-    : cruiseTypeId === BoatCruisesId.dayNight ? boatDetails.prices.childAddonDayNightPrice
-      : boatDetails.prices.childAddonNightStayPrice;
-
+  const isDayCruise = cruiseTypeId === BoatCruisesId.dayCruise
   useEffect(() => {
-    const isSharing = bookingTypeId === BookingType.sharing;
-    const currentMaxAdults = isSharing ? (roomCount * boatDetails.maxAdultCount) : boatDetails.maxAdultCount;
-    const currentMaxChildren = isSharing ? (roomCount * boatDetails.maxChildCount) : boatDetails.maxChildCount;
+    const currentMaxAdults = isSharing
+      ? (roomCount * boatDetails.maxAdultCount)
+      : isDayCruise
+      ? boatDetails.maxAdultCount
+      : (roomCount * 3);
 
     if (finalAdultCount > currentMaxAdults) {
       setFinalAdultCount(currentMaxAdults);
     }
-    if (finalChildCount > currentMaxChildren) {
-      setFinalChildCount(currentMaxChildren);
-    }
-  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, boatDetails.maxChildCount, finalAdultCount, finalChildCount]);
+
+  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, finalAdultCount]);
 
   useEffect(() => {
     const calculate = async () => {
       try {
-        const finalPrice = await CalculatePrice(finalAdultCount, finalChildCount, boatDetails.prices.dayPrice, boatDetails.maxAdultCount, boatDetails.maxChildCount, boatDetails.guestCount, adultAddonPrice, childAddonPrice, roomCount, bookingTypeId)
+        const finalPrice = await CalculatePrice(
+          finalAdultCount,
+          boatDetails.prices.dayPrice,
+          boatDetails.bedroomCount,
+          roomCount,
+          boatDetails.prices.roomPrice,
+          adultAddonPrice,
+          boatDetails.maxAdultCount,
+          boatDetails.guestCount,
+          bookingTypeId,
+          isDayCruise,
+        );
         setTotalPrice(finalPrice);
       } catch (error) {
         console.error('Error calculating total price:', error);
       }
     }
     calculate();
-  }, [finalAdultCount, finalChildCount, roomCount, bookingTypeId, boatDetails, adultAddonPrice, childAddonPrice]);
+  }, [finalAdultCount, roomCount, bookingTypeId, boatDetails, adultAddonPrice,]);
 
   const onCreateReservation = useCallback(() => {
     if (user) {
-      const isSharing = bookingTypeId === BookingType.sharing;
-      const currentMaxAdults = isSharing ? (roomCount * boatDetails.maxAdultCount) : boatDetails.maxAdultCount;
-      const currentMaxChildren = isSharing ? (roomCount * boatDetails.maxChildCount) : boatDetails.maxChildCount;
+      const currentMaxAdults = isSharing 
+      ? (roomCount * boatDetails.maxAdultCount)
+      : isDayCruise
+      ? boatDetails.maxAdultCount
+      : (roomCount * 3)
 
-      if (finalAdultCount <= currentMaxAdults && finalChildCount <= currentMaxChildren) {
+      if (finalAdultCount <= currentMaxAdults) {
         return bookingConfirmModal.onOpen();
       } else {
         toast.error("Maximum number of Guests exceeded!!");
@@ -97,7 +107,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
     } else {
       return loginModal.onOpen();
     }
-  }, [user, bookingConfirmModal, loginModal, finalAdultCount, finalChildCount, roomCount, bookingTypeId, boatDetails.maxAdultCount, boatDetails.maxChildCount])
+  }, [user, bookingConfirmModal, loginModal, finalAdultCount, roomCount, bookingTypeId, boatDetails.maxAdultCount,])
 
   const Map = dynamic(() => import('../../components/Misc/Map'), {
     ssr: false
@@ -106,7 +116,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   return (
     <>
-      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? BoatCruises.dayCruise : cruiseTypeId == 2 ? BoatCruises.dayNight : BoatCruises.nightStay} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} finalMinorCount={finalChildCount} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
+      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? BoatCruises.dayCruise : cruiseTypeId == 2 ? BoatCruises.dayNight : BoatCruises.nightStay} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
       <div className='max-w-7xl mx-auto pt-4 md:pt-24 pb-18 md:pb-0'>
         <div className='flex flex-col gap-6'>
           <ListingHead
@@ -125,33 +135,31 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 roomCount={boatDetails.bedroomCount}
                 bathroomCount={boatDetails.bathroomCount}
                 setAdultCount={setFinalAdultCount}
-                setChildCount={setFinalChildCount}
                 adultCount={finalAdultCount}
-                childCount={finalChildCount}
                 maxAdultCount={boatDetails.maxAdultCount}
-                maxChildCount={boatDetails.maxChildCount}
                 minAdultCount={boatDetails.minAdultCount}
                 bookingTypeId={bookingTypeId}
                 availableRoomCount={boatDetails?.availableRoomCount}
                 roomCountState={roomCount}
                 setRoomCount={setRoomCount}
+                minRoomCount={boatDetails.prices.minimumRoomCount}
               />
               <div className='w-full'>
                 {cruiseTypeId === BoatCruisesId.dayNight ? (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={(roomCount * 3)} Count={roomCount * 2} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingDayNightSteps /> : <PrivateDayNightSteps />}
                   </>
                 ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} childAddonPrice={boatDetails.prices.childAddonDayNightPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={(roomCount * 3)} Count={roomCount * 2} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingNightStaySteps /> : <PrivateNightStaySteps />}
                   </>
                 ) : (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} child={boatDetails.maxChildCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} childAddonPrice={boatDetails.prices.childAddOnDayPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingDayCruiseSteps /> : <PrivateDayCruiseSteps />}
                   </>
@@ -194,14 +202,14 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 <HouseRules />
               </div>
             </div>
-            {!bookingConfirmModal.isOpen&&<div className='md:order-last md:col-span-3'>
+            {!bookingConfirmModal.isOpen && <div className='md:order-last md:col-span-3'>
               <ListingReservation
                 totalPrice={totalPrice}
                 cruiseTypeId={cruiseTypeId}
                 bookingTypeId={bookingTypeId}
                 roomCount={roomCount}
                 selectedDate={startDate}
-                guestCount={(boatDetails.guestCount*roomCount) < (finalAdultCount + finalChildCount) ? (finalAdultCount + finalChildCount) : boatDetails.guestCount*roomCount}
+                guestCount={finalAdultCount}
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 isVeg={isVeg}

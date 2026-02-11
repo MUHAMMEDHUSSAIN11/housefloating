@@ -24,7 +24,6 @@ const GetAvailableHouseBoats = async ({
     OrderBy
 }: GetAvailableHouseBoatsProps) => {
     try {
-        console.log('public api',process.env.NEXT_PUBLIC_API)
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/getAvailableBoats`, {
             params: { 
                 TripModeId, 

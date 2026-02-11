@@ -12,8 +12,8 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
         tripDate,
         guestName,
         guestPhone,
+        roomCount,
         adultCount,
-        childCount,
         guestEmail,
         guestPlace,
         totalPrice,
@@ -34,7 +34,7 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
             
             <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px 20px; margin: 0;">
                 <p style="margin: 0; font-size: 14px; color: #856404;">
-                    <strong>⚡ Action Required:</strong> A new booking has been received from the Housefloating. Please review and process it.
+                    <strong>⚡ Action Required:</strong> A new booking has been received from Housefloating. Please review and process it.
                 </p>
             </div>
 
@@ -65,8 +65,8 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
                                 <td style="padding: 10px 0; font-weight: 600; color: #333;">${adultCount}</td>
                             </tr>
                             <tr style="border-bottom: 1px solid #f0f0f0;">
-                                <td style="padding: 10px 0; color: #6c757d;">Child Count</td>
-                                <td style="padding: 10px 0; font-weight: 600; color: #333;">${childCount}</td>
+                                <td style="padding: 10px 0; color: #6c757d;">Room Count</td>
+                                <td style="padding: 10px 0; font-weight: 600; color: #333;">${roomCount}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 10px 0; color: #6c757d;">Booked On</td>

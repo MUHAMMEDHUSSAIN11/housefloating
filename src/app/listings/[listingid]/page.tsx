@@ -13,9 +13,8 @@ interface Prices {
   adultAddOnDayPrice: number
   adultAddonDayNightPrice: number
   adultAddonNightStayPrice: number;
-  childAddOnDayPrice: number;
-  childAddonDayNightPrice: number;
-  childAddonNightStayPrice: number;
+  minimumRoomCount: number;
+  roomPrice: number;
   dayPrice: number;
 }
 
@@ -30,7 +29,6 @@ export interface BoatDetails {
   guestCount: number;
   maxAdultCount: number;
   minAdultCount: number;
-  maxChildCount: number;
   bathroomCount: number;
   prices: Prices;
   availableRoomCount?: number;

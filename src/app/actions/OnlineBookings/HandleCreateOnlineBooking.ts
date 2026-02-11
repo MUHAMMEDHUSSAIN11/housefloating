@@ -4,7 +4,6 @@ export interface CreateOnlineBookingData {
     adultCount: number | string;
     boatId: number | string;
     bookingDate: string;
-    childCount: number | string;
     contactNumber: string;
     cruiseTypeId: number;
     guestName: string;
