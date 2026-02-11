@@ -90,7 +90,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 console.warn('⚠️ Payment save note:', err?.message || err);
             }
 
-            // 7. Reconstruct Email Data and Send Emails
             const emailChunks = (metadata.ed1 || '') + (metadata.ed2 || '') + (metadata.ed3 || '');
             if (emailChunks) {
                 try {
