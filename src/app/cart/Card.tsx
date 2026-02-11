@@ -8,7 +8,7 @@ import { BoatBookingTypes, BookingStatuses } from '../enums/enums';
 import CheckIsDateOver from '../actions/checkDateOver';
 import Link from 'next/link';
 import { BookingData } from './page';
-import { Baby, House } from 'lucide-react';
+import { House } from 'lucide-react';
 
 interface CardListingProps {
   details: BookingData;
@@ -122,14 +122,7 @@ const Card: React.FC<CardListingProps> = ({ details, onAction, disabled, actionI
                         <p className="font-semibold text-xs md:text-sm text-gray-900">{details.adultCount}</p>
                     </div>
                 </div>
-                <div>
-                    <p className="text-xs text-gray-600 uppercase tracking-wide">Child</p>
-                    <div className="flex gap-1 items-center">
-                        <Baby className="text-green-600" size={20} />
-                        <p className="font-semibold text-xs md:text-sm text-gray-900">{details.childCount}</p>
-                    </div>
-                </div>
-                <div className={`${!details.isSharing&&'hidden'}`}>
+                <div className={``}>
                     <p className="text-xs text-gray-600 uppercase tracking-wide">Room</p>
                     <div className="flex gap-1 items-center">
                         <House className="text-green-600" size={20} />

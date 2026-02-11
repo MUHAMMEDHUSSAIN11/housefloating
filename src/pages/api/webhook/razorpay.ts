@@ -90,7 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             boatCode: parsed.bc, boatName: parsed.bn, boatCategory: parsed.bCat,
                             boatRoomCount: parsed.brc, boatImage: parsed.bi, bookingType: parsed.bt,
                             bookingDate: parsed.bd, bookingId: parsed.bid, adultCount: parsed.ac,
-                            childCount: parsed.cc, cruiseType: parsed.ct, tripDate: parsed.td,
+                            cruiseType: parsed.ct, tripDate: parsed.td,roomCount: parsed.rc,
                             guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
                             guestEmail: parsed.ge, ownerEmail: parsed.oe, totalPrice: parsed.tp,
                             advanceAmount: parsed.aa, remainingAmount: parsed.ra,

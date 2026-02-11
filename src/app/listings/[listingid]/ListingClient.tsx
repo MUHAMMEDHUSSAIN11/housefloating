@@ -42,31 +42,47 @@ const ListingClient: React.FC<ListingClientProps> = ({
   cruiseTypeId,
   bookingTypeId,
 }) => {
+  const isSharing = bookingTypeId === BookingType.sharing;
   const { user } = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
+  const [roomCount, setRoomCount] = useState((isSharing&&boatDetails.availableRoomCount)?boatDetails.availableRoomCount:boatDetails.bedroomCount);
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
-  const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.guestCount || 1);
+  const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.bedroomCount * 2);
   const [isVeg, setIsVeg] = useState(false);
-  const [roomCount, setRoomCount] = useState(1);
   const adultAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.adultAddOnDayPrice
     : cruiseTypeId === BoatCruisesId.dayNight ? boatDetails.prices.adultAddonDayNightPrice
       : boatDetails.prices.adultAddonNightStayPrice;
+  const isDayCruise = cruiseTypeId === BoatCruisesId.dayCruise
   useEffect(() => {
-    const isSharing = bookingTypeId === BookingType.sharing;
-    const currentMaxAdults = isSharing ? (roomCount * boatDetails.maxAdultCount) : boatDetails.maxAdultCount;
+    const currentMaxAdults = isSharing
+      ? (roomCount * boatDetails.maxAdultCount)
+      : isDayCruise
+      ? boatDetails.maxAdultCount
+      : (roomCount * 3);
 
     if (finalAdultCount > currentMaxAdults) {
       setFinalAdultCount(currentMaxAdults);
     }
 
-  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, finalAdultCount,]);
+  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, finalAdultCount]);
 
   useEffect(() => {
     const calculate = async () => {
       try {
-        const finalPrice = await CalculatePrice(finalAdultCount, boatDetails.prices.dayPrice, boatDetails.maxAdultCount, boatDetails.guestCount, adultAddonPrice, roomCount, bookingTypeId)
+        const finalPrice = await CalculatePrice(
+          finalAdultCount,
+          boatDetails.prices.dayPrice,
+          boatDetails.bedroomCount,
+          roomCount,
+          boatDetails.prices.roomPrice,
+          adultAddonPrice,
+          boatDetails.maxAdultCount,
+          boatDetails.guestCount,
+          bookingTypeId,
+          isDayCruise,
+        );
         setTotalPrice(finalPrice);
       } catch (error) {
         console.error('Error calculating total price:', error);
@@ -77,8 +93,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   const onCreateReservation = useCallback(() => {
     if (user) {
-      const isSharing = bookingTypeId === BookingType.sharing;
-      const currentMaxAdults = isSharing ? (roomCount * boatDetails.maxAdultCount) : boatDetails.maxAdultCount;
+      const currentMaxAdults = isSharing 
+      ? (roomCount * boatDetails.maxAdultCount)
+      : isDayCruise
+      ? boatDetails.maxAdultCount
+      : (roomCount * 3)
 
       if (finalAdultCount <= currentMaxAdults) {
         return bookingConfirmModal.onOpen();
@@ -123,17 +142,18 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 availableRoomCount={boatDetails?.availableRoomCount}
                 roomCountState={roomCount}
                 setRoomCount={setRoomCount}
+                minRoomCount={boatDetails.prices.minimumRoomCount}
               />
               <div className='w-full'>
                 {cruiseTypeId === BoatCruisesId.dayNight ? (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice}/>}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={(roomCount * 3)} Count={roomCount * 2} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingDayNightSteps /> : <PrivateDayNightSteps />}
                   </>
                 ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={(roomCount * 3)} Count={roomCount * 2} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingNightStaySteps /> : <PrivateNightStaySteps />}
                   </>
@@ -182,14 +202,14 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 <HouseRules />
               </div>
             </div>
-            {!bookingConfirmModal.isOpen&&<div className='md:order-last md:col-span-3'>
+            {!bookingConfirmModal.isOpen && <div className='md:order-last md:col-span-3'>
               <ListingReservation
                 totalPrice={totalPrice}
                 cruiseTypeId={cruiseTypeId}
                 bookingTypeId={bookingTypeId}
                 roomCount={roomCount}
                 selectedDate={startDate}
-                guestCount={(boatDetails.guestCount*roomCount) < (finalAdultCount) ? (finalAdultCount) : boatDetails.guestCount*roomCount}
+                guestCount={finalAdultCount}
                 onSubmit={onCreateReservation}
                 disabled={isLoading}
                 isVeg={isVeg}

@@ -176,7 +176,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
 
             try {
                 const isSharing = bookingTypeId === BookingType.sharing;
-                const finalRoomCount = isSharing ? roomCount : undefined;
+                const finalRoomCount = roomCount;
                 const tripDateLocal = FormatToLocalDate(finalCheckInDate);
                 const localBookingDate = FormatToLocalDateTime(new Date());
 
@@ -216,7 +216,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     const bookingType = bookingResponse.data.bookingType === BoatBookingTypes.onlineBooked ? 'Private' : 'Sharing';
                     const boatName = bookingResponse.data.boatName;
                     const adultCount = bookingResponse.data.adultCount;
-                    const childCount = bookingResponse.data.childCount;
 
                     try {
                         await MakeRazorpay({
@@ -242,7 +241,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                         bd: localBookingDate,
                                         bid: bookingId,
                                         ac: adultCount,
-                                        cc: childCount,
                                         ct: modeOfTravel,
                                         td: tripDateLocal,
                                         gn: guestName,
@@ -251,6 +249,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                         ge: user?.email,
                                         oe: boatDetails.ownerEmail,
                                         tp: finalPrice,
+                                        rc: roomCount,
                                         aa: Math.round(finalPrice * amount.advance),
                                         ra: Math.round(finalPrice * amount.remaining),
                                     };
@@ -274,12 +273,12 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                     bookingDate: localBookingDate,
                                     bookingId: bookingId,
                                     adultCount: adultCount,
-                                    childCount: childCount,
                                     cruiseType: modeOfTravel,
                                     tripDate: tripDateLocal,
                                     guestName: guestName,
                                     guestPlace: guestPlace,
                                     guestPhone: cleanedPhoneNumber,
+                                    roomCount: roomCount,
                                     guestEmail: user?.email,
                                     ownerEmail: boatDetails.ownerEmail,
                                     totalPrice: finalPrice,

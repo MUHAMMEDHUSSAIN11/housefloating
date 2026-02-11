@@ -14,9 +14,9 @@ export async function sendOwnerEmail(data: any) {
         boatRoomCount,
         bookingType,
         adultCount,
-        childCount,
         tripDate,
         guestName,
+        roomCount,
         guestPlace,
         totalPrice,
         advanceAmount,
@@ -54,7 +54,7 @@ export async function sendOwnerEmail(data: any) {
                             <tr><td style="padding: 6px 0; color: #777;">Booking Date</td><td style="padding: 6px 0; font-weight: 500;">${new Date(bookingDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td></tr>
                             <tr><td style="padding: 6px 0; color: #777;">Cruise Type</td><td style="padding: 6px 0; font-weight: 500;">${cruiseType}</td></tr>
                             <tr><td style="padding: 6px 0; color: #777;">Adult Count</td><td style="padding: 6px 0; font-weight: 500;">${adultCount}</td></tr>
-                            <tr><td style="padding: 6px 0; color: #777;">Child Count</td><td style="padding: 6px 0; font-weight: 500;">${childCount}</td></tr>
+                            <tr><td style="padding: 6px 0; color: #777;">Room Count</td><td style="padding: 6px 0; font-weight: 500;">${roomCount}</td></tr>
                         </table>
                     </div>
                 </div>
