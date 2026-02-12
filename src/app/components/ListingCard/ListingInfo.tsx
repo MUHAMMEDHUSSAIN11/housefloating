@@ -59,7 +59,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
           />
           {minRoomCount === roomCount
           ? (isSharing ? roomCountState === 1 : roomCountState === minRoomCount) && (
-          <div className='text-sm text-red-500 mt-1'>This boat requires {roomCountState} minimum rooms to operate.</div>
+          <div className={`text-sm text-red-500 mt-1 ${isSharing&&'hidden'}`}>This boat requires {roomCountState} minimum rooms to operate.</div>
           )
           :
           <>
@@ -67,7 +67,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
           <div className='text-sm text-red-500 mt-1'>This boat allows a maximum of {roomCountState} rooms.</div>
           )}
           {(isSharing ? roomCountState === 1 : roomCountState === minRoomCount) && (
-          <div className='text-sm text-red-500 mt-1'>This boat requires {roomCountState} minimum rooms to operate.</div>
+          <div className={`text-sm text-red-500 mt-1 ${isSharing&&'hidden'}`}>This boat requires {roomCountState} minimum rooms to operate.</div>
           )}
           </>}
         </div>
