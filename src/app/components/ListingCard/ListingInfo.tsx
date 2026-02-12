@@ -32,7 +32,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
     : isDayCruise
     ? maxAdultCount
     : (roomCountState * 3);
-  const currentMinAdults = (isSharing || isDayCruise) ? minAdultCount : 1;
+  const currentMinAdults = (isDayCruise && !isSharing) ? minAdultCount : 1;
 
   return (
     <div className='flex flex-col gap-7 px-1'>

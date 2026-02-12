@@ -159,7 +159,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
                 <span className="text-lg font-bold text-black">₹{totalPrice}</span>
-                <span className="text-xs text-gray-500">/ `${guestCount} guest - for ${roomCount} bedroom`</span>
+                <span className="text-xs text-gray-500">/ {`${guestCount} guest - for ${roomCount} bedroom`}</span>
               </div>
             </div>
             <div className="flex-1 max-w-150">
