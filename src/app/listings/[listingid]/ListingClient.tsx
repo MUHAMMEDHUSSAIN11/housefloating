@@ -63,7 +63,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
       : (roomCount * 3);
 
     if (finalAdultCount > currentMaxAdults) {
-      setFinalAdultCount(currentMaxAdults);
+      setFinalAdultCount(roomCount*2);
     }
 
   }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, finalAdultCount]);
