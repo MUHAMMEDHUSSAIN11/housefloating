@@ -47,7 +47,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
-  const [roomCount, setRoomCount] = useState((isSharing&&boatDetails.availableRoomCount)?boatDetails.availableRoomCount:boatDetails.bedroomCount);
+  const [roomCount, setRoomCount] = useState((isSharing&&boatDetails.availableRoomCount)?1:boatDetails.bedroomCount);
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
   const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.bedroomCount * 2);
   const [isVeg, setIsVeg] = useState(false);
@@ -62,11 +62,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
       ? boatDetails.maxAdultCount
       : (roomCount * 3);
 
-    if (finalAdultCount > currentMaxAdults) {
-      setFinalAdultCount(currentMaxAdults);
+    if (finalAdultCount > currentMaxAdults || finalAdultCount > roomCount*2) {
+      setFinalAdultCount(roomCount*2);
     }
 
-  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, finalAdultCount]);
+  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount,]);
 
   useEffect(() => {
     const calculate = async () => {

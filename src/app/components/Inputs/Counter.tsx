@@ -8,27 +8,30 @@ interface CounterProps {
   subtitle: string;
   value: number;
   onChange: (value: number) => void;
-  max?: number,
-  min?: number,
+  max?: number;
+  min?: number;
+  onLimitReached?: (type: 'min' | 'max') => void;
 }
 
-const Counter: React.FC<CounterProps> = ({ title, subtitle, value, onChange, max, min }) => {
+const Counter: React.FC<CounterProps> = ({ title, subtitle, value, onChange, max, min, onLimitReached }) => {
   const onAdd = useCallback(() => {
     if (typeof max === 'number' && value >= max) {
+      onLimitReached?.('max');
       return;
     }
     onChange(value + 1);
-  }, [onChange, value, max]);
+  }, [onChange, value, max, onLimitReached]);
 
   const onReduce = useCallback(() => {
     if (typeof min === 'number' && value <= min) {
+      onLimitReached?.('min');
       return;
     }
     if (value === 0) {
       return;
     }
     onChange(value - 1);
-  }, [onChange, value, min]);
+  }, [onChange, value, min, onLimitReached]);
 
   return (
     <div className="flex flex-row items-center justify-between">
