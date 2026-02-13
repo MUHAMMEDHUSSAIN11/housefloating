@@ -66,7 +66,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
       setFinalAdultCount(roomCount*2);
     }
 
-  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, finalAdultCount]);
+  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount,]);
 
   useEffect(() => {
     const calculate = async () => {
