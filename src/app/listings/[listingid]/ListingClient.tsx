@@ -62,7 +62,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
       ? boatDetails.maxAdultCount
       : (roomCount * 3);
 
-    if (finalAdultCount > currentMaxAdults) {
+    if (finalAdultCount > currentMaxAdults || finalAdultCount > roomCount*2) {
       setFinalAdultCount(roomCount*2);
     }
 
