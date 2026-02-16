@@ -210,6 +210,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
                 }}
                 onClose={() => setMobileActiveSection(null)}
                 inline={true}
+                bookingTypeId={selectedType}
               />
             </div>
           </div>
