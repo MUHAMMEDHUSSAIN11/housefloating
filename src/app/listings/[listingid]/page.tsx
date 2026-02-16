@@ -69,7 +69,9 @@ export async function generateMetadata(
   const cruiseTypeIdParam = resolvedSearchParams.cruiseTypeId as string;
   const bookingTypeIdParam = resolvedSearchParams.bookingTypeId as string;
 
-  const host = (await headers()).get('host') || 'housefloating.com';
+  // Use headers to get the current host dynamically
+  const hostArr = (await headers()).get('host')?.split(':') || ['housefloating.com'];
+  const host = hostArr[0];
   const protocol = 'https';
   const baseUrl = `${protocol}://${host}`;
 
@@ -89,10 +91,13 @@ export async function generateMetadata(
   }
 
   const title = `Houseboat ${boatData.boatCode} - ${boatData.boatCategory}`;
-  const description = `Book the ${boatData.boatCode} ${boatData.boatCategory} houseboat at ${boatData.boardingPoint}. ${boatData.bedroomCount} Bedrooms available.`;
+  const description = `Luxury ${boatData.boatCategory} houseboat with ${boatData.bedroomCount} bedrooms. Boarding at ${boatData.boardingPoint}. Book now!`;
 
-  // Ensure the image URL is absolute for WhatsApp/Social Scrapers
-  let imageUrl = boatData.boatImages?.[boatData.boatImages?.length - 1] || '/placeholder-boat.jpg';
+  // Get the LAST image as requested by the user
+  const images = boatData.boatImages || [];
+  let imageUrl = images.length > 0 ? images[images.length - 1] : '/placeholder-boat.jpg';
+
+  // Ensure the image URL is absolute and clearly formatted for WhatsApp/Facebook scrapers
   if (imageUrl && !imageUrl.startsWith('http')) {
     imageUrl = `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
   }
@@ -111,9 +116,9 @@ export async function generateMetadata(
       images: [
         {
           url: imageUrl,
-          width: 800,
-          height: 600,
-          alt: `${boatData.boatCode} Houseboat`,
+          width: 1200,
+          height: 630,
+          type: 'image/jpeg', // Standard for WhatsApp
         },
       ],
       type: 'website',
@@ -126,10 +131,6 @@ export async function generateMetadata(
     },
     alternates: {
       canonical: canonicalUrl,
-    },
-    icons: {
-      icon: '/favicon.ico',
-      apple: '/apple-touch-icon.png',
     }
   };
 }
