@@ -69,9 +69,8 @@ export async function generateMetadata(
   const cruiseTypeIdParam = resolvedSearchParams.cruiseTypeId as string;
   const bookingTypeIdParam = resolvedSearchParams.bookingTypeId as string;
 
-  // Use headers to get the current host dynamically (helps with QA/Prod environments)
   const host = (await headers()).get('host') || 'housefloating.com';
-  const protocol = host.includes('localhost') ? 'http' : 'https';
+  const protocol = 'https';
   const baseUrl = `${protocol}://${host}`;
 
   if (!listingId || !startDateParam || !cruiseTypeIdParam) {
@@ -93,7 +92,7 @@ export async function generateMetadata(
   const description = `Book the ${boatData.boatCode} ${boatData.boatCategory} houseboat at ${boatData.boardingPoint}. ${boatData.bedroomCount} Bedrooms available.`;
 
   // Ensure the image URL is absolute for WhatsApp/Social Scrapers
-  let imageUrl = boatData.boatImages?.[0] || '/placeholder-boat.jpg';
+  let imageUrl = boatData.boatImages?.[boatData.boatImages?.length - 1] || '/placeholder-boat.jpg';
   if (imageUrl && !imageUrl.startsWith('http')) {
     imageUrl = `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
   }
