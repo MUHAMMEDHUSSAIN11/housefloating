@@ -70,15 +70,20 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    const shareUrl = window.location.href;
+    const shareText = `Check out this houseboat: ${title}\n\n`;
+    const fullMessage = `${shareText}${shareUrl}`;
+
     try {
-      if (navigator.share) {
+      if (typeof navigator !== 'undefined' && navigator.share) {
         await navigator.share({
           title: title,
-          url: window.location.href
+          text: `Check out this houseboat: ${title}`,
+          url: shareUrl
         });
       } else {
-        await navigator.clipboard.writeText(window.location.href);
-        alert("Link copied to clipboard!");
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullMessage)}`;
+        window.open(whatsappUrl, '_blank');
       }
     } catch (error) {
       console.error("Error sharing:", error);
