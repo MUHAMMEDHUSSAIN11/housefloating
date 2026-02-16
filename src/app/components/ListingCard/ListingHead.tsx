@@ -71,8 +71,6 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const shareUrl = window.location.href;
-    const shareText = `Check out this houseboat: ${title}\n\n`;
-    const fullMessage = `${shareText}${shareUrl}`;
 
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
@@ -82,7 +80,7 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
           url: shareUrl
         });
       } else {
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullMessage)}`;
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareUrl)}`;
         window.open(whatsappUrl, '_blank');
       }
     } catch (error) {

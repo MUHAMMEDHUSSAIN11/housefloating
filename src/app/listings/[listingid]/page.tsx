@@ -50,6 +50,10 @@ const fetchBoatData = async (
   return fetchedBoatData;
 };
 
+import { headers } from 'next/headers';
+
+// ... (fetchBoatData stays same)
+
 // Generate Metadata for Social Sharing (WhatsApp, etc.)
 export async function generateMetadata(
   { params, searchParams }: {
@@ -65,7 +69,10 @@ export async function generateMetadata(
   const cruiseTypeIdParam = resolvedSearchParams.cruiseTypeId as string;
   const bookingTypeIdParam = resolvedSearchParams.bookingTypeId as string;
 
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://housefloating.com';
+  // Use headers to get the current host dynamically (helps with QA/Prod environments)
+  const host = (await headers()).get('host') || 'housefloating.com';
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}`;
 
   if (!listingId || !startDateParam || !cruiseTypeIdParam) {
     return { title: 'Houseboat Listing' };
@@ -94,6 +101,7 @@ export async function generateMetadata(
   const canonicalUrl = `${baseUrl}/listings/${listingId}?startDate=${startDateParam}&cruiseTypeId=${cruiseTypeIdParam}`;
 
   return {
+    metadataBase: new URL(baseUrl),
     title,
     description,
     openGraph: {
@@ -104,8 +112,8 @@ export async function generateMetadata(
       images: [
         {
           url: imageUrl,
-          width: 1200,
-          height: 630,
+          width: 800,
+          height: 600,
           alt: `${boatData.boatCode} Houseboat`,
         },
       ],
@@ -120,6 +128,10 @@ export async function generateMetadata(
     alternates: {
       canonical: canonicalUrl,
     },
+    icons: {
+      icon: '/favicon.ico',
+      apple: '/apple-touch-icon.png',
+    }
   };
 }
 
