@@ -23,7 +23,7 @@ interface ListingInfoProps {
 }
 
 const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
-  bathroomCount, roomCount, setAdultCount, availableRoomCount, travelMode,
+  bathroomCount, roomCount, setAdultCount, availableRoomCount, travelMode,category,
   adultCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount, minRoomCount }) => {
   const isDayCruise = travelMode === BoatCruisesId.dayCruise
   const isSharing = bookingTypeId === BookingType.sharing;
@@ -57,7 +57,8 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
         <div className="text-xl font-semibold">{title},{boardingPoint}</div>
         <div className="text-sm flex flex-row items-center gap-2">
           <div>{roomCount} Bedrooms</div>•
-          <div>{bathroomCount} Bathrooms</div>
+          <div>{bathroomCount} Bathrooms</div>•
+          <div>{category}</div>
         </div>
       </div>
       <hr className='border border-gray-300' />
