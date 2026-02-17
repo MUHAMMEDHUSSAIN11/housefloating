@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import GetRandomBoats from '@/app/actions/GetRandomBoats/GetRandomBoats';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
