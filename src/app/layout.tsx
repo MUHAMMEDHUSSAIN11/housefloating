@@ -18,18 +18,22 @@ export const inter = Inter({
 
 
 export const metadata = {
-  title: 'Houseboats in Alleppey – Book Online at Best Prices',
+  title: 'Housefloating.com - Book Houseboats in Alleppey',
   description: "Housefloating is No #1 Online portal for Booking Houseboats in Alleppey. Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
+  manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/hf-Logo.jpeg"
+    icon: "/images/hf-Logo.jpg",
+    apple: "/images/hf-Logo.jpg"
   },
   openGraph: {
-    title: 'Houseboats in Alleppey – Book Online at Best Prices',
+    title: 'Housefloating.com - Book Houseboats in Alleppey',
     description: "Housefloating is No #1 Online portal for Booking Houseboats in Alleppey. Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
-    images:['/hf-Logo.jpeg']
+    images: ['/images/hf-Logo.jpg']
   },
-  
+}
+
+export const viewport = {
+  themeColor: "#3b82f6",
 }
 
 import StoreProvider from './StoreProvider';

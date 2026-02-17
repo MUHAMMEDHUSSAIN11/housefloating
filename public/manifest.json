@@ -1,0 +1,23 @@
+{
+    "name": "Housefloating.com",
+    "short_name": "Housefloating.com",
+    "description": "Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3b82f6",
+    "icons": [
+        {
+            "src": "/images/hf-Logo.jpg",
+            "sizes": "192x192",
+            "type": "image/jpg",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/hf-Logo.jpg",
+            "sizes": "512x512",
+            "type": "image/jpg",
+            "purpose": "maskable"
+        }
+    ]
+}
