@@ -161,7 +161,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
                     </button>
                   </div>
                 </div>
-                <hr className='border border-gray-300'/>
+                <hr className='border border-gray-300' />
                 {categoryOptions.map((option) => (
                   <button
                     key={option.id}
@@ -211,6 +211,7 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
                 selected={selectedDateRange}
                 onSelect={setSelectedDateRange}
                 onClose={() => setActiveSection(null)}
+                bookingTypeId={selectedType}
               />
             )}
           </div>
