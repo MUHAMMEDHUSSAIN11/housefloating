@@ -21,6 +21,7 @@ interface SearchStore {
     showErrors: boolean;
     errors: SearchErrors;
     isMobileModalOpen: boolean;
+    activeSection: string | null;
 
     // Actions
     setSelectedCruise: (value: BoatCruisesId | ((prev: BoatCruisesId) => BoatCruisesId)) => void;
@@ -31,13 +32,14 @@ interface SearchStore {
     setShowErrors: (value: boolean | ((prev: boolean) => boolean)) => void;
     setErrors: (value: SearchErrors | ((prev: SearchErrors) => SearchErrors)) => void;
     setIsMobileModalOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
+    setActiveSection: (value: string | null | ((prev: string | null) => string | null)) => void;
     validateFields: () => boolean;
     clearErrors: () => void;
 }
 
 const useSearchStore = create<SearchStore>((set, get) => ({
     selectedCruise: BoatCruisesId.dayNight,
-    selectedType: null,
+    selectedType: BookingType.private,
     selectedDateRange: { startDate: null, endDate: null },
     selectedCategory: Categories.All,
     roomCount: 1,
@@ -48,6 +50,7 @@ const useSearchStore = create<SearchStore>((set, get) => ({
         date: false,
     },
     isMobileModalOpen: false,
+    activeSection: null,
 
     setSelectedCruise: (value) => set((state) => ({
         selectedCruise: typeof value === 'function' ? value(state.selectedCruise) : value
@@ -72,6 +75,9 @@ const useSearchStore = create<SearchStore>((set, get) => ({
     })),
     setIsMobileModalOpen: (value) => set((state) => ({
         isMobileModalOpen: typeof value === 'function' ? value(state.isMobileModalOpen) : value
+    })),
+    setActiveSection: (value) => set((state) => ({
+        activeSection: typeof value === 'function' ? value(state.activeSection) : value
     })),
 
     validateFields: () => {

@@ -1,7 +1,7 @@
 import { BoatCruisesId, BookingType, Categories } from "@/app/enums/enums";
 import { Calendar, ChevronDown, Minus, Plus, Search, Ship, User } from "lucide-react";
 import DateSelector from "../Navbar/DateSelector";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface SearchBarMobileModalProps {
   setIsMobileModalOpen: (isOpen: boolean) => void;
@@ -49,6 +49,22 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
   onClose,
 }) => {
   const [mobileActiveSection, setMobileActiveSection] = useState<'type' | 'category' | 'date' | null>('type');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (mobileActiveSection === 'date' && scrollContainerRef.current) {
+      // Use a timeout to wait for the expansion animation (duration-300)
+      const timeoutId = setTimeout(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTo({
+            top: scrollContainerRef.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      }, 350);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [mobileActiveSection]);
 
   return (
     <div className="fixed inset-0 z-60 bg-white flex flex-col md:hidden">
@@ -65,7 +81,10 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 bg-gray-50">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4 pb-24 bg-gray-50"
+      >
         {/* Type Selection Pill */}
         <div
           className={`rounded-3xl border transition-all duration-300 overflow-hidden shadow-sm ${mobileActiveSection === 'type' ? 'bg-white border-blue-200' :
@@ -132,7 +151,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileActiveSection === 'category' ? 'rotate-180 text-blue-500' : 'text-gray-400'}`} />
           </button>
 
-          <div className={`transition-all duration-300 ${mobileActiveSection === 'category' ? 'max-h-[500] opacity-100 p-4 pt-0' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+          <div className={`transition-all duration-300 ${mobileActiveSection === 'category' ? 'max-h-125 opacity-100 p-4 pt-0' : 'max-h-0 opacity-0 pointer-events-none'}`}>
             <div className="space-y-4">
               <div className="flex items-center justify-between bg-gray-50 p-3 rounded-2xl mt-2">
                 <span className="font-bold text-gray-700">Number of Rooms</span>
@@ -195,7 +214,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${mobileActiveSection === 'date' ? 'rotate-180 text-blue-500' : 'text-gray-400'}`} />
           </button>
 
-          <div className={`transition-all duration-300 ${mobileActiveSection === 'date' ? 'max-h-[600] opacity-100 p-2' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+          <div className={`transition-all duration-300 ${mobileActiveSection === 'date' ? 'max-h-150 opacity-100 p-2' : 'max-h-0 opacity-0 pointer-events-none'}`}>
             <div className="bg-white rounded-2xl overflow-hidden mt-1">
               <DateSelector
                 selectedCruise={selectedCruise}
@@ -210,6 +229,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
                 }}
                 onClose={() => setMobileActiveSection(null)}
                 inline={true}
+                bookingTypeId={selectedType}
               />
             </div>
           </div>

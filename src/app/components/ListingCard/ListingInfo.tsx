@@ -23,16 +23,21 @@ interface ListingInfoProps {
 }
 
 const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
-  bathroomCount, roomCount, setAdultCount, availableRoomCount, travelMode,
+  bathroomCount, roomCount, setAdultCount, availableRoomCount, travelMode, category,
   adultCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount, minRoomCount }) => {
   const isDayCruise = travelMode === BoatCruisesId.dayCruise
+  const isNightStay = travelMode === BoatCruisesId.nightStay;
   const isSharing = bookingTypeId === BookingType.sharing;
+
+  // Dynamic mode: Private Day Cruise or Private Night Stay
+  const isDynamicMode = (isDayCruise || isNightStay) && !isSharing;
+
   const currentMaxAdults = isSharing
     ? (roomCountState * maxAdultCount)
-    : isDayCruise
+    : isDynamicMode
       ? maxAdultCount
       : (roomCountState * 3);
-  const currentMinAdults = (isDayCruise && !isSharing) ? minAdultCount : 1;
+  const currentMinAdults = isDynamicMode ? minAdultCount : 1;
 
   const [roomError, setRoomError] = useState<'min' | 'max' | null>(null);
   const [adultError, setAdultError] = useState<'min' | 'max' | null>(null);
@@ -57,12 +62,13 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
         <div className="text-xl font-semibold">{title},{boardingPoint}</div>
         <div className="text-sm flex flex-row items-center gap-2">
           <div>{roomCount} Bedrooms</div>•
-          <div>{bathroomCount} Bathrooms</div>
+          <div>{bathroomCount} Bathrooms</div>•
+          <div>{category}</div>
         </div>
       </div>
       <hr className='border border-gray-300' />
 
-      {setRoomCount && roomCountState !== undefined && !(isDayCruise && !isSharing) && (
+      {setRoomCount && roomCountState !== undefined && !isDynamicMode && (
         <div className=''>
           <Counter
             onChange={(value) => {

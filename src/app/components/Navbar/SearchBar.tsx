@@ -33,10 +33,11 @@ const SearchBar = () => {
     showErrors, setShowErrors,
     errors, setErrors,
     isMobileModalOpen, setIsMobileModalOpen,
+    activeSection, setActiveSection,
     validateFields
   } = useSearchStore();
 
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+
   const [showFilter, setShowFilter] = useState(false);
 
   const typeRef = useRef<HTMLDivElement>(null);
@@ -99,11 +100,11 @@ const SearchBar = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     window.addEventListener('scroll', handleScroll, true);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
       window.removeEventListener('scroll', handleScroll, true);
     };
   }, [activeSection, showFilter]);
@@ -128,10 +129,15 @@ const SearchBar = () => {
     }
   }, [selectedDateRange, selectedCruise]);
 
+  // useEffect removed - now handled by ListingHero or handleSearch calling setActiveSection('type')
+
   // Removed local validateFields as it's now in the store
 
   const handleSearch = async () => {
     if (!validateFields()) {
+      if (window.innerWidth >= 768 && !selectedType) {
+        setActiveSection('type');
+      }
       return;
     }
 

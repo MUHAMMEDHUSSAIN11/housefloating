@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { format, addMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, isBefore, startOfDay } from 'date-fns';
-import { BoatCruises, BoatCruisesId } from '@/app/enums/enums';
+import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
+import GetCheckInOutTimes from '../Misc/GetCheckInOutTimes';
 
 interface DateRange {
   startDate: Date | null;
@@ -14,6 +15,7 @@ interface DateSelectorProps {
   onSelect: (dateRange: DateRange) => void;
   onClose: () => void;
   inline?: boolean;
+  bookingTypeId?: BookingType | null;
 }
 
 const DateSelector: React.FC<DateSelectorProps> = ({
@@ -22,7 +24,8 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   onClose,
   selectedCruise,
   setSelectedCruise,
-  inline = false
+  inline = false,
+  bookingTypeId = null
 }) => {
   const [tempStartDate, setTempStartDate] = useState<Date | null>(selected.startDate);
   const [tempEndDate, setTempEndDate] = useState<Date | null>(selected.endDate);
@@ -62,39 +65,50 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     return tempStartDate ? isSameDay(day, tempStartDate) : false;
   };
 
+  // Get check-in/out times for each cruise type
+  // If no booking type selected, default to Private times
+  const effectiveBookingType = bookingTypeId ?? BookingType.private;
+
+  const cruiseOptions = [
+    { id: BoatCruisesId.dayCruise, label: BoatCruises.dayCruise },
+    { id: BoatCruisesId.dayNight, label: BoatCruises.dayNight },
+    { id: BoatCruisesId.nightStay, label: BoatCruises.nightStay },
+  ];
+
   return (
     <div className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-3 sm:p-4 w-full sm:min-w-[420] z-50'}`}>
-      {/* Cruise Type Selection */}
-      <div className="flex justify-between items-center my-2 w-full gap-2">
-        <label className="inline-flex items-center cursor-pointer group">
-          <input
-            type="radio"
-            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
-            checked={selectedCruise === BoatCruisesId.dayCruise}
-            onChange={() => handleCruiseChange(BoatCruisesId.dayCruise)}
-          />
-          <span className="ml-1 text-10 sm:text-md font-medium text-gray-900 group-hover:text-blue-600 transition-colors">{BoatCruises.dayCruise}</span>
-        </label>
+      {/* Cruise Type Selection with Check-in/Out Times */}
+      <div className="flex justify-between items-start my-2 w-full gap-1">
+        {cruiseOptions.map((cruise) => {
+          const times = GetCheckInOutTimes(cruise.id, effectiveBookingType);
+          const isSelected = selectedCruise === cruise.id;
 
-        <label className="inline-flex items-center cursor-pointer group">
-          <input
-            type="radio"
-            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
-            checked={selectedCruise === BoatCruisesId.dayNight}
-            onChange={() => handleCruiseChange(BoatCruisesId.dayNight)}
-          />
-          <span className="ml-1 text-[10 sm:text-xs font-medium text-gray-700 group-hover:text-blue-600 transition-colors">{BoatCruises.dayNight}</span>
-        </label>
-
-        <label className="inline-flex items-center cursor-pointer group">
-          <input
-            type="radio"
-            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
-            checked={selectedCruise === BoatCruisesId.nightStay}
-            onChange={() => handleCruiseChange(BoatCruisesId.nightStay)}
-          />
-          <span className="ml-1 text-10 sm:text-md font-medium text-gray-900 group-hover:text-blue-600 transition-colors">{BoatCruises.nightStay}</span>
-        </label>
+          return (
+            <label
+              key={cruise.id}
+              className={`flex flex-col items-center cursor-pointer group flex-1 rounded-xl px-1 py-2 transition-all duration-200 ${isSelected ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50 border border-transparent'
+                }`}
+              onClick={() => handleCruiseChange(cruise.id)}
+            >
+              <div className="flex items-center gap-1">
+                <input
+                  type="radio"
+                  className="w-3.5 h-3.5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                  checked={isSelected}
+                  onChange={() => handleCruiseChange(cruise.id)}
+                />
+                <span className={`text-[10px] sm:text-xs font-semibold transition-colors ${isSelected ? 'text-blue-600' : 'text-gray-700 group-hover:text-blue-600'
+                  }`}>
+                  {cruise.label}
+                </span>
+              </div>
+              <div className={`mt-1 text-[9px] sm:text-[10px] leading-tight text-center ${isSelected ? 'text-blue-500' : 'text-gray-400'
+                }`}>
+                <div>{times.checkIn} - {times.checkOut}</div>
+              </div>
+            </label>
+          );
+        })}
       </div>
 
       <hr className="my-2 border border-gray-300" />

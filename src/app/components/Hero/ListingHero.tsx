@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import GetRandomBoats from '@/app/actions/GetRandomBoats/GetRandomBoats';
 import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
@@ -42,6 +41,8 @@ const ListingHero: React.FC = () => {
     roomCount,
     selectedDateRange,
     selectedCruise,
+    setIsMobileModalOpen,
+    setActiveSection,
   } = useSearchStore();
 
   const handleBoatClick = () => {
@@ -70,6 +71,15 @@ const ListingHero: React.FC = () => {
       router.push(`/houseBoats?${params.toString()}`);
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      // If mobile, open the search modal automatically
+      if (window.innerWidth < 768) {
+        setIsMobileModalOpen(true);
+      } else if (window.innerWidth >= 768 && !selectedDateRange.startDate) {
+        setActiveSection('date');
+      } else if (!selectedType) {
+        // If desktop, open the type section automatically if it's missing
+        setActiveSection('type');
+      }
     }
   };
 
