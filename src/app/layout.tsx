@@ -19,11 +19,22 @@ export const inter = Inter({
 
 export const metadata = {
   title: 'Housefloating.com - Book Houseboats in Alleppey',
-  description: "Housefloating is No #1 Online portal for Booking Houseboats in Alleppey. Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
+  description: "Housefloating.com is the #1 portal to book luxury Alleppey houseboats at best prices. Experience premium Kerala houseboats and unforgettable journeys online.",
   manifest: "/manifest.json",
   icons: {
     icon: "/images/hf-Logo.jpg",
-    apple: "/images/hf-Logo.jpg"
+    shortcut: "/images/hf-Logo.jpg",
+    apple: "/images/hf-Logo.jpg",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/images/hf-Logo.jpg",
+    },
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Housefloating.com - Book Houseboats in Alleppey',
+    description: 'Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats.',
+    images: ['/images/hf-Logo.jpg'],
   },
   openGraph: {
     title: 'Housefloating.com - Book Houseboats in Alleppey',
