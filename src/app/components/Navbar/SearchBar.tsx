@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Users, User, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
@@ -33,9 +33,17 @@ const SearchBar = () => {
     showErrors, setShowErrors,
     errors, setErrors,
     isMobileModalOpen, setIsMobileModalOpen,
-    // activeSection, setActiveSection,
+    triggerSection,
+    setTriggerSection,
     validateFields
   } = useSearchStore();
+
+  useEffect(() => {
+    if (triggerSection) {
+        setActiveSection(triggerSection);
+        setTriggerSection(null);
+    }
+  }, [triggerSection]);
 
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
@@ -52,7 +60,7 @@ const SearchBar = () => {
       isOpeningRef.current = true;
       setTimeout(() => {
         isOpeningRef.current = false;
-      }, 300); // 300ms buffer to allow layout shifts to settle
+      }, 300);
     } else {
       document.body.style.overflow = 'auto';
     }
@@ -136,14 +144,12 @@ const SearchBar = () => {
     try {
       const params = new URLSearchParams();
 
-      // Add required parameters
       if (selectedType) params.append('type', selectedType.toString());
       if (selectedCategory) {
         params.append('category', selectedCategory.toString());
       }
       params.append('rooms', roomCount.toString());
 
-      // Add date parameters
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDate(selectedDateRange.startDate));
 
@@ -161,7 +167,6 @@ const SearchBar = () => {
         }
       }
 
-      // Add cruise type
       params.append('cruise', selectedCruise.toString());
 
       setIsMobileModalOpen(false);
@@ -195,7 +200,6 @@ const SearchBar = () => {
 
   return (
     <div className="relative w-full mb-2 lg:mb:0 lg:my-8">
-      {/* Mobile Search Trigger */}
       <div className="md:hidden w-full px-4 mb-4">
         <button
           onClick={() => setIsMobileModalOpen(true)}

@@ -42,7 +42,7 @@ const ListingHero: React.FC = () => {
     selectedDateRange,
     selectedCruise,
     setIsMobileModalOpen,
-    setActiveSection,
+    setTriggerSection,
   } = useSearchStore();
 
   const handleBoatClick = () => {
@@ -75,9 +75,9 @@ const ListingHero: React.FC = () => {
       if (window.innerWidth < 768) {
         setIsMobileModalOpen(true);
       } else if (window.innerWidth >= 768 && !selectedDateRange.startDate) {
-        setActiveSection('date');
+        setTriggerSection('date');
       } else if (!selectedType) {
-        setActiveSection('type');
+        setTriggerSection('type');
       }
     }
   };
