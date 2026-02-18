@@ -81,14 +81,9 @@ const SearchBar = () => {
         return;
       }
 
-      // If we're scrolling inside a scrollable container in our active section, don't close
-      if (activeSection === 'date' && datesRef.current && datesRef.current.contains(event.target as Node)) {
-        return;
-      }
-      if (activeSection === 'category' && categoryRef.current && categoryRef.current.contains(event.target as Node)) {
-        return;
-      }
-      if (activeSection === 'type' && typeRef.current && typeRef.current.contains(event.target as Node)) {
+      // Only close if the scroll event target is the window or document.
+      // Element-level scrolls (like inside the DateSelector) should be ignored.
+      if (event.target !== window && event.target !== document) {
         return;
       }
 
