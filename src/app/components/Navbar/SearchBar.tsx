@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Users, User, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
@@ -33,11 +33,19 @@ const SearchBar = () => {
     showErrors, setShowErrors,
     errors, setErrors,
     isMobileModalOpen, setIsMobileModalOpen,
-    activeSection, setActiveSection,
+    triggerSection,
+    setTriggerSection,
     validateFields
   } = useSearchStore();
 
+  useEffect(() => {
+    if (triggerSection) {
+        setActiveSection(triggerSection);
+        setTriggerSection(null);
+    }
+  }, [triggerSection]);
 
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
 
   const typeRef = useRef<HTMLDivElement>(null);
@@ -52,7 +60,7 @@ const SearchBar = () => {
       isOpeningRef.current = true;
       setTimeout(() => {
         isOpeningRef.current = false;
-      }, 300); // 300ms buffer to allow layout shifts to settle
+      }, 300);
     } else {
       document.body.style.overflow = 'auto';
     }
@@ -64,31 +72,27 @@ const SearchBar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (activeSection === 'type' && typeRef.current && !typeRef.current.contains(event.target as Node)) {
+      if (isOpeningRef.current) return;
+
+      const path = event.composedPath();
+
+      if (activeSection === 'type' && typeRef.current && !path.includes(typeRef.current)) {
         setActiveSection(null);
       }
-      if (activeSection === 'category' && categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+      if (activeSection === 'category' && categoryRef.current && !path.includes(categoryRef.current)) {
         setActiveSection(null);
       }
-      if (activeSection === 'date' && datesRef.current && !datesRef.current.contains(event.target as Node)) {
+      if (activeSection === 'date' && datesRef.current && !path.includes(datesRef.current)) {
         setActiveSection(null);
       }
     };
 
     const handleScroll = (event: Event) => {
-      // Ignore scroll events during the opening "settling" phase to prevent flickering
       if (isOpeningRef.current) {
         return;
       }
 
-      // If we're scrolling inside a scrollable container in our active section, don't close
-      if (activeSection === 'date' && datesRef.current && datesRef.current.contains(event.target as Node)) {
-        return;
-      }
-      if (activeSection === 'category' && categoryRef.current && categoryRef.current.contains(event.target as Node)) {
-        return;
-      }
-      if (activeSection === 'type' && typeRef.current && typeRef.current.contains(event.target as Node)) {
+      if (event.target !== window && event.target !== document) {
         return;
       }
 
@@ -100,14 +104,14 @@ const SearchBar = () => {
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleClickOutside, true);
     window.addEventListener('scroll', handleScroll, true);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside, true);
       window.removeEventListener('scroll', handleScroll, true);
     };
-  }, [activeSection, showFilter]);
+  }, [activeSection, showFilter, setActiveSection]);
 
   useEffect(() => {
     if (selectedType && errors.type) {
@@ -129,10 +133,6 @@ const SearchBar = () => {
     }
   }, [selectedDateRange, selectedCruise]);
 
-  // useEffect removed - now handled by ListingHero or handleSearch calling setActiveSection('type')
-
-  // Removed local validateFields as it's now in the store
-
   const handleSearch = async () => {
     if (!validateFields()) {
       if (window.innerWidth >= 768 && !selectedType) {
@@ -144,14 +144,12 @@ const SearchBar = () => {
     try {
       const params = new URLSearchParams();
 
-      // Add required parameters
       if (selectedType) params.append('type', selectedType.toString());
       if (selectedCategory) {
         params.append('category', selectedCategory.toString());
       }
       params.append('rooms', roomCount.toString());
 
-      // Add date parameters
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDate(selectedDateRange.startDate));
 
@@ -169,7 +167,6 @@ const SearchBar = () => {
         }
       }
 
-      // Add cruise type
       params.append('cruise', selectedCruise.toString());
 
       setIsMobileModalOpen(false);
@@ -203,7 +200,6 @@ const SearchBar = () => {
 
   return (
     <div className="relative w-full mb-2 lg:mb:0 lg:my-8">
-      {/* Mobile Search Trigger */}
       <div className="md:hidden w-full px-4 mb-4">
         <button
           onClick={() => setIsMobileModalOpen(true)}

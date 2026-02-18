@@ -28,7 +28,6 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   bookingTypeId = null
 }) => {
   const [tempStartDate, setTempStartDate] = useState<Date | null>(selected.startDate);
-  const [tempEndDate, setTempEndDate] = useState<Date | null>(selected.endDate);
 
   const today = startOfDay(new Date());
   const monthsToShow = Array.from({ length: 12 }, (_, i) => addMonths(startOfMonth(new Date()), i));
@@ -38,7 +37,6 @@ const DateSelector: React.FC<DateSelectorProps> = ({
 
     if (selectedCruise === BoatCruisesId.dayCruise || selectedCruise === BoatCruisesId.nightStay || selectedCruise === BoatCruisesId.dayNight) {
       setTempStartDate(day);
-      setTempEndDate(null);
       onSelect({ startDate: day, endDate: null });
       onClose();
       return;
@@ -47,13 +45,9 @@ const DateSelector: React.FC<DateSelectorProps> = ({
 
   const handleCruiseChange = (cruise: BoatCruisesId) => {
     setSelectedCruise(cruise);
-    setTempStartDate(null);
-    setTempEndDate(null);
-  };
-
-  const handleClear = () => {
-    setTempStartDate(null);
-    setTempEndDate(null);
+    if (tempStartDate) {
+      onClose();
+    }
   };
 
   const isDateInRange = (day: Date): boolean => {
@@ -65,8 +59,6 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     return tempStartDate ? isSameDay(day, tempStartDate) : false;
   };
 
-  // Get check-in/out times for each cruise type
-  // If no booking type selected, default to Private times
   const effectiveBookingType = bookingTypeId ?? BookingType.private;
 
   const cruiseOptions = [
@@ -76,7 +68,10 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   ];
 
   return (
-    <div className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-3 sm:p-4 w-full sm:min-w-[420] z-50'}`}>
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-3 sm:p-4 w-full sm:min-w-[420] z-50'}`}
+    >
       {/* Cruise Type Selection with Check-in/Out Times */}
       <div className="flex justify-between items-start my-2 w-full gap-1">
         {cruiseOptions.map((cruise) => {
@@ -178,8 +173,6 @@ const DateSelector: React.FC<DateSelectorProps> = ({
           );
         })}
       </div>
-
-      {/* Action Buttons removed as they are no longer needed for single date selection */}
     </div>
   );
 };
