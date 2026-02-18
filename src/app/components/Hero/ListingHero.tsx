@@ -77,7 +77,6 @@ const ListingHero: React.FC = () => {
       } else if (window.innerWidth >= 768 && !selectedDateRange.startDate) {
         setActiveSection('date');
       } else if (!selectedType) {
-        // If desktop, open the type section automatically if it's missing
         setActiveSection('type');
       }
     }

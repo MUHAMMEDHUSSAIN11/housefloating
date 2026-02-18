@@ -47,7 +47,7 @@ const DateSelector: React.FC<DateSelectorProps> = ({
     setSelectedCruise(cruise);
     if (tempStartDate) {
       onClose();
-    } 
+    }
   };
 
   const isDateInRange = (day: Date): boolean => {
@@ -68,7 +68,10 @@ const DateSelector: React.FC<DateSelectorProps> = ({
   ];
 
   return (
-    <div className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-3 sm:p-4 w-full sm:min-w-[420] z-50'}`}>
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className={`${inline ? 'relative w-full shadow-none border-none z-40' : 'absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-3 sm:p-4 w-full sm:min-w-[420] z-50'}`}
+    >
       {/* Cruise Type Selection with Check-in/Out Times */}
       <div className="flex justify-between items-start my-2 w-full gap-1">
         {cruiseOptions.map((cruise) => {

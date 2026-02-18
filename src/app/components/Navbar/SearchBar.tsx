@@ -33,11 +33,11 @@ const SearchBar = () => {
     showErrors, setShowErrors,
     errors, setErrors,
     isMobileModalOpen, setIsMobileModalOpen,
-    activeSection, setActiveSection,
+    // activeSection, setActiveSection,
     validateFields
   } = useSearchStore();
 
-
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
 
   const typeRef = useRef<HTMLDivElement>(null);
@@ -64,25 +64,26 @@ const SearchBar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (activeSection === 'type' && typeRef.current && !typeRef.current.contains(event.target as Node)) {
+      if (isOpeningRef.current) return;
+
+      const path = event.composedPath();
+
+      if (activeSection === 'type' && typeRef.current && !path.includes(typeRef.current)) {
         setActiveSection(null);
       }
-      if (activeSection === 'category' && categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+      if (activeSection === 'category' && categoryRef.current && !path.includes(categoryRef.current)) {
         setActiveSection(null);
       }
-      if (activeSection === 'date' && datesRef.current && !datesRef.current.contains(event.target as Node)) {
+      if (activeSection === 'date' && datesRef.current && !path.includes(datesRef.current)) {
         setActiveSection(null);
       }
     };
 
     const handleScroll = (event: Event) => {
-      // Ignore scroll events during the opening "settling" phase to prevent flickering
       if (isOpeningRef.current) {
         return;
       }
 
-      // Only close if the scroll event target is the window or document.
-      // Element-level scrolls (like inside the DateSelector) should be ignored.
       if (event.target !== window && event.target !== document) {
         return;
       }
@@ -95,14 +96,14 @@ const SearchBar = () => {
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleClickOutside, true);
     window.addEventListener('scroll', handleScroll, true);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside, true);
       window.removeEventListener('scroll', handleScroll, true);
     };
-  }, [activeSection, showFilter]);
+  }, [activeSection, showFilter, setActiveSection]);
 
   useEffect(() => {
     if (selectedType && errors.type) {
@@ -123,10 +124,6 @@ const SearchBar = () => {
       setErrors(prev => ({ ...prev, date: false }));
     }
   }, [selectedDateRange, selectedCruise]);
-
-  // useEffect removed - now handled by ListingHero or handleSearch calling setActiveSection('type')
-
-  // Removed local validateFields as it's now in the store
 
   const handleSearch = async () => {
     if (!validateFields()) {

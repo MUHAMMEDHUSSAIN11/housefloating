@@ -100,7 +100,10 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
             </button>
 
             {activeSection === 'type' && (
-              <div className="absolute top-full left-0 right-0 w-fit mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50">
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute top-full left-0 right-0 w-fit mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50"
+              >
                 {typeOptions.map((option) => (
                   <button
                     key={option.id}
@@ -142,7 +145,10 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
             </button>
 
             {activeSection === 'category' && (
-              <div className="absolute top-full mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50">
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="absolute top-full mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50"
+              >
                 <div className="flex items-center justify-between gap-4 my-2">
                   <span className="text-sm text-gray-600">Rooms</span>
                   <div className="flex items-center gap-3">
