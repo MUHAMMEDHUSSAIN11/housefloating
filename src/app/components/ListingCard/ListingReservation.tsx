@@ -86,7 +86,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
         </div>
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
         <div className="flex flex-col">
           <div className="flex items-center justify-between mr-1 mb-1">
             <span className="text-sm font-medium text-gray-700">
