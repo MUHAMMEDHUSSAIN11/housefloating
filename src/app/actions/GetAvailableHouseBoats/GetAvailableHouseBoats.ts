@@ -5,6 +5,7 @@ interface GetAvailableHouseBoatsProps {
     CruiseTypeId: number;
     BoatCategoryId: number;
     RoomCount: number;
+    AdultCount?: number;
     CheckInDate?: Date | null;
     CheckOutDate?: Date | null;
     Skip: number;
@@ -17,6 +18,7 @@ const GetAvailableHouseBoats = async ({
     CruiseTypeId,
     BoatCategoryId,
     RoomCount,
+    AdultCount,
     CheckInDate,
     CheckOutDate,
     Skip,
@@ -25,23 +27,24 @@ const GetAvailableHouseBoats = async ({
 }: GetAvailableHouseBoatsProps) => {
     try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API}/getAvailableBoats`, {
-            params: { 
-                TripModeId, 
-                CruiseTypeId, 
-                BoatCategoryId, 
-                RoomCount, 
-                CheckInDate, 
-                CheckOutDate, 
-                Skip, 
-                Take, 
-                OrderBy 
+            params: {
+                TripModeId,
+                CruiseTypeId,
+                BoatCategoryId,
+                RoomCount,
+                AdultCount,
+                CheckInDate,
+                CheckOutDate,
+                Skip,
+                Take,
+                OrderBy
             },
         });
-        
+
         if (response.status >= 200 && response.status < 300) {
             return response.data
         }
-        
+
         return null;
     } catch (error) {
         console.error('API Error:', error);

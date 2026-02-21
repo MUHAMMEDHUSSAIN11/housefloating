@@ -14,6 +14,7 @@ const HouseBoatsContent = () => {
 
   const categoryFromUrl = Number(searchParams?.get('category')) || 0;
   const roomCountFromUrl = Number(searchParams?.get('rooms')) || 0;
+  const adultCountFromUrl = Number(searchParams?.get('adultCount')) || 0;
   const typeFromUrl = Number(searchParams?.get('type')) || 0;
   const startDateFromUrl = searchParams?.get('startDate');
   const endDateFromUrl = searchParams?.get('endDate');
@@ -37,7 +38,7 @@ const HouseBoatsContent = () => {
   const isFetchingRef = useRef(false);
   const isInitializedRef = useRef(false);
 
-  const cacheKey = `boats-${categoryFromUrl}-${roomCountFromUrl}-${typeFromUrl}-${cruiseFromUrl}-${startDateFromUrl}-${endDateFromUrl}`;
+  const cacheKey = `boats-${categoryFromUrl}-${roomCountFromUrl}-${adultCountFromUrl}-${typeFromUrl}-${cruiseFromUrl}-${startDateFromUrl}-${endDateFromUrl}`;
 
   const fetchInitialBoats = async () => {
     const result = await GetAvailableHouseBoats({
@@ -45,6 +46,7 @@ const HouseBoatsContent = () => {
       CruiseTypeId: cruiseFromUrl,
       BoatCategoryId: categoryFromUrl,
       RoomCount: roomCountFromUrl,
+      AdultCount: adultCountFromUrl,
       CheckInDate: startDate,
       CheckOutDate: endDate,
       Skip: 0,
@@ -122,6 +124,7 @@ const HouseBoatsContent = () => {
             CruiseTypeId: cruiseFromUrl,
             BoatCategoryId: categoryFromUrl,
             RoomCount: roomCountFromUrl,
+            AdultCount: adultCountFromUrl,
             CheckInDate: startDate,
             CheckOutDate: endDate,
             Skip: skip,
@@ -238,7 +241,7 @@ const HouseBoatsContent = () => {
 
         {listing.exactMatch.length > 0 && (
           <div className="mb-12 ">
-            <Heading title='Exact Matches' large/>
+            <Heading title='Exact Matches' large />
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
               {listing.exactMatch.map((listing: any) => (
                 <ListingCard
@@ -256,12 +259,13 @@ const HouseBoatsContent = () => {
 
         {listing.greaterThanMatch.length > 0 && (
           <div className="mb-8 ">
-            <Heading title='Better Matches' large/>
+            <Heading title='Better Matches' large />
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
               {listing.greaterThanMatch.map((listing: any) => (
                 <ListingCard
                   key={listing.boatId}
                   data={listing}
+                  roomCountForSearch={roomCountFromUrl}
                   startDate={startDateFromUrl}
                   endDate={endDateFromUrl}
                   cruiseTypeId={cruiseFromUrl}
