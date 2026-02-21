@@ -109,7 +109,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   };
 
   return (
-    <div className="col-span-1 group relative">
+    <div className="col-span-1 group relative shadow-lg rounded-lg">
       <div
         className={`absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 hover:bg-white transition cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleHeartClick}
@@ -125,7 +125,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
       <Link href={listingUrl} className="block cursor-pointer">
         <div className="flex flex-col w-full">
-          <div className="aspect-4/3 w-full relative overflow-hidden rounded-lg bg-gray-200">
+          <div className="aspect-4/3 w-full relative overflow-hidden rounded-t-lg bg-gray-200">
             <Image
               fill
               className="object-cover h-full w-full group-hover:scale-110 transition"
@@ -137,26 +137,33 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
             />
           </div>
 
+          <div className='p-1'>
           <div className="font-semibold text-sm md:text-md mt-2 flex">
             {data.boatCategory} •
             {!isSharing?<div className='ml-1'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
             :<div className='ml-1'>SharingBoat</div>}
           </div>
-
-          <div className='flex flex-col gap-1'>
-            <div className="text-gray-700 text-xs">
-              {data.guestCount || 2} Adult <span>·</span> {data.cruiseType}
-            </div>
-            <div className='flex gap-1 items-center'>
-              <div className="text-gray-500 line-through text-sm">
-                ₹{FormatIndianCurrency(strikeThroughPrice)}
+            <div className='flex flex-col gap-1'>
+              <div className="text-gray-700 text-xs">
+                {data.guestCount || 2} Adult <span>·</span> {data.cruiseType}
               </div>
-              <div className="font-semibold text-gray-700 text-sm">
-                <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
-                {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+              <div className='flex justify-between items-center'>
+              <div className='flex gap-1 items-center'>
+                <div className="text-gray-500 line-through text-sm md:text-base">
+                  ₹{FormatIndianCurrency(strikeThroughPrice)}
+                </div>
+                <div className="font-semibold text-gray-700 text-sm md:text-base">
+                  <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                  {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+                </div>
+              </div>
+              <div className='flex flex-col bg-gray-200 p-1 justify-center items-center rounded-xl md:m-2'>
+                <div className='text-[10px] md:text-xs text-gray-600'>2 Adult</div>
+                <div className='text-[12px] md:text-sm text-gray-800'>₹{FormatIndianCurrency(12500)}</div>
+              </div>
               </div>
             </div>
-          </div>
+            </div>
         </div>
       </Link>
     </div>

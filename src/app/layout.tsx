@@ -22,13 +22,15 @@ export const metadata = {
   description: "Housefloating.com is the #1 portal to book luxury Alleppey houseboats at best prices. Experience premium Kerala houseboats and unforgettable journeys online.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/images/hf-Logo.jpg",
+    icon: [
+      { url: "/images/hf-Logo.jpg", sizes: "32x32", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "48x48", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "96x96", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "144x144", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "192x192", type: "image/jpeg" },
+    ],
     shortcut: "/images/hf-Logo.jpg",
     apple: "/images/hf-Logo.jpg",
-    other: {
-      rel: "apple-touch-icon-precomposed",
-      url: "/images/hf-Logo.jpg",
-    },
   },
   twitter: {
     card: 'summary_large_image',
