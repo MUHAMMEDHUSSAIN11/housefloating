@@ -1,9 +1,9 @@
-import React from 'react';
 import { Metadata } from 'next';
 import EmptyState from '@/app/components/Misc/EmptyState';
 import ListingClient from './ListingClient';
 import GetBoatById from '@/app/actions/GetBoatById/GetBoatById';
 import { BookingType } from '@/app/enums/enums';
+import { headers } from 'next/headers';
 
 interface Prices {
   adultAddOnDayPrice: number
@@ -25,6 +25,7 @@ export interface BoatDetails {
   guestCount: number;
   maxAdultCount: number;
   minAdultCount: number;
+  maxGuestCountPerRoomForNight: number;
   bathroomCount: number;
   prices: Prices;
   availableRoomCount?: number;
@@ -50,11 +51,6 @@ const fetchBoatData = async (
   return fetchedBoatData;
 };
 
-import { headers } from 'next/headers';
-
-// ... (fetchBoatData stays same)
-
-// Generate Metadata for Social Sharing (WhatsApp, etc.)
 export async function generateMetadata(
   { params, searchParams }: {
     params: Promise<Iparams>,
@@ -118,7 +114,7 @@ export async function generateMetadata(
           url: imageUrl,
           width: 1200,
           height: 630,
-          type: 'image/jpeg', // Standard for WhatsApp
+          type: 'image/jpeg',
         },
       ],
       type: 'website',

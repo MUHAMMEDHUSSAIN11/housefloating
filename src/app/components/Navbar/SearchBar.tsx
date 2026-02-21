@@ -30,6 +30,7 @@ const SearchBar = () => {
     selectedDateRange, setSelectedDateRange,
     selectedCategory, setSelectedCategory,
     roomCount, setRoomCount,
+    guestCount, setGuestCount,
     showErrors, setShowErrors,
     errors, setErrors,
     isMobileModalOpen, setIsMobileModalOpen,
@@ -40,8 +41,8 @@ const SearchBar = () => {
 
   useEffect(() => {
     if (triggerSection) {
-        setActiveSection(triggerSection);
-        setTriggerSection(null);
+      setActiveSection(triggerSection);
+      setTriggerSection(null);
     }
   }, [triggerSection]);
 
@@ -148,7 +149,12 @@ const SearchBar = () => {
       if (selectedCategory) {
         params.append('category', selectedCategory.toString());
       }
-      params.append('rooms', roomCount.toString());
+
+      if (selectedCruise === BoatCruisesId.dayCruise) {
+        params.append('adultCount', guestCount.toString());
+      } else {
+        params.append('rooms', roomCount.toString());
+      }
 
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDate(selectedDateRange.startDate));
@@ -211,7 +217,7 @@ const SearchBar = () => {
                 {getSelectedLabel(selectedType)} • {getCategoryLabel(selectedCategory)}
               </span>
               <span className={`text-xs ${showErrors && (errors.type || errors.category || errors.date) ? 'text-red-500' : 'text-gray-500'}`}>
-                {getDateDisplayText()} • {roomCount} {roomCount === 1 ? 'room' : 'rooms'} {selectedCruise && `• ${BoatCruisesId[selectedCruise]}`}
+                {getDateDisplayText()} • {selectedCruise === BoatCruisesId.dayCruise ? `${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}` : `${roomCount} ${roomCount === 1 ? 'room' : 'rooms'}`} {selectedCruise && `• ${BoatCruisesId[selectedCruise]}`}
               </span>
             </div>
           ) : (
@@ -236,6 +242,8 @@ const SearchBar = () => {
           setSelectedCategory={setSelectedCategory}
           roomCount={roomCount}
           setRoomCount={setRoomCount}
+          guestCount={guestCount}
+          setGuestCount={setGuestCount}
           showErrors={showErrors}
           errors={errors}
           handleSearch={handleSearch}
@@ -266,6 +274,8 @@ const SearchBar = () => {
         categoryOptions={categoryOptions}
         roomCount={roomCount}
         setRoomCount={setRoomCount}
+        guestCount={guestCount}
+        setGuestCount={setGuestCount}
         selectedDateRange={selectedDateRange}
         setSelectedDateRange={setSelectedDateRange}
         getDateDisplayText={getDateDisplayText}

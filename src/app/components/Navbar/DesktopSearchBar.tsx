@@ -36,12 +36,14 @@ interface DesktopSearchBarProps {
     label: string;
   }[];
   roomCount: number;
-  setRoomCount: React.Dispatch<React.SetStateAction<number>>;
+  setRoomCount: (value: number | ((prev: number) => number)) => void;
+  guestCount: number;
+  setGuestCount: (value: number | ((prev: number) => number)) => void;
   selectedDateRange: DateRange;
   setSelectedDateRange: (range: DateRange) => void;
   getDateDisplayText: () => string;
   selectedCruise: BoatCruisesId;
-  setSelectedCruise: React.Dispatch<React.SetStateAction<BoatCruisesId>>;
+  setSelectedCruise: (value: BoatCruisesId | ((prev: BoatCruisesId) => BoatCruisesId)) => void;
   handleSearch: () => void;
 }
 
@@ -63,6 +65,8 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
   categoryOptions,
   roomCount,
   setRoomCount,
+  guestCount,
+  setGuestCount,
   selectedDateRange,
   setSelectedDateRange,
   getDateDisplayText,
@@ -194,17 +198,33 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
             {activeSection === 'date' && (
               <div className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 z-50 min-w-75">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-semibold text-gray-700">Number of Rooms</span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {selectedCruise === BoatCruisesId.dayCruise ? 'Number of Guests' : 'Number of Rooms'}
+                  </span>
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => setRoomCount(prev => Math.max(1, prev - 1))}
+                      onClick={() => {
+                        if (selectedCruise === BoatCruisesId.dayCruise) {
+                          setGuestCount(prev => Math.max(1, prev - 1));
+                        } else {
+                          setRoomCount(prev => Math.max(1, prev - 1));
+                        }
+                      }}
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="w-6 text-center font-bold">{roomCount}</span>
+                    <span className="w-6 text-center font-bold">
+                      {selectedCruise === BoatCruisesId.dayCruise ? guestCount : roomCount}
+                    </span>
                     <button
-                      onClick={() => setRoomCount(prev => prev + 1)}
+                      onClick={() => {
+                        if (selectedCruise === BoatCruisesId.dayCruise) {
+                          setGuestCount(prev => prev + 1);
+                        } else {
+                          setRoomCount(prev => prev + 1);
+                        }
+                      }}
                       className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
                     >
                       <Plus className="w-4 h-4" />

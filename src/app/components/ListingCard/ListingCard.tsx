@@ -3,8 +3,8 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { amount, BookingType } from '@/app/enums/enums'
-import { Heart } from 'lucide-react'
+import { amount, BoatCruisesId, BookingType } from '@/app/enums/enums'
+import { Heart, Users } from 'lucide-react'
 import useLoginModal from '@/app/hooks/useLoginModal'
 import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
 import useAuth from '@/app/hooks/useAuth'
@@ -20,6 +20,7 @@ interface BoatCardDetails {
   bedroomCount: number;
   price: number;
   boatCode: string;
+  betterMatchPrice: number;
   guestCount: number | null;
   cruiseTypeId: number;
   cruiseType: string;
@@ -27,18 +28,22 @@ interface BoatCardDetails {
 
 interface ListingCardProps {
   data: BoatCardDetails;
+  roomCountForSearch?: number;
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
   bookingTypeId?: number;
+  exactMatch?: boolean;
 }
 
 const ListingCard: React.FC<ListingCardProps> = React.memo(({
   data,
+  roomCountForSearch,
   startDate,
   endDate,
   cruiseTypeId,
   bookingTypeId,
+  exactMatch,
 }) => {
   const loginModal = useLoginModal();
   const { user } = useAuth();
@@ -48,6 +53,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
   const offerPrice = useMemo(() => Math.round(data.price * amount.commissionPercentage), [data.price]);
+  const betterMatchPrice = useMemo(() => Math.round(data.betterMatchPrice * amount.commissionPercentage), [data?.betterMatchPrice]);
 
   const imageUrl = !imageError && data.boatImage
     ? data.boatImage
@@ -66,6 +72,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
   }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
   const isSharing = bookingTypeId === BookingType.sharing;
+  const isDayCruise = cruiseTypeId === BoatCruisesId.dayCruise
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -139,8 +146,12 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
           <div className='p-1'>
           <div className="font-semibold text-sm md:text-md mt-2 flex">
-            {data.boatCategory} •
-            {!isSharing?<div className='ml-1'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
+            {`${data.boatCategory} • `}
+            {!isSharing?
+            <>
+            <div className='ml-1 sm:hidden'>{data.bedroomCount} room{data.bedroomCount > 1 ? 's' : ''}</div>
+            <div className='ml-1 hidden sm:block'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
+            </>
             :<div className='ml-1'>SharingBoat</div>}
           </div>
             <div className='flex flex-col gap-1'>
@@ -148,7 +159,8 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
                 {data.guestCount || 2} Adult <span>·</span> {data.cruiseType}
               </div>
               <div className='flex justify-between items-center'>
-              <div className='flex gap-1 items-center'>
+              {exactMatch ?
+              < div className='md:flex gap-1 items-center'>
                 <div className="text-gray-500 line-through text-sm md:text-base">
                   ₹{FormatIndianCurrency(strikeThroughPrice)}
                 </div>
@@ -156,12 +168,24 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
                   <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
                   {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
                 </div>
+              </div>:
+              <div className='md:flex gap-1 items-center'>
+                <div className="text-gray-500 text-sm md:text-base">
+                  For 9 Bedrooms
+                </div>
+                <div className="font-semibold text-gray-700 line-through text-sm md:text-base">
+                  <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                  {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+                </div>
+              </div>}
               </div>
-              <div className='flex flex-col bg-gray-200 p-1 justify-center items-center rounded-xl md:m-2'>
-                <div className='text-[10px] md:text-xs text-gray-600'>2 Adult</div>
-                <div className='text-[12px] md:text-sm text-gray-800'>₹{FormatIndianCurrency(12500)}</div>
-              </div>
-              </div>
+              {(data.betterMatchPrice && roomCountForSearch && !isDayCruise)&&<div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
+                  <Users className="w-4.5 h-4.5 text-white" />
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-xs md:text-sm lg:text-md text-white font-medium">{roomCountForSearch} Rooms</span>
+                    <span className="text-sm md:text-md lg:text-lg font-bold text-white">₹{FormatIndianCurrency(betterMatchPrice)}</span>
+                  </div>
+                </div>}
             </div>
             </div>
         </div>
