@@ -13,6 +13,7 @@ interface ListingInfoProps {
   travelMode: number;
   maxAdultCount: number;
   minAdultCount: number;
+  maxGuestCountPerRoom?: number;
   title: string;
   boardingPoint: string;
   bookingTypeId?: number | null;
@@ -22,21 +23,20 @@ interface ListingInfoProps {
   minRoomCount: number;
 }
 
-const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
+const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,maxGuestCountPerRoom,
   bathroomCount, roomCount, setAdultCount, availableRoomCount, travelMode, category,
   adultCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount, minRoomCount }) => {
   const isDayCruise = travelMode === BoatCruisesId.dayCruise
-  const isNightStay = travelMode === BoatCruisesId.nightStay;
   const isSharing = bookingTypeId === BookingType.sharing;
 
   // Dynamic mode: Private Day Cruise or Private Night Stay
-  const isDynamicMode = (isDayCruise || isNightStay) && !isSharing;
+  const isDynamicMode = (isDayCruise) && !isSharing;
 
   const currentMaxAdults = isSharing
     ? (roomCountState * maxAdultCount)
     : isDynamicMode
       ? maxAdultCount
-      : (roomCountState * 3);
+      :maxGuestCountPerRoom && (roomCountState * maxGuestCountPerRoom);
   const currentMinAdults = isDynamicMode ? minAdultCount : 1;
 
   const [roomError, setRoomError] = useState<'min' | 'max' | null>(null);

@@ -5,7 +5,7 @@ interface GetAvailableHouseBoatsProps {
     CruiseTypeId: number;
     BoatCategoryId: number;
     RoomCount: number;
-    AdultCount?: number;
+    GuestCount?: number;
     CheckInDate?: Date | null;
     CheckOutDate?: Date | null;
     Skip: number;
@@ -18,7 +18,7 @@ const GetAvailableHouseBoats = async ({
     CruiseTypeId,
     BoatCategoryId,
     RoomCount,
-    AdultCount,
+    GuestCount,
     CheckInDate,
     CheckOutDate,
     Skip,
@@ -32,7 +32,7 @@ const GetAvailableHouseBoats = async ({
                 CruiseTypeId,
                 BoatCategoryId,
                 RoomCount,
-                AdultCount,
+                GuestCount,
                 CheckInDate,
                 CheckOutDate,
                 Skip,
