@@ -211,9 +211,14 @@ const ListingHead: React.FC<ListingHeadProps> = ({ imageSrc, title }) => {
           <div className="fixed inset-0 bg-black z-50 overflow-y-auto">
             <div className="min-h-screen p-8">
               <div className="max-w-5xl mx-auto">
-                <div className="flex items-center justify-between mb-8 sticky top-0 bg-black py-4">
+                <div className="flex items-center justify-between mb-8 sticky top-0 bg-black py-4 z-60">
                   <h2 className="text-white text-xl font-semibold">All Photos</h2>
-                  <div className="w-1/4"><Button label="Close" onClick={() => setShowAllPhotos(false)} /></div>
+                  <button
+                    onClick={() => setShowAllPhotos(false)}
+                    className="text-white bg-blue-400 rounded-full p-0.5 hover:text-gray-300 transition-colors cursor-pointer"
+                  >
+                    <X size={24} />
+                  </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {imageSrc.map((img, index) => (

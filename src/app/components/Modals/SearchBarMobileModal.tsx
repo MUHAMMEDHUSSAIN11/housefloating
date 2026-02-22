@@ -16,10 +16,12 @@ interface SearchBarMobileModalProps {
   categoryOptions: { id: Categories; label: string; }[];
   roomCount: number;
   setRoomCount: (count: number) => void;
+  guestCount: number;
+  setGuestCount: (count: number) => void;
   selectedDateRange: { startDate: Date | null; endDate: Date | null; };
   setSelectedDateRange: (range: { startDate: Date | null; endDate: Date | null; }) => void;
   selectedCruise: BoatCruisesId;
-  setSelectedCruise: React.Dispatch<React.SetStateAction<BoatCruisesId>>;
+  setSelectedCruise: (value: BoatCruisesId | ((prev: BoatCruisesId) => BoatCruisesId)) => void;
   showErrors: boolean;
   errors: { type: boolean; category: boolean; date: boolean; };
   handleSearch: () => void;
@@ -39,6 +41,8 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
   categoryOptions,
   roomCount,
   setRoomCount,
+  guestCount,
+  setGuestCount,
   selectedDateRange,
   setSelectedDateRange,
   selectedCruise,
@@ -142,9 +146,9 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             <div className="flex items-center gap-3">
               <Ship className={`w-5 h-5 ${mobileActiveSection === 'category' ? 'text-blue-500' : ''}`} />
               <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Category & Rooms</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Category</p>
                 <p className="font-bold text-gray-900">
-                  {getCategoryLabel(selectedCategory)} • {roomCount} {roomCount === 1 ? 'Room' : 'Rooms'}
+                  {getCategoryLabel(selectedCategory)}
                 </p>
               </div>
             </div>
@@ -152,25 +156,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
           </button>
 
           <div className={`transition-all duration-300 ${mobileActiveSection === 'category' ? 'max-h-125 opacity-100 p-4 pt-0' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between bg-gray-50 p-3 rounded-2xl mt-2">
-                <span className="font-bold text-gray-700">Number of Rooms</span>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setRoomCount(Math.max(1, roomCount - 1)); }}
-                    className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-blue-500 transition-colors shadow-sm"
-                  >
-                    <Minus className="w-5 h-5" />
-                  </button>
-                  <span className="w-4 text-center font-black text-lg">{roomCount}</span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setRoomCount(roomCount + 1); }}
-                    className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-blue-500 transition-colors shadow-sm"
-                  >
-                    <Plus className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+            <div className="space-y-4 pt-2">
               <div className="grid grid-cols-2 gap-2">
                 {categoryOptions.map((option) => (
                   <button
@@ -205,9 +191,14 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             <div className="flex items-center gap-3">
               <Calendar className={`w-5 h-5 ${mobileActiveSection === 'date' ? 'text-blue-500' : ''}`} />
               <div>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Pick Dates & Cruise</p>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                  {selectedCruise === BoatCruisesId.dayCruise ? 'Guests, Dates & Cruise' : 'Rooms, Dates & Cruise'}
+                </p>
                 <p className="font-bold text-gray-900 truncate max-w-[200]">
-                  {selectedDateRange.startDate ? getDateDisplayText() : 'Select Dates'}  {selectedCruise && `• ${BoatCruisesId[selectedCruise]}`}
+                  {selectedCruise === BoatCruisesId.dayCruise
+                    ? `${guestCount} ${guestCount === 1 ? 'Guest' : 'Guests'}`
+                    : `${roomCount} ${roomCount === 1 ? 'Room' : 'Rooms'}`
+                  } • {selectedDateRange.startDate ? getDateDisplayText() : 'Select Dates'}
                 </p>
               </div>
             </div>
@@ -215,7 +206,44 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
           </button>
 
           <div className={`transition-all duration-300 ${mobileActiveSection === 'date' ? 'max-h-150 opacity-100 p-2' : 'max-h-0 opacity-0 pointer-events-none'}`}>
-            <div className="bg-white rounded-2xl overflow-hidden mt-1">
+            <div className="bg-white rounded-2xl overflow-hidden mt-1 p-4 shadow-inner">
+              <div className="flex items-center justify-between mb-4 bg-gray-50 p-4 rounded-2xl">
+                <span className="font-bold text-gray-700">
+                  {selectedCruise === BoatCruisesId.dayCruise ? 'Number of Guests' : 'Number of Rooms'}
+                </span>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedCruise === BoatCruisesId.dayCruise) {
+                        setGuestCount(Math.max(1, guestCount - 1));
+                      } else {
+                        setRoomCount(Math.max(1, roomCount - 1));
+                      }
+                    }}
+                    className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-blue-500 transition-colors shadow-sm"
+                  >
+                    <Minus className="w-5 h-5" />
+                  </button>
+                  <span className="w-4 text-center font-black text-lg">
+                    {selectedCruise === BoatCruisesId.dayCruise ? guestCount : roomCount}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedCruise === BoatCruisesId.dayCruise) {
+                        setGuestCount(guestCount + 1);
+                      } else {
+                        setRoomCount(roomCount + 1);
+                      }
+                    }}
+                    className="w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center hover:border-blue-500 transition-colors shadow-sm"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              <hr className="mb-4 border-gray-100" />
               <DateSelector
                 selectedCruise={selectedCruise}
                 setSelectedCruise={setSelectedCruise}
@@ -244,6 +272,7 @@ const SearchBarMobileModal: React.FC<SearchBarMobileModalProps> = ({
             setSelectedDateRange({ startDate: null, endDate: null });
             setSelectedCategory(Categories.All);
             setRoomCount(1);
+            setGuestCount(1);
           }}
           className="text-gray-500 font-semibold underline px-2"
         >

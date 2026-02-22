@@ -36,12 +36,14 @@ interface DesktopSearchBarProps {
     label: string;
   }[];
   roomCount: number;
-  setRoomCount: React.Dispatch<React.SetStateAction<number>>;
+  setRoomCount: (value: number | ((prev: number) => number)) => void;
+  guestCount: number;
+  setGuestCount: (value: number | ((prev: number) => number)) => void;
   selectedDateRange: DateRange;
   setSelectedDateRange: (range: DateRange) => void;
   getDateDisplayText: () => string;
   selectedCruise: BoatCruisesId;
-  setSelectedCruise: React.Dispatch<React.SetStateAction<BoatCruisesId>>;
+  setSelectedCruise: (value: BoatCruisesId | ((prev: BoatCruisesId) => BoatCruisesId)) => void;
   handleSearch: () => void;
 }
 
@@ -63,6 +65,8 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
   categoryOptions,
   roomCount,
   setRoomCount,
+  guestCount,
+  setGuestCount,
   selectedDateRange,
   setSelectedDateRange,
   getDateDisplayText,
@@ -149,25 +153,6 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
                 onClick={(e) => e.stopPropagation()}
                 className="absolute top-full mt-2 bg-white rounded-2xl shadow-lg border border-gray-200 p-2 z-50"
               >
-                <div className="flex items-center justify-between gap-4 my-2">
-                  <span className="text-sm text-gray-600">Rooms</span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setRoomCount(prev => Math.max(1, prev - 1))}
-                      className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                    <span className="w-6 text-center font-medium">{roomCount}</span>
-                    <button
-                      onClick={() => setRoomCount(prev => prev + 1)}
-                      className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-                <hr className='border border-gray-300' />
                 {categoryOptions.map((option) => (
                   <button
                     key={option.id}
@@ -211,14 +196,52 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
             </button>
 
             {activeSection === 'date' && (
-              <DateSelector
-                selectedCruise={selectedCruise}
-                setSelectedCruise={setSelectedCruise}
-                selected={selectedDateRange}
-                onSelect={setSelectedDateRange}
-                onClose={() => setActiveSection(null)}
-                bookingTypeId={selectedType}
-              />
+              <div className="absolute top-full mt-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 z-50 min-w-75">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-semibold text-gray-700">
+                    {selectedCruise === BoatCruisesId.dayCruise ? 'Number of Guests' : 'Number of Rooms'}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        if (selectedCruise === BoatCruisesId.dayCruise) {
+                          setGuestCount(prev => Math.max(1, prev - 1));
+                        } else {
+                          setRoomCount(prev => Math.max(1, prev - 1));
+                        }
+                      }}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-6 text-center font-bold">
+                      {selectedCruise === BoatCruisesId.dayCruise ? guestCount : roomCount}
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (selectedCruise === BoatCruisesId.dayCruise) {
+                          setGuestCount(prev => prev + 1);
+                        } else {
+                          setRoomCount(prev => prev + 1);
+                        }
+                      }}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-500 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                <hr className="mb-4 border-gray-100" />
+                <DateSelector
+                  selectedCruise={selectedCruise}
+                  setSelectedCruise={setSelectedCruise}
+                  selected={selectedDateRange}
+                  onSelect={setSelectedDateRange}
+                  onClose={() => setActiveSection(null)}
+                  bookingTypeId={selectedType}
+                  inline={true}
+                />
+              </div>
             )}
           </div>
         </div>
