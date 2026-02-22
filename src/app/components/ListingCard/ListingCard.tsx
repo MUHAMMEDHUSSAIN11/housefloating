@@ -146,10 +146,10 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
           <div className='p-1'>
           <div className="font-semibold text-sm md:text-md mt-2 flex">
-            {`${data.boatCategory} • `}
+            {`${data.boatCategory}•`}
             {!isSharing?
             <>
-            <div className='ml-1 sm:hidden'>{data.bedroomCount} room{data.bedroomCount > 1 ? 's' : ''}</div>
+            <div className='ml-1 sm:hidden'>{data.bedroomCount}room{data.bedroomCount > 1 ? 's' : ''}</div>
             <div className='ml-1 hidden sm:block'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
             </>
             :<div className='ml-1'>SharingBoat</div>}
@@ -171,7 +171,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
               </div>:
               <div className='md:flex gap-1 items-center'>
                 <div className="text-gray-500 text-sm md:text-base">
-                  For 9 Bedrooms
+                  For {data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}
                 </div>
                 <div className="font-semibold text-gray-700 line-through text-sm md:text-base">
                   <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
@@ -182,7 +182,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
               {(data.betterMatchPrice && roomCountForSearch && !isDayCruise)&&<div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
                   <Users className="w-4.5 h-4.5 text-white" />
                   <div className="flex flex-col leading-tight">
-                    <span className="text-xs md:text-sm lg:text-md text-white font-medium">{roomCountForSearch} Rooms</span>
+                    <span className="text-xs md:text-sm lg:text-md text-white font-medium">{roomCountForSearch}  room{roomCountForSearch > 1 ? 's' : ''} •{roomCountForSearch*2}Adults</span>
                     <span className="text-sm md:text-md lg:text-lg font-bold text-white">₹{FormatIndianCurrency(betterMatchPrice)}</span>
                   </div>
                 </div>}
