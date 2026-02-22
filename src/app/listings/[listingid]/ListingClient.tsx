@@ -33,6 +33,8 @@ export interface ListingClientProps {
   endDate: Date;
   cruiseTypeId: number;
   bookingTypeId: number | null;
+  searchedRoomCount?: number;
+  searchedAdultCount?: number;
 }
 
 const ListingClient: React.FC<ListingClientProps> = ({
@@ -41,15 +43,33 @@ const ListingClient: React.FC<ListingClientProps> = ({
   endDate,
   cruiseTypeId,
   bookingTypeId,
+  searchedRoomCount,
+  searchedAdultCount,
 }) => {
   const isSharing = bookingTypeId === BookingType.sharing;
   const { user } = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
-  const [roomCount, setRoomCount] = useState((isSharing && boatDetails.availableRoomCount) ? 1 : boatDetails.bedroomCount);
+  const [roomCount, setRoomCount] = useState(() => {
+    if (isSharing && boatDetails.availableRoomCount) return 1;
+    let initialCount = (searchedRoomCount && searchedRoomCount <= boatDetails.bedroomCount)
+      ? searchedRoomCount
+      : boatDetails.bedroomCount;
+
+    if (boatDetails.prices?.minimumRoomCount) {
+      initialCount = Math.max(initialCount, boatDetails.prices.minimumRoomCount);
+    }
+    return initialCount;
+  });
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
-  const [finalAdultCount, setFinalAdultCount] = useState((!isSharing && (cruiseTypeId === BoatCruisesId.dayCruise)) ? boatDetails.minAdultCount : (boatDetails.bedroomCount * 2));
+  const [finalAdultCount, setFinalAdultCount] = useState(() => {
+    if (isSharing) return boatDetails.bedroomCount * 2;
+    if (cruiseTypeId === BoatCruisesId.dayCruise) {
+      return searchedAdultCount || boatDetails.minAdultCount;
+    }
+    return roomCount * 2;
+  });
   const [isVeg, setIsVeg] = useState(false);
   const adultAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.adultAddOnDayPrice
     : cruiseTypeId === BoatCruisesId.dayNight ? boatDetails.prices.adultAddonDayNightPrice
@@ -63,13 +83,12 @@ const ListingClient: React.FC<ListingClientProps> = ({
         ? boatDetails.maxAdultCount
         : (roomCount * boatDetails.maxGuestCountPerRoomForNight);
 
-    const currentBaseGuests = isSharing
-      ? (roomCount * 2)
-      : isDynamicMode
-        ? boatDetails.minAdultCount
-        : (roomCount * boatDetails.minAdultCount);
-
-    if (finalAdultCount > currentMaxAdults || finalAdultCount > currentBaseGuests) {
+    if (finalAdultCount > currentMaxAdults) {
+      const currentBaseGuests = isSharing
+        ? (roomCount * 2)
+        : isDynamicMode
+          ? boatDetails.minAdultCount
+          : (roomCount * boatDetails.minAdultCount);
       setFinalAdultCount(currentBaseGuests);
     }
 

@@ -29,6 +29,7 @@ interface BoatCardDetails {
 interface ListingCardProps {
   data: BoatCardDetails;
   roomCountForSearch?: number;
+  guestCountForSearch?: number;
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
@@ -39,6 +40,7 @@ interface ListingCardProps {
 const ListingCard: React.FC<ListingCardProps> = React.memo(({
   data,
   roomCountForSearch,
+  guestCountForSearch,
   startDate,
   endDate,
   cruiseTypeId,
@@ -66,11 +68,13 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
-    if(bookingTypeId) params.append('bookingTypeId',bookingTypeId?.toString());
+    if (bookingTypeId) params.append('bookingTypeId', bookingTypeId?.toString());
+    if (roomCountForSearch) params.append('rooms', roomCountForSearch.toString());
+    if (guestCountForSearch) params.append('adultCount', guestCountForSearch.toString());
 
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
-  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
+  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId, roomCountForSearch, guestCountForSearch]);
   const isSharing = bookingTypeId === BookingType.sharing;
   const isDayCruise = cruiseTypeId === BoatCruisesId.dayCruise
 
@@ -145,49 +149,49 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
           </div>
 
           <div className='p-1'>
-          <div className="font-semibold text-sm md:text-md mt-2 flex">
-            {`${data.boatCategory}•`}
-            {!isSharing?
-            <>
-            <div className='ml-1 sm:hidden'>{data.bedroomCount}room{data.bedroomCount > 1 ? 's' : ''}</div>
-            <div className='ml-1 hidden sm:block'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
-            </>
-            :<div className='ml-1'>SharingBoat</div>}
-          </div>
+            <div className="font-semibold text-sm md:text-md mt-2 flex">
+              {`${data.boatCategory}•`}
+              {!isSharing ?
+                <>
+                  <div className='ml-1 sm:hidden'>{data.bedroomCount}room{data.bedroomCount > 1 ? 's' : ''}</div>
+                  <div className='ml-1 hidden sm:block'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
+                </>
+                : <div className='ml-1'>SharingBoat</div>}
+            </div>
             <div className='flex flex-col gap-1'>
               <div className="text-gray-700 text-xs">
                 {data.guestCount || 2} Adult <span>·</span> {data.cruiseType}
               </div>
               <div className='flex justify-between items-center'>
-              {exactMatch ?
-              < div className='md:flex gap-1 items-center'>
-                <div className="text-gray-500 line-through text-sm md:text-base">
-                  ₹{FormatIndianCurrency(strikeThroughPrice)}
-                </div>
-                <div className="font-semibold text-gray-700 text-sm md:text-base">
-                  <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
-                  {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
-                </div>
-              </div>:
-              <div className='md:flex gap-1 items-center'>
-                <div className="text-gray-500 text-sm md:text-base">
-                  For {data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}
-                </div>
-                <div className="font-semibold text-gray-700 line-through text-sm md:text-base">
-                  <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
-                  {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+                {exactMatch ?
+                  < div className='md:flex gap-1 items-center'>
+                    <div className="text-gray-500 line-through text-sm md:text-base">
+                      ₹{FormatIndianCurrency(strikeThroughPrice)}
+                    </div>
+                    <div className="font-semibold text-gray-700 text-sm md:text-base">
+                      <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                      {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+                    </div>
+                  </div> :
+                  <div className='md:flex gap-1 items-center'>
+                    <div className="text-gray-500 text-sm md:text-base">
+                      For {data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}
+                    </div>
+                    <div className="font-semibold text-gray-700 line-through text-sm md:text-base">
+                      <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                      {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+                    </div>
+                  </div>}
+              </div>
+              {(data.betterMatchPrice && roomCountForSearch && !isDayCruise) && <div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
+                <Users className="w-4.5 h-4.5 text-white" />
+                <div className="flex flex-col leading-tight">
+                  <span className="text-xs md:text-sm lg:text-md text-white font-medium">{roomCountForSearch}  room{roomCountForSearch > 1 ? 's' : ''} •{roomCountForSearch * 2}Adults</span>
+                  <span className="text-sm md:text-md lg:text-lg font-bold text-white">₹{FormatIndianCurrency(betterMatchPrice)}</span>
                 </div>
               </div>}
-              </div>
-              {(data.betterMatchPrice && roomCountForSearch && !isDayCruise)&&<div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
-                  <Users className="w-4.5 h-4.5 text-white" />
-                  <div className="flex flex-col leading-tight">
-                    <span className="text-xs md:text-sm lg:text-md text-white font-medium">{roomCountForSearch}  room{roomCountForSearch > 1 ? 's' : ''} •{roomCountForSearch*2}Adults</span>
-                    <span className="text-sm md:text-md lg:text-lg font-bold text-white">₹{FormatIndianCurrency(betterMatchPrice)}</span>
-                  </div>
-                </div>}
             </div>
-            </div>
+          </div>
         </div>
       </Link>
     </div>
