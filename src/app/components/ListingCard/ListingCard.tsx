@@ -77,6 +77,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId, roomCountForSearch, guestCountForSearch]);
   const isSharing = bookingTypeId === BookingType.sharing;
   const isDayCruise = cruiseTypeId === BoatCruisesId.dayCruise
+  const isNightStay = cruiseTypeId === BoatCruisesId.nightStay
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -160,10 +161,10 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
             </div>
             <div className='flex flex-col gap-1'>
               <div className="text-gray-700 text-xs">
-                {data.guestCount || 2} Adult <span>·</span> {data.cruiseType}
+                { isDayCruise ? guestCountForSearch :data.guestCount} Adult <span>·</span> {data.cruiseType}
               </div>
               <div className='flex justify-between items-center'>
-                {exactMatch ?
+                {(exactMatch || (!isSharing && isNightStay)) ?
                   < div className='md:flex gap-1 items-center'>
                     <div className="text-gray-500 line-through text-sm md:text-base">
                       ₹{FormatIndianCurrency(strikeThroughPrice)}
@@ -183,7 +184,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
                     </div>
                   </div>}
               </div>
-              {(data.betterMatchPrice && roomCountForSearch && !isDayCruise) && <div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
+              {(!isSharing && data.betterMatchPrice && roomCountForSearch && !isDayCruise && !isNightStay) && <div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
                 <Users className="w-4.5 h-4.5 text-white" />
                 <div className="flex flex-col leading-tight">
                   <span className="text-xs md:text-sm lg:text-md text-white font-medium">{roomCountForSearch}  room{roomCountForSearch > 1 ? 's' : ''} •{roomCountForSearch * 2}Adults</span>

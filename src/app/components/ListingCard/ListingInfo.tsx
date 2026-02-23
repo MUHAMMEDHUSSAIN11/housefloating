@@ -27,6 +27,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,maxGuestCountPe
   bathroomCount, roomCount, setAdultCount, availableRoomCount, travelMode, category,
   adultCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount, minRoomCount }) => {
   const isDayCruise = travelMode === BoatCruisesId.dayCruise
+  const isNightStay = travelMode === BoatCruisesId.nightStay
   const isSharing = bookingTypeId === BookingType.sharing;
 
   // Dynamic mode: Private Day Cruise or Private Night Stay
@@ -68,7 +69,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,maxGuestCountPe
       </div>
       <hr className='border border-gray-300' />
 
-      {setRoomCount && roomCountState !== undefined && !isDynamicMode && (
+      {setRoomCount && roomCountState !== undefined && !(isDynamicMode) && !((isNightStay) && !isSharing) && (
         <div className=''>
           <Counter
             onChange={(value) => {

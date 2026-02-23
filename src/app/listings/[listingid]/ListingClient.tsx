@@ -47,13 +47,15 @@ const ListingClient: React.FC<ListingClientProps> = ({
   searchedAdultCount,
 }) => {
   const isSharing = bookingTypeId === BookingType.sharing;
+  const isNightStay = cruiseTypeId === BoatCruisesId.nightStay
+
   const { user } = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
   const [roomCount, setRoomCount] = useState(() => {
     if (isSharing && boatDetails.availableRoomCount) return 1;
-    let initialCount = (searchedRoomCount && searchedRoomCount <= boatDetails.bedroomCount)
+    let initialCount = (!isNightStay &&searchedRoomCount && searchedRoomCount <= boatDetails.bedroomCount)
       ? searchedRoomCount
       : boatDetails.bedroomCount;
 
