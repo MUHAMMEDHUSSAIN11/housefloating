@@ -243,16 +243,18 @@ const HouseBoatsContent = () => {
         {listing.exactMatch.length > 0 && (
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-5 bg-blue-50 w-fit px-3 py-1 rounded-3xl">
-                <CheckCircle className="text-blue-600" size={20} />
-                <h2 className="text-sm md:text-xl lg:text-2xl font-semibold text-neutral-700 tracking-tight">
-                  Exact Matches
-                </h2>
-              </div>
+              <CheckCircle className="text-blue-600" size={20} />
+              <h2 className="text-sm md:text-xl lg:text-2xl font-semibold text-neutral-700 tracking-tight">
+                Exact Matches
+              </h2>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
               {listing.exactMatch.map((listing: any) => (
                 <ListingCard
                   key={listing.boatId}
                   data={listing}
+                  roomCountForSearch={roomCountFromUrl}
+                  guestCountForSearch={adultCountFromUrl}
                   startDate={startDateFromUrl}
                   endDate={endDateFromUrl}
                   cruiseTypeId={cruiseFromUrl}
@@ -266,18 +268,19 @@ const HouseBoatsContent = () => {
 
         {listing.greaterThanMatch.length > 0 && (
           <div className="mb-10">
-              <div className="flex items-center gap-3 mb-5 bg-blue-50 w-fit px-3 py-1 rounded-3xl">
-                <Sparkles className="text-blue-500" size={20} />
-                <h2 className="text-sm md:text-xl lg:text-2xl font-semibold text-neutral-700 tracking-tight">
-                  Better Matches
-                </h2>
-              </div>
+            <div className="flex items-center gap-3 mb-5 bg-blue-50 w-fit px-3 py-1 rounded-3xl">
+              <Sparkles className="text-blue-500" size={20} />
+              <h2 className="text-sm md:text-xl lg:text-2xl font-semibold text-neutral-700 tracking-tight">
+                Better Matches
+              </h2>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
               {listing.greaterThanMatch.map((listing: any) => (
                 <ListingCard
                   key={listing.boatId}
                   data={listing}
                   roomCountForSearch={roomCountFromUrl}
+                  guestCountForSearch={adultCountFromUrl}
                   startDate={startDateFromUrl}
                   endDate={endDateFromUrl}
                   cruiseTypeId={cruiseFromUrl}

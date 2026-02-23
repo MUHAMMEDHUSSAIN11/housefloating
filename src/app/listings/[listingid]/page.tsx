@@ -146,11 +146,15 @@ const Listingpage = async ({
   const endDateParam = resolvedSearchParams.endDate as string;
   const cruiseTypeIdParam = resolvedSearchParams.cruiseTypeId as string;
   const bookingTypeIdParam = resolvedSearchParams.bookingTypeId as string;
+  const roomsParam = resolvedSearchParams.rooms as string;
+  const adultCountParam = resolvedSearchParams.adultCount as string;
 
   const startDate = startDateParam ? new Date(startDateParam) : null;
   const endDate = endDateParam ? new Date(endDateParam) : null;
   const cruiseTypeId = cruiseTypeIdParam ? Number(cruiseTypeIdParam) : null;
   const bookingTypeId = bookingTypeIdParam ? Number(bookingTypeIdParam) : null;
+  const searchedRoomCount = roomsParam ? Number(roomsParam) : undefined;
+  const searchedAdultCount = adultCountParam ? Number(adultCountParam) : undefined;
 
   const hasRequiredParams = !!(listingId && startDateParam && cruiseTypeIdParam && startDate && cruiseTypeId);
 
@@ -186,6 +190,8 @@ const Listingpage = async ({
         endDate={endDate!}
         cruiseTypeId={cruiseTypeId!}
         bookingTypeId={bookingTypeId}
+        searchedRoomCount={searchedRoomCount}
+        searchedAdultCount={searchedAdultCount}
       />
     );
   } catch (error) {
