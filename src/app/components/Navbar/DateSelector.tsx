@@ -45,9 +45,6 @@ const DateSelector: React.FC<DateSelectorProps> = ({
 
   const handleCruiseChange = (cruise: BoatCruisesId) => {
     setSelectedCruise(cruise);
-    if (tempStartDate) {
-      onClose();
-    }
   };
 
   const isDateInRange = (day: Date): boolean => {

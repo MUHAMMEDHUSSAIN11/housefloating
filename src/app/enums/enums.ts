@@ -17,8 +17,8 @@ export enum BoatBookingTypes {
 }
 
 export enum amount {
-    advance = 0.3,
-    remaining = 0.7,
+    advance = 0.15,
+    remaining = 0.85,
     weekendPrice = 2000,
     preChristmas = 1.71,
     christmasSeason = 2.20,
