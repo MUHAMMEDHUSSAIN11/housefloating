@@ -184,9 +184,16 @@ const DesktopSearchBar: React.FC<DesktopSearchBarProps> = ({
               <div className="flex items-center gap-1 lg:gap-2">
                 <Calendar className={`w-4 h-4 shrink-0 ${showErrors && errors.date ? 'text-red-500' : ''}`} />
                 <div className="min-w-0 flex-1">
-                  <p className={`hidden sm:block truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
-                    {!selectedDateRange.startDate ? 'Select Date' : getDateDisplayText()}
-                  </p>
+                  <div className="flex flex-col justify-center">
+                    <p className={`hidden sm:block truncate text-sm leading-tight ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
+                      {!selectedDateRange.startDate ? 'Select Date' : getDateDisplayText()}
+                    </p>
+                    {selectedDateRange.startDate && (
+                      <p className="hidden sm:block truncate text-[10px] text-gray-500 leading-tight">
+                        {selectedCruise === BoatCruisesId.dayCruise ? `${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}` : `${roomCount} ${roomCount === 1 ? 'room' : 'rooms'}`} • {BoatCruisesId[selectedCruise]}
+                      </p>
+                    )}
+                  </div>
                   <p className={`sm:hidden text-sm truncate ${showErrors && errors.date ? 'text-red-500 font-semibold' : ''}`}>
                     {!selectedDateRange.startDate ? 'Date' : getDateDisplayText()}
                   </p>
