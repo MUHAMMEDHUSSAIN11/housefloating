@@ -36,9 +36,9 @@ const MakeRazorpay = async (options: RazorpayOptions) => {
             if (options.onError) options.onError("SDK failed to load");
             return;
         }
-
-        const advanceAmount = Math.round(options.totalPrice * amountEnum.advance);
-        const remainingAmount = Math.round(options.totalPrice * amountEnum.remaining);
+        const boatPrice = Math.round(options.totalPrice / amountEnum.commissionPercentage);
+        const advanceAmount = Math.round(boatPrice * amountEnum.advance);
+        const remainingAmount = Math.round(boatPrice);
 
         const token = jsCookie.get('token');
         const finalMetadata = {

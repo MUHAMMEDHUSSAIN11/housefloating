@@ -11,7 +11,7 @@ import { Search } from 'lucide-react';
 const steps = [
   { icon: <Search size={25} />, title: "Start your Search", desc: "Select Private or Sharing and travel date" },
   { icon: <IoIosBoat size={25} />, title: "Choose a Houseboat", desc: "Select your preferred houseboat" },
-  { icon: <MdPayment size={25} />, title: "Payment", desc: "Make the payment of 30% in advance and confirm the booking" },
+  { icon: <MdPayment size={25} />, title: "Payment", desc: "Make the payment of 15% in advance and confirm the booking" },
   { icon: <FaAnchor size={25} />, title: "Enjoy the Ride", desc: "Embark on an unforgettable adventure." },
 ];
 
