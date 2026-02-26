@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import useSearchStore from '@/app/hooks/useSearchStore';
 import FormatToLocalDate from '../Misc/FormatToLocalDate';
 import { amount, BoatCruisesId } from '@/app/enums/enums';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 
 interface HeroListing {
@@ -21,11 +22,101 @@ interface HeroListing {
 interface GridSectionProps {
   title: string;
   items: HeroListing[];
+  onBoatClick: () => void;
 }
 
 
-const ListingHero: React.FC = () => {
+const GridSection: React.FC<GridSectionProps> = ({ title, items, onBoatClick }) => {
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 300;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  return (
+    <div className="mb-5 relative group/section">
+      {/* Section Title */}
+      <div className="px-4 sm:px-6 lg:px-8 mb-6">
+        <div
+          className="inline-flex items-center text-xl sm:text-2xl text-black font-medium transition-colors duration-300 group"
+        >
+          <h2 className="mr-3">{title}</h2>
+        </div>
+      </div>
+
+      {/* Scrollable Grid Wrapper */}
+      <div className="px-4 sm:px-6 lg:px-8 relative group/grid">
+        {/* Navigation Buttons - Simple side buttons */}
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-1 top-[45%] -translate-y-1/2 z-10 p-1 rounded-full border border-gray-100 bg-white/90 text-gray-600 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-200 cursor-pointer hidden md:flex items-center justify-center shadow-sm opacity-0 group-hover/grid:opacity-100"
+          aria-label="Scroll Left"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-1 top-[45%] -translate-y-1/2 z-10 p-1 rounded-full border border-gray-100 bg-white/90 text-gray-600 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-200 cursor-pointer hidden md:flex items-center justify-center shadow-sm opacity-0 group-hover/grid:opacity-100"
+          aria-label="Scroll Right"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+
+        {/* Scrollable Container */}
+        <div
+          ref={scrollContainerRef}
+          className="overflow-x-auto overflow-y-hidden scroll-smooth"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          <div className="flex space-x-4 pb-4 min-w-max">
+            {items.map((item) => (
+              <div
+                key={item.boatId}
+                onClick={onBoatClick}
+                className="shrink-0 w-48 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
+              >
+                {/* Image */}
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={item.thumbnailImage}
+                    alt={item.boatName}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                {/* Content */}
+                <div className="p-4">
+                  <h3 className="text-sm font-medium text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                    {item.boatCategory} • {item.roomCount} Bedroom
+                  </h3>
+                  <p className="text-sm font-semibold text-gray-900">
+                    ₹{Math.round(item.basePrice * amount.commissionPercentage)}
+                    <span className="text-sm font-normal text-gray-600 ml-1">
+                      For DayNight
+                    </span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ListingHero: React.FC = () => {
   const { data: listings = [], error, isLoading } = useSWR('hero-listings', GetRandomBoats, {
     revalidateOnFocus: false,
     dedupingInterval: 600000,
@@ -81,60 +172,6 @@ const ListingHero: React.FC = () => {
       }
     }
   };
-
-  const GridSection: React.FC<GridSectionProps> = ({ title, items }) => (
-    <div className="mb-5">
-      {/* Section Title */}
-      <div className="px-4 sm:px-6 lg:px-8 mb-6">
-        <div
-          className="inline-flex items-center text-xl sm:text-2xl text-black font-medium transition-colors duration-300 group"
-        >
-          <h2 className="mr-3">{title}</h2>
-        </div>
-      </div>
-
-      {/* Scrollable Grid - Hidden scrollbar on mobile */}
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="overflow-x-auto overflow-y-hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          <style jsx>{`
-            div::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
-          <div className="flex space-x-4 pb-4 min-w-max">
-            {items.map((item) => (
-              <div
-                key={item.boatId}
-                onClick={handleBoatClick}
-                className="shrink-0 w-48 bg-white rounded-xl overflow-y-auto shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group block"
-              >
-                {/* Image */}
-                <div className="relative h-40 overflow-hidden">
-                  <img
-                    src={item.thumbnailImage}
-                    alt={item.boatName}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                {/* Content */}
-                <div className="p-4">
-                  <h3 className="text-sm font-medium text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                    {item.boatCategory} • {item.roomCount} Bedroom
-                  </h3>
-                  <p className="text-sm font-semibold text-gray-900">
-                    ₹{Math.round(item.basePrice * amount.commissionPercentage)}
-                    <span className="text-sm font-normal text-gray-600 ml-1">
-                      For DayNight
-                    </span>
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   // Skeleton Loading Component
   const SkeletonCard = () => (
@@ -210,7 +247,7 @@ const ListingHero: React.FC = () => {
     <section className="bg-gray-50 h-auto">
       <div className="pt-48 lg:pt-36 ">
         {/* Favourite Picks Section */}
-        <GridSection title="Favourite Picks" items={listings} />
+        <GridSection title="Favourite Picks" items={listings} onBoatClick={handleBoatClick} />
       </div>
     </section>
   );
