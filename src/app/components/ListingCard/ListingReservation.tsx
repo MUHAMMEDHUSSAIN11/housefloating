@@ -8,6 +8,7 @@ import GetCheckInOutTimes from "../Misc/GetCheckInOutTimes";
 
 interface ListingReservationProps {
   totalPrice: number;
+  advanceAmount: number;
   onSubmit: () => void;
   cruiseTypeId?: number;
   bookingTypeId?: number | null;
@@ -22,6 +23,7 @@ interface ListingReservationProps {
 const ListingReservation: React.FC<ListingReservationProps> = ({
   totalPrice,
   onSubmit,
+  advanceAmount,
   cruiseTypeId,
   bookingTypeId,
   roomCount,
@@ -75,8 +77,13 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
               <div className="text-sm">CheckOutTime</div>
               <div className="text-black">{checkOut}</div>
             </div>
-            <div className="col-span-2 pt-2 pl-4 border-t-2 border-gray-300">
-              <div className="text-xl font-semibold">₹{totalPrice}</div>
+            <div className="col-span-2 pt-2 pl-4 border-t-2 border-gray-300 flex flex-col">
+              <div className="flex justify-between items-center">
+                <div className="text-xl font-semibold">₹{totalPrice}</div>
+                <div className="text-[10px] md:text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
+                  Book with ₹{advanceAmount} Payment
+                </div>
+              </div>
               <span className="text-xs text-gray-500">{`${guestCount} guest - for ${roomCount} bedroom`}</span>
             </div>
           </div>
@@ -119,6 +126,9 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
               <div className="flex items-center gap-1">
                 <span className="text-lg font-bold text-black">₹{totalPrice}</span>
                 <span className="text-xs text-gray-500">/ {`${guestCount} guest - for ${roomCount} bedroom`}</span>
+              </div>
+              <div className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md w-fit">
+                Book with ₹{advanceAmount} Payment
               </div>
             </div>
             <div className="flex-1 max-w-150">
