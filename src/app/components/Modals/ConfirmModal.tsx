@@ -37,6 +37,7 @@ enum STEPS {
 
 interface confirmModalProps {
     boatDetails: BoatDetails,
+    advanceAmount: number,
     modeOfTravel: string,
     finalPrice: number,
     finalHeadCount: number,
@@ -48,7 +49,7 @@ interface confirmModalProps {
 }
 
 
-const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, isVeg, bookingTypeId, roomCount }) => {
+const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, advanceAmount, finalPrice, finalHeadCount, finalCheckInDate, finalCheckOutDate, isVeg, bookingTypeId, roomCount }) => {
 
     const BookingConfirmModal = useBookingConfirmModal();
     const [step, setStep] = useState(STEPS.PHONENUMBER);
@@ -56,7 +57,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
     const [otp, setOtp] = useState('');
     const { user } = useAuth();
     const router = useRouter();
-    const boatPrice = (Math.round(finalPrice / amount.commissionPercentage));
+    const remainingAmount = (Math.round(finalPrice - advanceAmount));
 
     const handlePush = () => {
         router.push('/cart');
@@ -251,8 +252,8 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                         oe: boatDetails.ownerEmail,
                                         tp: finalPrice,
                                         rc: roomCount,
-                                        aa: Math.round(boatPrice * amount.advance),
-                                        ra: Math.round(boatPrice),
+                                        aa: Math.round(advanceAmount),
+                                        ra: Math.round(remainingAmount),
                                     };
                                     const str = JSON.stringify(emailInfo);
                                     return {
@@ -475,9 +476,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                     <p className="text-gray-900">Room Count: {roomCount}</p>
                     <hr className="my-1 border-gray-100" />
                     <p className="text-gray-900">Total Price: ₹{finalPrice}</p>
-                    <p className="text-gray-900 flex">Advance Amount:<span className='ml-1 font-semibold text-black'>₹{Math.round(boatPrice * amount.advance)}</span></p>
+                    <p className="text-gray-900 flex">Advance Amount:<span className='ml-1 font-semibold text-black'>₹{advanceAmount}</span></p>
                     <p className="text-md font-light text-red-500">Balance Amount Pay at Boat</p>
-                    <p className="text-gray-900">Balance Amount: ₹{Math.round(boatPrice)}</p>
+                    <p className="text-gray-900">Balance Amount: ₹{Math.round(remainingAmount)}</p>
                 </div>
             </div>
         )

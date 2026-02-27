@@ -106,6 +106,9 @@ const GridSection: React.FC<GridSectionProps> = ({ title, items, onBoatClick }) 
                       For DayNight
                     </span>
                   </p>
+                  <div className="mt-1 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md w-fit">
+                    Book with ₹{Math.round(item.basePrice * amount.advance)} Payment
+                  </div>
                 </div>
               </div>
             ))}
