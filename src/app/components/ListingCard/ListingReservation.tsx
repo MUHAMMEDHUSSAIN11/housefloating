@@ -81,7 +81,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
               <div className="flex justify-between items-center">
                 <div className="text-xl font-semibold">₹{totalPrice}</div>
                 <div className="text-[10px] md:text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
-                  Book with ₹{advanceAmount} Payment
+                  Book now for just ₹{advanceAmount}/-
                 </div>
               </div>
               <span className="text-xs text-gray-500">{`${guestCount} guest - for ${roomCount} bedroom`}</span>
@@ -128,7 +128,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
                 <span className="text-xs text-gray-500">/ {`${guestCount} guest - for ${roomCount} bedroom`}</span>
               </div>
               <div className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md w-fit">
-                Book with ₹{advanceAmount} Payment
+                Book now for just ₹{advanceAmount}/-
               </div>
             </div>
             <div className="flex-1 max-w-150">
