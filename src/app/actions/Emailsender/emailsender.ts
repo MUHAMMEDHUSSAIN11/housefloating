@@ -14,17 +14,17 @@ export async function sendAllEmails(bookingData: any) {
         const adminData = JSON.parse(fileContents);
         const adminEmails = adminData.emails || [];
 
-        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-        // Send emails sequentially with a small delay to avoid rate limits (2 req/sec)
-        await sendAdminEmail(bookingData, adminEmails);
-        await delay(500);
-        await sendOwnerEmail(bookingData);
+        // Send emails in parallel to avoid timeouts and sequential delays
+        const emailPromises = [
+            sendAdminEmail(bookingData, adminEmails),
+            sendOwnerEmail(bookingData)
+        ];
 
         if (bookingData.guestEmail) {
-            await delay(500);
-            await sendUserEmail(bookingData);
+            emailPromises.push(sendUserEmail(bookingData));
         }
+
+        await Promise.all(emailPromises);
 
         return { success: true };
     } catch (error) {

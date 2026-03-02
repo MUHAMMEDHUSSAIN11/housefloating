@@ -16,7 +16,7 @@ import validateOTP from '@/app/actions/validateOTP';
 import { toast } from 'react-hot-toast';
 import useAuth from '@/app/hooks/useAuth';
 import { BoatDetails } from '@/app/listings/[listingid]/page';
-import { amount, BoatBookingTypes } from '@/app/enums/enums';
+import { BoatBookingTypes } from '@/app/enums/enums';
 import { BoatCruises, BoatCruisesId, BookingType } from '@/app/enums/enums';
 import MakeRazorpay from '@/app/actions/MakeRazorpay';
 import HandleCreateOnlineBooking from '@/app/actions/OnlineBookings/HandleCreateOnlineBooking';
