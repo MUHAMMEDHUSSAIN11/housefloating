@@ -19,6 +19,7 @@ interface BoatCardDetails {
   boatImage: string | null;
   bedroomCount: number;
   price: number;
+  bookingPrice: number;
   boatCode: string;
   betterMatchPrice: number;
   guestCount: number | null;
@@ -161,7 +162,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
             </div>
             <div className='flex flex-col gap-1'>
               <div className="text-gray-700 text-xs">
-                { isDayCruise ? guestCountForSearch :data.guestCount} Adult <span>·</span> {data.cruiseType}
+                {isDayCruise ? guestCountForSearch : data.guestCount} Adult <span>·</span> {data.cruiseType}
               </div>
               <div className='flex justify-between items-center'>
                 {(exactMatch || (!isSharing && isNightStay)) ?
@@ -183,6 +184,9 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
                       {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
                     </div>
                   </div>}
+              </div>
+              <div className="text-[10px] md:text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md self-start">
+                Book now for just ₹{FormatIndianCurrency(data.bookingPrice)}/-
               </div>
               {(!isSharing && data.betterMatchPrice && roomCountForSearch && !isDayCruise && !isNightStay) && <div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
                 <Users className="w-4.5 h-4.5 text-white" />

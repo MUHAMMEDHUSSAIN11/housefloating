@@ -15,7 +15,7 @@ import PremiumFood from '../../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
 import HouseRules from '../../components/Descriptions/HouseRules';
 import CalculatePrice from '@/app/actions/calculatePrice';
-import { BoatCruises, BoatCruisesId, BookingType, Categories, coordinates } from '@/app/enums/enums';
+import { amount, BoatCruises, BoatCruisesId, BookingType, Categories, coordinates } from '@/app/enums/enums';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
@@ -65,6 +65,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
     return initialCount;
   });
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
+  const [advanceAmount, setAdvanceAmount] = useState(() => Math.round(boatDetails.prices.dayPrice * amount.advance));
   const [finalAdultCount, setFinalAdultCount] = useState(() => {
     if (isSharing) return boatDetails.bedroomCount * 2;
     if (cruiseTypeId === BoatCruisesId.dayCruise) {
@@ -114,6 +115,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
           isDayCruise,
         );
         setTotalPrice(finalPrice);
+        setAdvanceAmount(Math.round((finalPrice / amount.commissionPercentage) * amount.advance));
       } catch (error) {
         console.error('Error calculating total price:', error);
       }
@@ -146,7 +148,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   return (
     <>
-      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? BoatCruises.dayCruise : cruiseTypeId == 2 ? BoatCruises.dayNight : BoatCruises.nightStay} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
+      <ConfirmModal boatDetails={boatDetails} advanceAmount={advanceAmount} modeOfTravel={cruiseTypeId == 1 ? BoatCruises.dayCruise : cruiseTypeId == 2 ? BoatCruises.dayNight : BoatCruises.nightStay} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
       <div className='max-w-7xl mx-auto pt-4 md:pt-24 pb-18 md:pb-0'>
         <div className='flex flex-col gap-6'>
           <ListingHead
@@ -236,6 +238,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             {!bookingConfirmModal.isOpen && <div className='md:order-last md:col-span-3'>
               <ListingReservation
                 totalPrice={totalPrice}
+                advanceAmount={advanceAmount}
                 cruiseTypeId={cruiseTypeId}
                 bookingTypeId={bookingTypeId}
                 roomCount={roomCount}

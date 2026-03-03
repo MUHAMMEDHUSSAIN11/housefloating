@@ -8,11 +8,13 @@ import useSearchStore from '@/app/hooks/useSearchStore';
 import FormatToLocalDate from '../Misc/FormatToLocalDate';
 import { amount, BoatCruisesId } from '@/app/enums/enums';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import FormatIndianCurrency from '../Misc/FormatIndianCurrency';
 
 
 interface HeroListing {
   boatId: number;
   basePrice: number;
+  bookingPrice: number;
   boatName: string;
   boatCategory: string;
   roomCount: number;
@@ -106,6 +108,9 @@ const GridSection: React.FC<GridSectionProps> = ({ title, items, onBoatClick }) 
                       For DayNight
                     </span>
                   </p>
+                  <div className="mt-1 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md w-fit">
+                    Book now for just ₹{FormatIndianCurrency(item.bookingPrice)}/-
+                  </div>
                 </div>
               </div>
             ))}
