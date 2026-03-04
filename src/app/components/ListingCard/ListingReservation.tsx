@@ -4,10 +4,11 @@ import { BoatCruisesId, CheckInOutTimes, BookingType, BookingStatuses, BoatCruis
 import Button from "../Misc/Button";
 import format from "date-fns/format";
 import addDays from "date-fns/addDays";
-import { is } from "date-fns/locale";
+import GetCheckInOutTimes from "../Misc/GetCheckInOutTimes";
 
 interface ListingReservationProps {
   totalPrice: number;
+  advanceAmount: number;
   onSubmit: () => void;
   cruiseTypeId?: number;
   bookingTypeId?: number | null;
@@ -22,6 +23,7 @@ interface ListingReservationProps {
 const ListingReservation: React.FC<ListingReservationProps> = ({
   totalPrice,
   onSubmit,
+  advanceAmount,
   cruiseTypeId,
   bookingTypeId,
   roomCount,
@@ -36,53 +38,12 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
     : cruiseTypeId === BoatCruisesId.dayNight ? BoatCruises.dayNight
       : BoatCruises.nightStay;
 
-    const formattedStartDate = format(selectedDate, 'dd MMM');
-    const dateDisplay = cruiseTypeId === BoatCruisesId.dayCruise
+  const formattedStartDate = format(selectedDate, 'dd MMM');
+  const dateDisplay = cruiseTypeId === BoatCruisesId.dayCruise
     ? formattedStartDate
     : `${formattedStartDate} - ${format(addDays(selectedDate, 1), 'dd MMM')}`;
 
-  // Function to get check-in and check-out times based on booking type and cruise type
-  const getCheckInOutTimes = (): { checkIn: string; checkOut: string } => {
-
-    if (isSharing) {
-      if (cruiseTypeId === BoatCruisesId.dayCruise) {
-        return {
-          checkIn: CheckInOutTimes.SharingDayCruiseCheckIn,
-          checkOut: CheckInOutTimes.SharingDayCruiseCheckOut,
-        };
-      } else if (cruiseTypeId === BoatCruisesId.dayNight) {
-        return {
-          checkIn: CheckInOutTimes.SharingDayNightCheckIn,
-          checkOut: CheckInOutTimes.SharingDayNightCheckOut,
-        };
-      } else {
-        return {
-          checkIn: CheckInOutTimes.SharingNightStayCheckIn,
-          checkOut: CheckInOutTimes.SharingNightStayCheckOut,
-        };
-      }
-    } else {
-      // Private booking
-      if (cruiseTypeId === BoatCruisesId.dayCruise) {
-        return {
-          checkIn: CheckInOutTimes.PrivateDayCruiseCheckIn,
-          checkOut: CheckInOutTimes.PrivateDayCruiseCheckOut,
-        };
-      } else if (cruiseTypeId === BoatCruisesId.dayNight) {
-        return {
-          checkIn: CheckInOutTimes.PrivateDayNightCheckIn,
-          checkOut: CheckInOutTimes.PrivateDayNightCheckOut,
-        };
-      } else {
-        return {
-          checkIn: CheckInOutTimes.PrivateNightStayCheckIn,
-          checkOut: CheckInOutTimes.PrivateNightStayCheckOut,
-        };
-      }
-    }
-  };
-
-  const { checkIn, checkOut } = getCheckInOutTimes();
+  const { checkIn, checkOut } = GetCheckInOutTimes(cruiseTypeId, bookingTypeId);
 
   return (
     <>
@@ -116,9 +77,14 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
               <div className="text-sm">CheckOutTime</div>
               <div className="text-black">{checkOut}</div>
             </div>
-            <div className="col-span-2 pt-2 pl-4 border-t-2 border-gray-300">
-              <div className="text-xl font-semibold">₹{totalPrice}</div>
-               <span className="text-xs text-gray-500">{`${guestCount} guest - for ${roomCount} bedroom`}</span>
+            <div className="col-span-2 pt-2 pl-4 border-t-2 border-gray-300 flex flex-col">
+              <div className="flex justify-between items-center">
+                <div className="text-xl font-semibold">₹{totalPrice}</div>
+                <div className="text-[10px] md:text-sm font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
+                  Book now for just ₹{advanceAmount}/-
+                </div>
+              </div>
+              <span className="text-xs text-gray-500">{`${guestCount} guest - for ${roomCount} bedroom`}</span>
             </div>
           </div>
           <div className="w-full">
@@ -127,7 +93,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
         </div>
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 z-40 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
         <div className="flex flex-col">
           <div className="flex items-center justify-between mr-1 mb-1">
             <span className="text-sm font-medium text-gray-700">
@@ -160,6 +126,9 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
               <div className="flex items-center gap-1">
                 <span className="text-lg font-bold text-black">₹{totalPrice}</span>
                 <span className="text-xs text-gray-500">/ {`${guestCount} guest - for ${roomCount} bedroom`}</span>
+              </div>
+              <div className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md w-fit">
+                Book now for just ₹{advanceAmount}/-
               </div>
             </div>
             <div className="flex-1 max-w-150">

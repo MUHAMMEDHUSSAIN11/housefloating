@@ -18,8 +18,35 @@ export const inter = Inter({
 
 
 export const metadata = {
-  title: 'Houseboats in Alleppey – Book Online at Best Prices',
-  description: "Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
+  title: 'Housefloating.com - Book Houseboats in Alleppey',
+  description: "Housefloating.com is the #1 portal to book luxury Alleppey houseboats at best prices. Experience premium Kerala houseboats and unforgettable journeys online.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/images/hf-Logo.jpg", sizes: "32x32", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "48x48", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "96x96", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "144x144", type: "image/jpeg" },
+      { url: "/images/hf-Logo.jpg", sizes: "192x192", type: "image/jpeg" },
+    ],
+    shortcut: "/images/hf-Logo.jpg",
+    apple: "/images/hf-Logo.jpg",
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Housefloating.com - Book Houseboats in Alleppey',
+    description: 'Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats.',
+    images: ['/images/hf-Logo.jpg'],
+  },
+  openGraph: {
+    title: 'Housefloating.com - Book Houseboats in Alleppey',
+    description: "Housefloating is No #1 Online portal for Booking Houseboats in Alleppey. Book your Alleppey houseboat online and experience luxury and premium Kerala houseboats. Affordable rates and unforgettable journeys await you!",
+    images: ['/images/hf-Logo.jpg']
+  },
+}
+
+export const viewport = {
+  themeColor: "#3b82f6",
 }
 
 import StoreProvider from './StoreProvider';

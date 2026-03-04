@@ -15,7 +15,7 @@ import PremiumFood from '../../components/FoodMenu/PremiumFood';
 import LuxuryFood from '../../components/FoodMenu/LuxuryFood';
 import HouseRules from '../../components/Descriptions/HouseRules';
 import CalculatePrice from '@/app/actions/calculatePrice';
-import { BoatCruises, BoatCruisesId, BookingType, Categories, coordinates } from '@/app/enums/enums';
+import { amount, BoatCruises, BoatCruisesId, BookingType, Categories, coordinates } from '@/app/enums/enums';
 import toast from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { BoatDetails } from './page';
@@ -33,6 +33,8 @@ export interface ListingClientProps {
   endDate: Date;
   cruiseTypeId: number;
   bookingTypeId: number | null;
+  searchedRoomCount?: number;
+  searchedAdultCount?: number;
 }
 
 const ListingClient: React.FC<ListingClientProps> = ({
@@ -41,32 +43,59 @@ const ListingClient: React.FC<ListingClientProps> = ({
   endDate,
   cruiseTypeId,
   bookingTypeId,
+  searchedRoomCount,
+  searchedAdultCount,
 }) => {
   const isSharing = bookingTypeId === BookingType.sharing;
+  const isNightStay = cruiseTypeId === BoatCruisesId.nightStay
+
   const { user } = useAuth();
   const loginModal = useLoginModal();
   const bookingConfirmModal = useBookingConfirmModal();
   const [isLoading, setIsLoading] = useState(false);
-  const [roomCount, setRoomCount] = useState((isSharing&&boatDetails.availableRoomCount)?1:boatDetails.bedroomCount);
+  const [roomCount, setRoomCount] = useState(() => {
+    if (isSharing && boatDetails.availableRoomCount) return 1;
+    let initialCount = (!isNightStay &&searchedRoomCount && searchedRoomCount <= boatDetails.bedroomCount)
+      ? searchedRoomCount
+      : boatDetails.bedroomCount;
+
+    if (boatDetails.prices?.minimumRoomCount) {
+      initialCount = Math.max(initialCount, boatDetails.prices.minimumRoomCount);
+    }
+    return initialCount;
+  });
   const [totalPrice, setTotalPrice] = useState(boatDetails.prices.dayPrice);
-  const [finalAdultCount, setFinalAdultCount] = useState(boatDetails.bedroomCount * 2);
+  const [advanceAmount, setAdvanceAmount] = useState(() => Math.round(boatDetails.prices.dayPrice * amount.advance));
+  const [finalAdultCount, setFinalAdultCount] = useState(() => {
+    if (isSharing) return boatDetails.bedroomCount * 2;
+    if (cruiseTypeId === BoatCruisesId.dayCruise) {
+      return searchedAdultCount || boatDetails.minAdultCount;
+    }
+    return roomCount * 2;
+  });
   const [isVeg, setIsVeg] = useState(false);
   const adultAddonPrice = cruiseTypeId === BoatCruisesId.dayCruise ? boatDetails.prices.adultAddOnDayPrice
     : cruiseTypeId === BoatCruisesId.dayNight ? boatDetails.prices.adultAddonDayNightPrice
       : boatDetails.prices.adultAddonNightStayPrice;
   const isDayCruise = cruiseTypeId === BoatCruisesId.dayCruise
+  const isDynamicMode = (isDayCruise) && !isSharing;
   useEffect(() => {
     const currentMaxAdults = isSharing
       ? (roomCount * boatDetails.maxAdultCount)
-      : isDayCruise
-      ? boatDetails.maxAdultCount
-      : (roomCount * 3);
+      : isDynamicMode
+        ? boatDetails.maxAdultCount
+        : (roomCount * boatDetails.maxGuestCountPerRoomForNight);
 
     if (finalAdultCount > currentMaxAdults) {
-      setFinalAdultCount(currentMaxAdults);
+      const currentBaseGuests = isSharing
+        ? (roomCount * 2)
+        : isDynamicMode
+          ? boatDetails.minAdultCount
+          : (roomCount * boatDetails.minAdultCount);
+      setFinalAdultCount(currentBaseGuests);
     }
 
-  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount, finalAdultCount]);
+  }, [roomCount, bookingTypeId, boatDetails.maxAdultCount,]);
 
   useEffect(() => {
     const calculate = async () => {
@@ -80,10 +109,13 @@ const ListingClient: React.FC<ListingClientProps> = ({
           adultAddonPrice,
           boatDetails.maxAdultCount,
           boatDetails.guestCount,
+          boatDetails.minAdultCount,
+          boatDetails.maxGuestCountPerRoomForNight,
           bookingTypeId,
           isDayCruise,
         );
         setTotalPrice(finalPrice);
+        setAdvanceAmount(Math.round((finalPrice / amount.commissionPercentage) * amount.advance));
       } catch (error) {
         console.error('Error calculating total price:', error);
       }
@@ -93,11 +125,11 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   const onCreateReservation = useCallback(() => {
     if (user) {
-      const currentMaxAdults = isSharing 
-      ? (roomCount * boatDetails.maxAdultCount)
-      : isDayCruise
-      ? boatDetails.maxAdultCount
-      : (roomCount * 3)
+      const currentMaxAdults = isSharing
+        ? (roomCount * boatDetails.maxAdultCount)
+        : isDynamicMode
+          ? boatDetails.maxAdultCount
+          : (roomCount * boatDetails.maxGuestCountPerRoomForNight);
 
       if (finalAdultCount <= currentMaxAdults) {
         return bookingConfirmModal.onOpen();
@@ -116,7 +148,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   return (
     <>
-      <ConfirmModal boatDetails={boatDetails} modeOfTravel={cruiseTypeId == 1 ? BoatCruises.dayCruise : cruiseTypeId == 2 ? BoatCruises.dayNight : BoatCruises.nightStay} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
+      <ConfirmModal boatDetails={boatDetails} advanceAmount={advanceAmount} modeOfTravel={cruiseTypeId == 1 ? BoatCruises.dayCruise : cruiseTypeId == 2 ? BoatCruises.dayNight : BoatCruises.nightStay} finalPrice={totalPrice} finalHeadCount={finalAdultCount} finalCheckInDate={startDate} finalCheckOutDate={endDate} isVeg={isVeg} bookingTypeId={bookingTypeId} roomCount={roomCount} />
       <div className='max-w-7xl mx-auto pt-4 md:pt-24 pb-18 md:pb-0'>
         <div className='flex flex-col gap-6'>
           <ListingHead
@@ -137,6 +169,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
                 setAdultCount={setFinalAdultCount}
                 adultCount={finalAdultCount}
                 maxAdultCount={boatDetails.maxAdultCount}
+                maxGuestCountPerRoom={boatDetails.maxGuestCountPerRoomForNight}
                 minAdultCount={boatDetails.minAdultCount}
                 bookingTypeId={bookingTypeId}
                 availableRoomCount={boatDetails?.availableRoomCount}
@@ -147,19 +180,19 @@ const ListingClient: React.FC<ListingClientProps> = ({
               <div className='w-full'>
                 {cruiseTypeId === BoatCruisesId.dayNight ? (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={(roomCount * 3)} Count={roomCount * 2} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'DayNight Cruise Occupancy'} category={boatDetails.boatCategory} adult={(roomCount * boatDetails.maxGuestCountPerRoomForNight)} Count={roomCount * 2} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingDayNightSteps /> : <PrivateDayNightSteps />}
                   </>
                 ) : cruiseTypeId === BoatCruisesId.nightStay ? (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={(roomCount * 3)} Count={roomCount * 2} adultAddonPrice={boatDetails.prices.adultAddonDayNightPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Night Stay Occupancy'} category={boatDetails.boatCategory} adult={isDynamicMode ? boatDetails.maxAdultCount : (roomCount * boatDetails.maxGuestCountPerRoomForNight)} Count={isDynamicMode ? boatDetails.guestCount : (roomCount * boatDetails.minAdultCount)} adultAddonPrice={boatDetails.prices.adultAddonNightStayPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingNightStaySteps /> : <PrivateNightStaySteps />}
                   </>
                 ) : (
                   <>
-                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} Count={boatDetails.guestCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} />}
+                    {bookingTypeId == BookingType.sharing ? <SharingTermsAndConditions /> : <Occupancy title={'Day Cruise Occupancy'} category={boatDetails.boatCategory} adult={boatDetails.maxAdultCount} Count={boatDetails.minAdultCount} adultAddonPrice={boatDetails.prices.adultAddOnDayPrice} />}
                     {bookingTypeId !== BookingType.sharing && <hr className='border border-gray-300' />}
                     {bookingTypeId == BookingType.sharing ? <SharingDayCruiseSteps /> : <PrivateDayCruiseSteps />}
                   </>
@@ -205,6 +238,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
             {!bookingConfirmModal.isOpen && <div className='md:order-last md:col-span-3'>
               <ListingReservation
                 totalPrice={totalPrice}
+                advanceAmount={advanceAmount}
                 cruiseTypeId={cruiseTypeId}
                 bookingTypeId={bookingTypeId}
                 roomCount={roomCount}

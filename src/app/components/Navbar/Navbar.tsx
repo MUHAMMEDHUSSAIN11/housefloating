@@ -32,7 +32,10 @@ const Navbar = () => {
             {/* Top row: Logo and Right Content */}
             <div className="flex flex-row items-center justify-between mb-1">
               <Logo />
-              <RightContent />
+              <div className='flex gap-1 items-center'>
+                <NavbarIcons />
+                <RightContent />
+              </div>
             </div>
 
             <div className={`${isListingPage&&'hidden'} md:flex pb-1`}>

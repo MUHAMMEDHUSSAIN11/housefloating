@@ -3,8 +3,8 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { amount, BookingType } from '@/app/enums/enums'
-import { Heart } from 'lucide-react'
+import { amount, BoatCruisesId, BookingType } from '@/app/enums/enums'
+import { Heart, Users } from 'lucide-react'
 import useLoginModal from '@/app/hooks/useLoginModal'
 import FormatIndianCurrency from '../Misc/FormatIndianCurrency'
 import useAuth from '@/app/hooks/useAuth'
@@ -19,7 +19,9 @@ interface BoatCardDetails {
   boatImage: string | null;
   bedroomCount: number;
   price: number;
+  bookingPrice: number;
   boatCode: string;
+  betterMatchPrice: number;
   guestCount: number | null;
   cruiseTypeId: number;
   cruiseType: string;
@@ -27,18 +29,24 @@ interface BoatCardDetails {
 
 interface ListingCardProps {
   data: BoatCardDetails;
+  roomCountForSearch?: number;
+  guestCountForSearch?: number;
   startDate?: string | null;
   endDate?: string | null;
   cruiseTypeId?: number;
   bookingTypeId?: number;
+  exactMatch?: boolean;
 }
 
 const ListingCard: React.FC<ListingCardProps> = React.memo(({
   data,
+  roomCountForSearch,
+  guestCountForSearch,
   startDate,
   endDate,
   cruiseTypeId,
   bookingTypeId,
+  exactMatch,
 }) => {
   const loginModal = useLoginModal();
   const { user } = useAuth();
@@ -48,6 +56,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
   const strikeThroughPrice = useMemo(() => Math.round(data.price * amount.offerPrice), [data.price]);
   const offerPrice = useMemo(() => Math.round(data.price * amount.commissionPercentage), [data.price]);
+  const betterMatchPrice = useMemo(() => Math.round(data.betterMatchPrice * amount.commissionPercentage), [data?.betterMatchPrice]);
 
   const imageUrl = !imageError && data.boatImage
     ? data.boatImage
@@ -60,12 +69,16 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
     if (cruiseTypeId) params.append('cruiseTypeId', cruiseTypeId.toString());
-    if(bookingTypeId) params.append('bookingTypeId',bookingTypeId?.toString());
+    if (bookingTypeId) params.append('bookingTypeId', bookingTypeId?.toString());
+    if (roomCountForSearch) params.append('rooms', roomCountForSearch.toString());
+    if (guestCountForSearch) params.append('adultCount', guestCountForSearch.toString());
 
     const queryString = params.toString();
     return `/listings/${data.boatId}${queryString ? `?${queryString}` : ''}`;
-  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId]);
+  }, [data.boatId, startDate, endDate, cruiseTypeId, bookingTypeId, roomCountForSearch, guestCountForSearch]);
   const isSharing = bookingTypeId === BookingType.sharing;
+  const isDayCruise = cruiseTypeId === BoatCruisesId.dayCruise
+  const isNightStay = cruiseTypeId === BoatCruisesId.nightStay
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -109,7 +122,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
   };
 
   return (
-    <div className="col-span-1 group relative">
+    <div className="col-span-1 group relative shadow-lg rounded-lg">
       <div
         className={`absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 hover:bg-white transition cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={handleHeartClick}
@@ -125,7 +138,7 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
 
       <Link href={listingUrl} className="block cursor-pointer">
         <div className="flex flex-col w-full">
-          <div className="aspect-4/3 w-full relative overflow-hidden rounded-lg bg-gray-200">
+          <div className="aspect-4/3 w-full relative overflow-hidden rounded-t-lg bg-gray-200">
             <Image
               fill
               className="object-cover h-full w-full group-hover:scale-110 transition"
@@ -137,24 +150,51 @@ const ListingCard: React.FC<ListingCardProps> = React.memo(({
             />
           </div>
 
-          <div className="font-semibold text-sm md:text-md mt-2 flex">
-            {data.boatCategory} •
-            {!isSharing?<div className='ml-1'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
-            :<div className='ml-1'>SharingBoat</div>}
-          </div>
-
-          <div className='flex flex-col gap-1'>
-            <div className="text-gray-700 text-xs">
-              {data.guestCount || 2} Adult <span>·</span> {data.cruiseType}
+          <div className='p-1'>
+            <div className="font-semibold text-sm md:text-md mt-2 flex">
+              {`${data.boatCategory}•`}
+              {!isSharing ?
+                <>
+                  <div className='ml-1 sm:hidden'>{data.bedroomCount}room{data.bedroomCount > 1 ? 's' : ''}</div>
+                  <div className='ml-1 hidden sm:block'>{data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}</div>
+                </>
+                : <div className='ml-1'>SharingBoat</div>}
             </div>
-            <div className='flex gap-1 items-center'>
-              <div className="text-gray-500 line-through text-sm">
-                ₹{FormatIndianCurrency(strikeThroughPrice)}
+            <div className='flex flex-col gap-1'>
+              <div className="text-gray-700 text-xs">
+                {isDayCruise ? guestCountForSearch : data.guestCount} Adult <span>·</span> {data.cruiseType}
               </div>
-              <div className="font-semibold text-gray-700 text-sm">
-                <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
-                {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+              <div className='flex justify-between items-center'>
+                {(exactMatch || (!isSharing && isNightStay)) ?
+                  < div className='md:flex gap-1 items-center'>
+                    <div className="text-gray-500 line-through text-sm md:text-base">
+                      ₹{FormatIndianCurrency(strikeThroughPrice)}
+                    </div>
+                    <div className="font-semibold text-gray-700 text-sm md:text-base">
+                      <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                      {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+                    </div>
+                  </div> :
+                  <div className='md:flex gap-1 items-center'>
+                    <div className="text-gray-500 text-sm md:text-base">
+                      For {data.bedroomCount} Bedroom{data.bedroomCount > 1 ? 's' : ''}
+                    </div>
+                    <div className="font-semibold text-gray-700 line-through text-sm md:text-base">
+                      <span className='font-medium'>₹</span>{FormatIndianCurrency(offerPrice)}
+                      {isSharing && <span className='text-gray-700 text-xs'> /- bedroom</span>}
+                    </div>
+                  </div>}
               </div>
+              <div className="text-[10px] md:text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md self-start">
+                Book now for just ₹{FormatIndianCurrency(data.bookingPrice)}/-
+              </div>
+              {(!isSharing && data.betterMatchPrice && roomCountForSearch && !isDayCruise && !isNightStay) && <div className="flex justify-center items-center gap-2 md:gap-5 bg-blue-400 rounded-lg px-1 lg:px-3 py-0.5 lg:py-1.5">
+                <Users className="w-4.5 h-4.5 text-white" />
+                <div className="flex flex-col leading-tight">
+                  <span className="text-xs md:text-sm lg:text-md text-white font-medium">{roomCountForSearch}  room{roomCountForSearch > 1 ? 's' : ''} •{roomCountForSearch * 2}Adults</span>
+                  <span className="text-sm md:text-md lg:text-lg font-bold text-white">₹{FormatIndianCurrency(betterMatchPrice)}</span>
+                </div>
+              </div>}
             </div>
           </div>
         </div>

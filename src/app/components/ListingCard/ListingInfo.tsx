@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Counter from '../Inputs/Counter';
 import { BoatCruisesId, BookingType } from '@/app/enums/enums';
 
@@ -13,6 +13,7 @@ interface ListingInfoProps {
   travelMode: number;
   maxAdultCount: number;
   minAdultCount: number;
+  maxGuestCountPerRoom?: number;
   title: string;
   boardingPoint: string;
   bookingTypeId?: number | null;
@@ -22,17 +23,39 @@ interface ListingInfoProps {
   minRoomCount: number;
 }
 
-const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
-  bathroomCount, roomCount, setAdultCount, availableRoomCount,travelMode,
+const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,maxGuestCountPerRoom,
+  bathroomCount, roomCount, setAdultCount, availableRoomCount, travelMode, category,
   adultCount, minAdultCount, title, boardingPoint, bookingTypeId, roomCountState, setRoomCount, minRoomCount }) => {
   const isDayCruise = travelMode === BoatCruisesId.dayCruise
+  const isNightStay = travelMode === BoatCruisesId.nightStay
   const isSharing = bookingTypeId === BookingType.sharing;
+
+  // Dynamic mode: Private Day Cruise or Private Night Stay
+  const isDynamicMode = (isDayCruise) && !isSharing;
+
   const currentMaxAdults = isSharing
     ? (roomCountState * maxAdultCount)
-    : isDayCruise
-    ? maxAdultCount
-    : (roomCountState * 3);
-  const currentMinAdults = (isDayCruise && !isSharing) ? minAdultCount : 1;
+    : isDynamicMode
+      ? maxAdultCount
+      :maxGuestCountPerRoom && (roomCountState * maxGuestCountPerRoom);
+  const currentMinAdults = isDynamicMode ? minAdultCount : 1;
+
+  const [roomError, setRoomError] = useState<'min' | 'max' | null>(null);
+  const [adultError, setAdultError] = useState<'min' | 'max' | null>(null);
+
+  useEffect(() => {
+    if (roomError) {
+      const timer = setTimeout(() => setRoomError(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [roomError]);
+
+  useEffect(() => {
+    if (adultError) {
+      const timer = setTimeout(() => setAdultError(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [adultError]);
 
   return (
     <div className='flex flex-col gap-7 px-1'>
@@ -40,50 +63,57 @@ const ListingInfo: React.FC<ListingInfoProps> = ({ maxAdultCount,
         <div className="text-xl font-semibold">{title},{boardingPoint}</div>
         <div className="text-sm flex flex-row items-center gap-2">
           <div>{roomCount} Bedrooms</div>•
-          <div>{bathroomCount} Bathrooms</div>
+          <div>{bathroomCount} Bathrooms</div>•
+          <div>{category}</div>
         </div>
       </div>
       <hr className='border border-gray-300' />
 
-      { setRoomCount && roomCountState !== undefined && !(isDayCruise && !isSharing) && (
+      {setRoomCount && roomCountState !== undefined && !(isDynamicMode) && !((isNightStay) && !isSharing) && (
         <div className=''>
           <Counter
             onChange={(value) => {
+              setRoomError(null);
               setRoomCount(value);
             }}
-            min={isSharing?1 :minRoomCount}
+            min={isSharing ? 1 : minRoomCount}
             max={isSharing ? availableRoomCount : roomCount}
             value={roomCountState}
             title="Number of Rooms"
             subtitle="Select rooms required"
+            onLimitReached={(type) => setRoomError(type)}
           />
-          {minRoomCount === roomCount
-          ? (isSharing ? roomCountState === 1 : roomCountState === minRoomCount) && (
-          <div className={`text-sm text-red-500 mt-1 ${isSharing&&'hidden'}`}>This boat requires {roomCountState} minimum rooms to operate.</div>
-          )
-          :
-          <>
-          {(isSharing ? roomCountState === availableRoomCount : roomCountState === roomCount) && (
-          <div className='text-sm text-red-500 mt-1'>This boat allows a maximum of {roomCountState} rooms.</div>
+          {roomError === 'min' && (
+            <div className={`text-sm text-red-500 mt-1 ${isSharing && 'hidden'}`}>
+              This boat requires {isSharing ? 1 : minRoomCount} minimum rooms to operate.
+            </div>
           )}
-          {(isSharing ? roomCountState === 1 : roomCountState === minRoomCount) && (
-          <div className={`text-sm text-red-500 mt-1 ${isSharing&&'hidden'}`}>This boat requires {roomCountState} minimum rooms to operate.</div>
+          {roomError === 'max' && (
+            <div className='text-sm text-red-500 mt-1'>
+              Maximum room count reached.
+            </div>
           )}
-          </>}
         </div>
       )}
 
       <div className=''>
         <Counter
-          onChange={(value) => setAdultCount(value)}
+          onChange={(value) => {
+            setAdultError(null);
+            setAdultCount(value);
+          }}
           min={currentMinAdults}
           max={currentMaxAdults}
           value={adultCount}
           title="Number of Adults"
           subtitle="Ages 10 and above"
+          onLimitReached={(type) => setAdultError(type)}
         />
-        {adultCount === currentMaxAdults && (
+        {adultError === 'max' && (
           <div className='text-sm text-red-500 mt-1'>Maximum adult count reached</div>
+        )}
+        {adultError === 'min' && (
+          <div className='text-sm text-red-500 mt-1'>Minimum adult count reached</div>
         )}
       </div>
 

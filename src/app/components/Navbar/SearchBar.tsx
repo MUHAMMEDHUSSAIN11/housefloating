@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Users, User, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { BookingType, BoatCruisesId, Categories } from '@/app/enums/enums';
@@ -30,11 +30,21 @@ const SearchBar = () => {
     selectedDateRange, setSelectedDateRange,
     selectedCategory, setSelectedCategory,
     roomCount, setRoomCount,
+    guestCount, setGuestCount,
     showErrors, setShowErrors,
     errors, setErrors,
     isMobileModalOpen, setIsMobileModalOpen,
+    triggerSection,
+    setTriggerSection,
     validateFields
   } = useSearchStore();
+
+  useEffect(() => {
+    if (triggerSection) {
+      setActiveSection(triggerSection);
+      setTriggerSection(null);
+    }
+  }, [triggerSection]);
 
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showFilter, setShowFilter] = useState(false);
@@ -51,7 +61,7 @@ const SearchBar = () => {
       isOpeningRef.current = true;
       setTimeout(() => {
         isOpeningRef.current = false;
-      }, 300); // 300ms buffer to allow layout shifts to settle
+      }, 300);
     } else {
       document.body.style.overflow = 'auto';
     }
@@ -63,31 +73,27 @@ const SearchBar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (activeSection === 'type' && typeRef.current && !typeRef.current.contains(event.target as Node)) {
+      if (isOpeningRef.current) return;
+
+      const path = event.composedPath();
+
+      if (activeSection === 'type' && typeRef.current && !path.includes(typeRef.current)) {
         setActiveSection(null);
       }
-      if (activeSection === 'category' && categoryRef.current && !categoryRef.current.contains(event.target as Node)) {
+      if (activeSection === 'category' && categoryRef.current && !path.includes(categoryRef.current)) {
         setActiveSection(null);
       }
-      if (activeSection === 'date' && datesRef.current && !datesRef.current.contains(event.target as Node)) {
+      if (activeSection === 'date' && datesRef.current && !path.includes(datesRef.current)) {
         setActiveSection(null);
       }
     };
 
     const handleScroll = (event: Event) => {
-      // Ignore scroll events during the opening "settling" phase to prevent flickering
       if (isOpeningRef.current) {
         return;
       }
 
-      // If we're scrolling inside a scrollable container in our active section, don't close
-      if (activeSection === 'date' && datesRef.current && datesRef.current.contains(event.target as Node)) {
-        return;
-      }
-      if (activeSection === 'category' && categoryRef.current && categoryRef.current.contains(event.target as Node)) {
-        return;
-      }
-      if (activeSection === 'type' && typeRef.current && typeRef.current.contains(event.target as Node)) {
+      if (event.target !== window && event.target !== document) {
         return;
       }
 
@@ -99,14 +105,14 @@ const SearchBar = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside, true);
     window.addEventListener('scroll', handleScroll, true);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside, true);
       window.removeEventListener('scroll', handleScroll, true);
     };
-  }, [activeSection, showFilter]);
+  }, [activeSection, showFilter, setActiveSection]);
 
   useEffect(() => {
     if (selectedType && errors.type) {
@@ -128,24 +134,28 @@ const SearchBar = () => {
     }
   }, [selectedDateRange, selectedCruise]);
 
-  // Removed local validateFields as it's now in the store
-
   const handleSearch = async () => {
     if (!validateFields()) {
+      if (window.innerWidth >= 768 && !selectedType) {
+        setActiveSection('type');
+      }
       return;
     }
 
     try {
       const params = new URLSearchParams();
 
-      // Add required parameters
       if (selectedType) params.append('type', selectedType.toString());
       if (selectedCategory) {
         params.append('category', selectedCategory.toString());
       }
-      params.append('rooms', roomCount.toString());
 
-      // Add date parameters
+      if (selectedCruise === BoatCruisesId.dayCruise) {
+        params.append('adultCount', guestCount.toString());
+      } else {
+        params.append('rooms', roomCount.toString());
+      }
+
       if (selectedDateRange.startDate) {
         params.append('startDate', FormatToLocalDate(selectedDateRange.startDate));
 
@@ -163,7 +173,6 @@ const SearchBar = () => {
         }
       }
 
-      // Add cruise type
       params.append('cruise', selectedCruise.toString());
 
       setIsMobileModalOpen(false);
@@ -197,7 +206,6 @@ const SearchBar = () => {
 
   return (
     <div className="relative w-full mb-2 lg:mb:0 lg:my-8">
-      {/* Mobile Search Trigger */}
       <div className="md:hidden w-full px-4 mb-4">
         <button
           onClick={() => setIsMobileModalOpen(true)}
@@ -209,7 +217,7 @@ const SearchBar = () => {
                 {getSelectedLabel(selectedType)} • {getCategoryLabel(selectedCategory)}
               </span>
               <span className={`text-xs ${showErrors && (errors.type || errors.category || errors.date) ? 'text-red-500' : 'text-gray-500'}`}>
-                {getDateDisplayText()} • {roomCount} {roomCount === 1 ? 'room' : 'rooms'} {selectedCruise && `• ${BoatCruisesId[selectedCruise]}`}
+                {getDateDisplayText()} • {selectedCruise === BoatCruisesId.dayCruise ? `${guestCount} ${guestCount === 1 ? 'guest' : 'guests'}` : `${roomCount} ${roomCount === 1 ? 'room' : 'rooms'}`} {selectedCruise && `• ${BoatCruisesId[selectedCruise]}`}
               </span>
             </div>
           ) : (
@@ -234,6 +242,8 @@ const SearchBar = () => {
           setSelectedCategory={setSelectedCategory}
           roomCount={roomCount}
           setRoomCount={setRoomCount}
+          guestCount={guestCount}
+          setGuestCount={setGuestCount}
           showErrors={showErrors}
           errors={errors}
           handleSearch={handleSearch}
@@ -264,6 +274,8 @@ const SearchBar = () => {
         categoryOptions={categoryOptions}
         roomCount={roomCount}
         setRoomCount={setRoomCount}
+        guestCount={guestCount}
+        setGuestCount={setGuestCount}
         selectedDateRange={selectedDateRange}
         setSelectedDateRange={setSelectedDateRange}
         getDateDisplayText={getDateDisplayText}

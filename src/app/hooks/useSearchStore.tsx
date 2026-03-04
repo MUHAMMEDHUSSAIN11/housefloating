@@ -18,9 +18,11 @@ interface SearchStore {
     selectedDateRange: DateRange;
     selectedCategory: Categories;
     roomCount: number;
+    guestCount: number;
     showErrors: boolean;
     errors: SearchErrors;
     isMobileModalOpen: boolean;
+    triggerSection: string | null;
 
     // Actions
     setSelectedCruise: (value: BoatCruisesId | ((prev: BoatCruisesId) => BoatCruisesId)) => void;
@@ -28,19 +30,22 @@ interface SearchStore {
     setSelectedDateRange: (value: DateRange | ((prev: DateRange) => DateRange)) => void;
     setSelectedCategory: (value: Categories | ((prev: Categories) => Categories)) => void;
     setRoomCount: (value: number | ((prev: number) => number)) => void;
+    setGuestCount: (value: number | ((prev: number) => number)) => void;
     setShowErrors: (value: boolean | ((prev: boolean) => boolean)) => void;
     setErrors: (value: SearchErrors | ((prev: SearchErrors) => SearchErrors)) => void;
     setIsMobileModalOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
+    setTriggerSection: (value: string | null) => void;
     validateFields: () => boolean;
     clearErrors: () => void;
 }
 
 const useSearchStore = create<SearchStore>((set, get) => ({
     selectedCruise: BoatCruisesId.dayNight,
-    selectedType: null,
+    selectedType: BookingType.private,
     selectedDateRange: { startDate: null, endDate: null },
     selectedCategory: Categories.All,
     roomCount: 1,
+    guestCount: 1,
     showErrors: false,
     errors: {
         type: false,
@@ -48,6 +53,8 @@ const useSearchStore = create<SearchStore>((set, get) => ({
         date: false,
     },
     isMobileModalOpen: false,
+    triggerSection: null,
+
 
     setSelectedCruise: (value) => set((state) => ({
         selectedCruise: typeof value === 'function' ? value(state.selectedCruise) : value
@@ -64,6 +71,9 @@ const useSearchStore = create<SearchStore>((set, get) => ({
     setRoomCount: (value) => set((state) => ({
         roomCount: typeof value === 'function' ? value(state.roomCount) : value
     })),
+    setGuestCount: (value) => set((state) => ({
+        guestCount: typeof value === 'function' ? value(state.guestCount) : value
+    })),
     setShowErrors: (value) => set((state) => ({
         showErrors: typeof value === 'function' ? value(state.showErrors) : value
     })),
@@ -73,7 +83,7 @@ const useSearchStore = create<SearchStore>((set, get) => ({
     setIsMobileModalOpen: (value) => set((state) => ({
         isMobileModalOpen: typeof value === 'function' ? value(state.isMobileModalOpen) : value
     })),
-
+    setTriggerSection: (value) => set({ triggerSection: value }),
     validateFields: () => {
         const { selectedType, selectedCategory, selectedDateRange } = get();
         const newErrors = {

@@ -8,9 +8,11 @@ const CalculatePrice = async (
   roomPrice: number,
   adultAddonPrice: number,
   boatMaxAdults: number,
-  boatBaseGuests: number,
+  boatBaseGuestsSharing: number,
+  boatBaseGuestsDayCruise: number,
+  maxGuestCountPerRoomForNight: number,
   bookingTypeId?: number | null,
-  isDayCruise?:boolean,
+  isDayCruise?: boolean,
 ) => {
   const isSharing = bookingTypeId === BookingType.sharing;
 
@@ -20,16 +22,16 @@ const CalculatePrice = async (
 
   if (isSharing) {
     totalPrice = roomCount * dayPrice;
-    baseGuestCount = roomCount * boatBaseGuests;
+    baseGuestCount = roomCount * boatBaseGuestsSharing;
     maxGuestCount = roomCount * boatMaxAdults;
   } else if (isDayCruise) {
     totalPrice = dayPrice;
-    baseGuestCount = boatBaseGuests;
+    baseGuestCount = boatBaseGuestsDayCruise;
     maxGuestCount = boatMaxAdults;
   } else {
     totalPrice = dayPrice - ((boatRoomCount - roomCount) * roomPrice);
     baseGuestCount = roomCount * 2;
-    maxGuestCount = roomCount * 3;
+    maxGuestCount = roomCount * maxGuestCountPerRoomForNight;
   }
 
   if (finalAdultCount > baseGuestCount && finalAdultCount <= maxGuestCount) {
