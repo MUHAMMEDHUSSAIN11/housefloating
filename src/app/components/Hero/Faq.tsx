@@ -4,15 +4,15 @@ import AccordionItem from "./AccordionItem";
 
 const Accordion = () => {
   return (
-    <section className="relative z-20 overflow-hidden bg-white pt-20 pb-12 lg:pt-[120 lg:pb-[90">
-      <div className="container mx-auto">
+    <section className="relative z-20 overflow-hidden bg-white pt-20 pb-12 lg:pt-30 lg:pb-22.5">
+      <div className="container mx-auto px-4">
         <div className="-mx-4 flex flex-wrap">
           <div className="w-full px-4">
-            <div className="mx-auto mb-[60 max-w-[520 text-center lg:mb-20">
+            <div className="mx-auto mb-15 max-w-130 text-center lg:mb-20">
               <span className="mb-2 block text-lg font-semibold text-primary">
                 FAQ
               </span>
-              <h2 className="mb-4 text-3xl font-bold text-dark sm:text-4xl md:text-[40">
+              <h2 className="mb-4 text-3xl font-bold text-dark sm:text-4xl">
                 Any Questions? Look Here
               </h2>
             </div>

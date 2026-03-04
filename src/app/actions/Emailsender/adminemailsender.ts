@@ -112,7 +112,7 @@ export async function sendAdminEmail(data: any, adminEmails: string[]) {
                             <td style="padding: 8px 0; text-align: right; font-weight: 700; color: #333; font-size: 18px;">₹${totalPrice}</td>
                         </tr>
                         <tr style="border-top: 1px dashed #ddd;">
-                            <td style="padding: 8px 0; color: #495057;">Advance Received (30%)</td>
+                            <td style="padding: 8px 0; color: #495057;">Advance Received (15%)</td>
                             <td style="padding: 8px 0; text-align: right; font-weight: 600; color: #28a745;">₹${advanceAmount}</td>
                         </tr>
                         <tr>
