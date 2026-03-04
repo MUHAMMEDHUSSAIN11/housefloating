@@ -254,12 +254,14 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                         rc: roomCount,
                                         aa: Math.round(advanceAmount),
                                         ra: Math.round(remainingAmount),
+                                        bp: boatDetails.boardingPoint,
                                     };
                                     const str = JSON.stringify(emailInfo);
                                     return {
                                         ed1: str.substring(0, 250),
                                         ed2: str.substring(250, 500),
                                         ed3: str.substring(500, 750),
+                                        ed4: str.substring(750, 1000),
                                     };
                                 })()
                             },
