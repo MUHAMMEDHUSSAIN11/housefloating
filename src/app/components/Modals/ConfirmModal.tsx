@@ -27,8 +27,6 @@ import Input from '../Inputs/Input';
 import countries from 'world-countries';
 import { State } from 'country-state-city'
 import jsCookie from 'js-cookie';
-import { sendWhatsAppConfirmation } from '@/app/actions/whatsapp/sendBookingConfirmation';
-
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -207,31 +205,19 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                 };
 
                 let bookingResponse;
-                let bookingId = createdBookingId;
-
-                if (!bookingId) {
-                    try {
-                        bookingResponse = await HandleCreateOnlineBooking(bookingData);
-                        if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
-                            bookingId = bookingResponse.data.bookingId;
-                            setCreatedBookingId(bookingId);
-                        } else {
-                            throw new Error("Invalid booking response");
-                        }
-                    } catch (err) {
-                        toast.error('Failed to create booking');
-                        setIsLoading(false);
-                        return;
-                    }
+                try {
+                    bookingResponse = await HandleCreateOnlineBooking(bookingData);
+                } catch (err) {
+                    toast.error('Failed to create booking');
+                    setIsLoading(false);
+                    return;
                 }
 
-                if (bookingId) {
-                    // Update bookingResponse simulation if we used existing ID
-                    const bId = bookingId;
-                    const bookingType = isSharing ? 'Sharing' : 'Private';
-                    const boatName = boatDetails.boatCode; // fallback or from data if available
-                    const adultCount = finalHeadCount;
-
+                if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
+                    const bookingId = bookingResponse.data.bookingId;
+                    const bookingType = bookingResponse.data.bookingType === BoatBookingTypes.onlineBooked ? 'Private' : 'Sharing';
+                    const boatName = bookingResponse.data.boatName;
+                    const adultCount = bookingResponse.data.adultCount;
 
                     try {
                         await MakeRazorpay({
@@ -249,13 +235,13 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 ...(() => {
                                     const emailInfo = {
                                         bc: boatDetails.boatCode,
-                                        bn: boatName || boatDetails.boatCode,
+                                        bn: boatName,
                                         bCat: boatDetails.boatCategory,
                                         brc: boatDetails.bedroomCount,
                                         bi: boatDetails.boatImages?.[0],
                                         bt: bookingType,
                                         bd: localBookingDate,
-                                        bid: bId,
+                                        bid: bookingId,
                                         ac: adultCount,
                                         ct: modeOfTravel,
                                         td: tripDateLocal,
@@ -277,7 +263,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                     };
                                 })()
                             },
-
                             onSuccess: () => {
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
@@ -315,75 +300,6 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             }
         }
     }
-
-    const handleWhatsAppTrigger = async () => {
-        setIsLoading(true);
-        try {
-            const data = watch();
-            const cleanedPhoneNumber = data.phonenumber.replace(/-/g, '');
-            const isSharing = bookingTypeId === BookingType.sharing;
-            const tripDateLocal = FormatToLocalDate(finalCheckInDate);
-            const localBookingDate = FormatToLocalDateTime(new Date());
-
-            const guestName = data.guestName;
-            const country = data.guestCountry;
-            const state = data.guestState;
-            const guestPlace = state ? `${state}, ${country}` : country;
-
-            const bookingData = {
-                adultCount: finalHeadCount,
-                boatId: boatDetails.boatId,
-                bookingDate: localBookingDate,
-                contactNumber: cleanedPhoneNumber,
-                cruiseTypeId: modeOfTravel === BoatCruises.dayCruise ? BoatCruisesId.dayCruise : modeOfTravel === BoatCruises.dayNight ? BoatCruisesId.dayNight : BoatCruisesId.nightStay,
-                guestName: guestName,
-                guestPlace: guestPlace,
-                guestUserId: user?.id || 0,
-                isVeg: isVeg,
-                price: finalPrice,
-                tripDate: tripDateLocal,
-                boardingPoint: boatDetails.boardingPoint,
-                isSharing: isSharing,
-                roomCount: roomCount
-            };
-
-            let bookingId = createdBookingId;
-
-            if (!bookingId) {
-                const bookingResponse = await HandleCreateOnlineBooking(bookingData);
-                if (bookingResponse && bookingResponse.data && bookingResponse.data.bookingId) {
-                    bookingId = bookingResponse.data.bookingId;
-                    setCreatedBookingId(bookingId);
-                }
-            }
-
-            const whatsappData = {
-                guestName: guestName,
-                boatCode: boatDetails.boatCode,
-                bookingId: bookingId?.toString() || "TEMP",
-                tripDate: tripDateLocal,
-                cruiseType: modeOfTravel,
-                boardingPoint: boatDetails.boardingPoint,
-                totalAmount: finalPrice,
-                advance: Math.round(finalPrice * amount.advance),
-                balance: Math.round(finalPrice * amount.remaining),
-                phoneNumber: cleanedPhoneNumber
-            };
-
-            const result = await sendWhatsAppConfirmation(whatsappData);
-            if (result.success) {
-                toast.success("WhatsApp message sent successfully!");
-            } else {
-                toast.error(result.message || "Failed to send WhatsApp message");
-            }
-        } catch (error) {
-            console.error("WhatsApp Trigger Error:", error);
-            toast.error("Failed to trigger WhatsApp message");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
 
     let bodyContent = (
         <div className="flex flex-col gap-4">
@@ -582,12 +498,9 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
             disabled={isLoading}
             onClose={BookingConfirmModal.onClose}
             onSubmit={handleSubmit(onSubmit)}
-            secondaryAction={step === STEPS.SUMMARY ? handleWhatsAppTrigger : undefined}
-            secondaryActionLabel={step === STEPS.SUMMARY ? "Send AI Sensy Message" : undefined}
             body={bodyContent}
             footer={footerContent}
         />
-
     )
 }
 
