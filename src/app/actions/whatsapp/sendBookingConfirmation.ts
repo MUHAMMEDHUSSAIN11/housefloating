@@ -45,12 +45,9 @@ export async function sendWhatsAppConfirmation(data: {
         campaignName: campaignName,
         destination: cleanPhone,
         userName: data.guestName,
-        template: {
-            name: templateName,
-            languageCode: "en",
-            parameters: templateParams
-        },
-        source: "api"
+        templateParams: templateParams,
+        source: "api",
+        media: {}
     };
 
     console.log("------------------------------------------");
