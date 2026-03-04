@@ -50,12 +50,6 @@ export async function sendWhatsAppConfirmation(data: {
         media: {}
     };
 
-    console.log("------------------------------------------");
-    console.log("🚀 AISENSY WHATSAPP TRIGGER");
-    console.log("------------------------------------------");
-    console.log("Payload:", JSON.stringify(payload, null, 2));
-    console.log("------------------------------------------");
-
     try {
         const response = await fetch("https://backend.aisensy.com/campaign/t1/api/v2", {
             method: "POST",
