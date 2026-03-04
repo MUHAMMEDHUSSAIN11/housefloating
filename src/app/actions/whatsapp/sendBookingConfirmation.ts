@@ -13,15 +13,15 @@ export async function sendWhatsAppConfirmation(data: {
     phoneNumber: string;
 }) {
     const apiKey = process.env.AISENSY_API_KEY;
-    const campaignName = "Booking_confirmation";
-    const templateName = "booking_confirmation";
+    const campaignName = "Booking_confirmation-1";
+    const templateName = "booking_confirmation_1";
 
     // Format the date to DD-MM-YYYY
     const date = new Date(data.tripDate);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    const formattedDate = `${day}-${month}-${year}`;
+    const formattedDate = `${day}/${month}/${year}`;
 
     // Clean phone number: remove any non-digit characters (like + or -)
     const cleanPhone = data.phoneNumber.replace(/\D/g, '');
@@ -45,7 +45,11 @@ export async function sendWhatsAppConfirmation(data: {
         campaignName: campaignName,
         destination: cleanPhone,
         userName: data.guestName,
-        templateParams: templateParams,
+        template: {
+            name: templateName,
+            languageCode: "en",
+            parameters: templateParams
+        },
         source: "api"
     };
 

@@ -4,6 +4,7 @@ import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreate
 import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 import { PaymentModes } from '@/app/enums/enums';
 import { sendAllEmails } from '@/app/actions/Emailsender/emailsender';
+import { sendWhatsAppConfirmation } from '@/app/actions/whatsapp/sendBookingConfirmation';
 
 // 1. MUST disable body parsing for signature verification to work in Next.js
 export const config = {
@@ -104,7 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     // Save to DB (HandleCreateOnlinePayment should have its own duplicate check too)
                     await HandleCreateOnlinePayment(paymentData, token).catch(e => console.warn('⚠️ DB Save Note:', e.message));
 
-                    const emailChunks = (metadata.ed1 || '') + (metadata.ed2 || '') + (metadata.ed3 || '');
+                    const emailChunks = (metadata.ed1 || '') + (metadata.ed2 || '') + (metadata.ed3 || '') + (metadata.ed4 || '');
                     if (emailChunks) {
                         let parsed = JSON.parse(emailChunks);
                         if (parsed.bc) {
@@ -116,10 +117,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
                                 guestEmail: parsed.ge, ownerEmail: parsed.oe, totalPrice: parsed.tp,
                                 advanceAmount: parsed.aa, remainingAmount: parsed.ra,
+                                boardingPoint: parsed.bp
                             };
                         }
                         console.log(`📧 Sending emails for booking #${onlineBookingId}`);
                         await sendAllEmails(parsed);
+
+                        if (parsed.guestPhone) {
+                            console.log(`📱 Sending WhatsApp confirmation to ${parsed.guestPhone}`);
+                            await sendWhatsAppConfirmation({
+                                guestName: parsed.guestName,
+                                boatCode: parsed.boatCode,
+                                bookingId: parsed.bookingId.toString(),
+                                tripDate: parsed.tripDate,
+                                cruiseType: parsed.cruiseType,
+                                boardingPoint: parsed.boardingPoint,
+                                totalAmount: parsed.totalPrice,
+                                advance: parsed.advanceAmount,
+                                balance: parsed.remainingAmount,
+                                phoneNumber: parsed.guestPhone
+                            }).catch((err: any) => console.error('❌ WhatsApp Send Error:', err));
+                        }
                     }
                 } catch (bgError) {
                     console.error('❌ Background Webhook Error:', bgError);
