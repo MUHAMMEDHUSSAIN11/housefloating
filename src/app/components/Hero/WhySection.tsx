@@ -22,7 +22,7 @@ const WhySection = () => {
                                 <Radio size={25} />
                             </div>
                             <h3 className="text-xl mt-4 font-medium">Live Availability</h3>
-                            <p className="text-gray-700 mt-2">Real time boat availability with in 10 seconds</p>
+                            <p className="text-gray-700 mt-2">Real time boat availability with in no time</p>
                         </div>
                         <div className="text-center">
                             <div className="bg-blue-500 text-white rounded-full p-3 inline-flex">

@@ -4,8 +4,8 @@ import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreate
 import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 import { PaymentModes } from '@/app/enums/enums';
 import { sendAllEmails } from '@/app/actions/Emailsender/emailsender';
+import { sendWhatsAppConfirmation } from '@/app/actions/whatsapp/sendBookingConfirmation';
 
-// 1. MUST disable body parsing for signature verification to work in Next.js
 export const config = {
     api: {
         bodyParser: false,
@@ -23,7 +23,6 @@ async function getRawBody(req: NextApiRequest) {
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || "";
 
-// In-memory lock to prevent multiple simultaneous webhooks from processing the same payment
 const processedPaymentIds = new Set<string>();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -58,18 +57,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { event, payload } = body;
         const paymentId = payload.payment.entity.id;
 
-        // 1. RESPOND IMMEDIATELY TO STOP RETRIES
-        // Razorpay expects a 200 OK quickly. We send it now before doing any slow work.
-        res.status(200).json({ status: 'accepted' });
-
-        // 2. CHECK MEMORY LOCK
         // If we already started processing this payment in the last 10 minutes, stop here.
         if (processedPaymentIds.has(paymentId)) {
             console.log(`🔒 Payment ${paymentId} is already being processed or finished. Skipping duplicate.`);
-            return;
+            return res.status(200).json({ status: 'locked', message: 'Already processed' });
         }
 
-        // Add to lock
         processedPaymentIds.add(paymentId);
         // Safety: remove from lock after 10 minutes to prevent memory leaks
         setTimeout(() => processedPaymentIds.delete(paymentId), 10 * 60 * 1000);
@@ -81,6 +74,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const metadata = paymentEntity.notes || {};
             const onlineBookingId = Number(metadata.onlineBookingId);
             const token = metadata.at;
+
+            console.log(`📝 Metadata Keys Found: ${Object.keys(metadata).join(', ')}`);
 
             let paymentModeId = PaymentModes.UPI;
             if (paymentEntity.method === 'card') paymentModeId = PaymentModes.Card;
@@ -95,38 +90,63 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 transactionId: paymentEntity.id
             };
 
-            // 3. BACKGROUND PROCESSING
-            // We do not 'await' these because we already responded 200 OK.
-            // This runs in the background of the server instance.
-            (async () => {
-                try {
-                    console.log(`💾 Saving payment for booking #${onlineBookingId}`);
-                    // Save to DB (HandleCreateOnlinePayment should have its own duplicate check too)
-                    await HandleCreateOnlinePayment(paymentData, token).catch(e => console.warn('⚠️ DB Save Note:', e.message));
+            try {
+                console.log(`💾 Saving payment for booking #${onlineBookingId}`);
+                await HandleCreateOnlinePayment(paymentData, token).catch(e => console.warn('⚠️ DB Save Note:', e.message));
 
-                    const emailChunks = (metadata.ed1 || '') + (metadata.ed2 || '') + (metadata.ed3 || '');
-                    if (emailChunks) {
-                        let parsed = JSON.parse(emailChunks);
-                        if (parsed.bc) {
-                            parsed = {
-                                boatCode: parsed.bc, boatName: parsed.bn, boatCategory: parsed.bCat,
-                                boatRoomCount: parsed.brc, boatImage: parsed.bi, bookingType: parsed.bt,
-                                bookingDate: parsed.bd, bookingId: parsed.bid, adultCount: parsed.ac,
-                                cruiseType: parsed.ct, tripDate: parsed.td, roomCount: parsed.rc,
-                                guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
-                                guestEmail: parsed.ge, ownerEmail: parsed.oe, totalPrice: parsed.tp,
-                                advanceAmount: parsed.aa, remainingAmount: parsed.ra,
-                            };
-                        }
-                        console.log(`📧 Sending emails for booking #${onlineBookingId}`);
-                        await sendAllEmails(parsed);
+                const emailChunks = (metadata.ed1 || '') + (metadata.ed2 || '') + (metadata.ed3 || '') + (metadata.ed4 || '');
+                console.log(`📦 Combined Metadata Length: ${emailChunks.length} characters`);
+
+                if (emailChunks) {
+                    let parsed;
+                    try {
+                        parsed = JSON.parse(emailChunks);
+                    } catch (jsonErr) {
+                        console.error('❌ Metadata JSON Parse Error:', jsonErr);
+                        console.log('Raw string that failed:', emailChunks);
                     }
-                } catch (bgError) {
-                    console.error('❌ Background Webhook Error:', bgError);
-                }
-            })();
 
-            return;
+                    if (parsed && parsed.bc) {
+                        const bookingData = {
+                            boatCode: parsed.bc, boatName: parsed.bn, boatCategory: parsed.bCat,
+                            boatRoomCount: parsed.brc, boatImage: parsed.bi, bookingType: parsed.bt,
+                            bookingDate: parsed.bd, bookingId: parsed.bid, adultCount: parsed.ac,
+                            cruiseType: parsed.ct, tripDate: parsed.td, roomCount: parsed.rc,
+                            guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
+                            guestEmail: parsed.ge, ownerEmail: parsed.oe, totalPrice: parsed.tp,
+                            advanceAmount: parsed.aa, remainingAmount: parsed.ra,
+                            boardingPoint: parsed.bp
+                        };
+
+                        console.log(`📧 Sending emails for booking #${onlineBookingId}`);
+                        await sendAllEmails(bookingData).catch(err => console.error('❌ Email Send Error:', err));
+
+                        if (bookingData.guestPhone) {
+                            console.log(`📱 Sending WhatsApp confirmation to ${bookingData.guestPhone}`);
+                            await sendWhatsAppConfirmation({
+                                guestName: bookingData.guestName,
+                                boatCode: bookingData.boatCode,
+                                bookingId: bookingData.bookingId.toString(),
+                                tripDate: bookingData.tripDate,
+                                cruiseType: bookingData.cruiseType,
+                                boardingPoint: bookingData.boardingPoint,
+                                totalAmount: bookingData.totalPrice,
+                                advance: bookingData.advanceAmount,
+                                balance: bookingData.remainingAmount,
+                                phoneNumber: bookingData.guestPhone
+                            }).catch((err: any) => console.error('❌ WhatsApp Send Error:', err));
+                        }
+                    } else {
+                        console.warn('⚠️ No valid booking data found in metadata chunks');
+                    }
+                } else {
+                    console.warn(`⚠️ No metadata chunks found (ed1-ed4 empty) for payment ${paymentId}`);
+                }
+            } catch (innerError) {
+                console.error('❌ Error during webhook processing:', innerError);
+            }
+
+            return res.status(200).json({ status: 'captured' });
         }
 
         if (event === 'payment.failed') {
@@ -134,14 +154,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const bookingId = Number(metadata.onlineBookingId);
             if (bookingId) {
                 console.log(`🗑️ Cleaning failed booking #${bookingId}`);
-                HandleDeleteOnlineBooking({ bookingId }, metadata.at).catch(e => console.error('❌ Failed to delete:', e));
+                await HandleDeleteOnlineBooking({ bookingId }, metadata.at).catch(e => console.error('❌ Failed to delete:', e));
             }
-            return;
+            return res.status(200).json({ status: 'handled_failure' });
         }
+
+        return res.status(200).json({ status: 'ignored_event' });
 
     } catch (err: any) {
         console.error('❌ Global Webhook Error:', err?.message || err);
-        // We might have already sent a 200, so we can't send a 500 here if headers were sent
         if (!res.headersSent) {
             return res.status(500).send('Internal Server Error');
         }
