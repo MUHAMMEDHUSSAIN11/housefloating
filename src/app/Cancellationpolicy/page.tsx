@@ -1,4 +1,13 @@
 import React from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Cancellation Policy | Housefloating.com',
+    description: 'Read the cancellation and refund policies for houseboat bookings at Housefloating.com.',
+    alternates: {
+        canonical: '/Cancellationpolicy',
+    },
+};
 import Updated from '../components/Hero/Updated';
 import Footer from '../components/Hero/Footer';
 
@@ -81,7 +90,7 @@ const Page = () => {
                 </div>
             </div>
             <Updated />
-            <hr className='border border-gray-300'/>
+            <hr className='border border-gray-300' />
             <Footer />
         </div>
     );

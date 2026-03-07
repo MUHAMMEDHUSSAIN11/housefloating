@@ -1,4 +1,13 @@
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us | Housefloating.com",
+  description: "Learn more about Housefloating.com, your trusted partner for houseboat bookings in Alleppey, Kerala.",
+  alternates: {
+    canonical: "/about",
+  },
+};
 import AboutImage from "../components/Descriptions/AboutImage";
 import Footer from "../components/Hero/Footer";
 import Updated from "../components/Hero/Updated";
@@ -25,11 +34,11 @@ const About = () => {
         </p>
       </div>
 
-      <br/>
-      <hr/>
-      <Updated/>
-      <hr/>
-      <Footer/>
+      <br />
+      <hr />
+      <Updated />
+      <hr />
+      <Footer />
     </>
   );
 };
