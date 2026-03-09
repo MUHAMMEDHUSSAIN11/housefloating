@@ -7,9 +7,11 @@ import { GoogleTagManager } from '@next/third-parties/google'
 import NextTopLoader from 'nextjs-toploader';
 import ScrollToTopButton from './components/Misc/ScrolltoTop'
 import { Toaster } from 'react-hot-toast'
+import GTMTracker from './actions/GtmTralker/gtmTracker'
 import Script from 'next/script'
 import BottomNavbar from './components/BottomNavbar/BottomNavbar'
 import GoogleSync from './components/Auth/GoogleSync'
+import { Suspense } from 'react'
 
 export const inter = Inter({
   subsets: ['latin'],
@@ -19,6 +21,7 @@ export const inter = Inter({
 
 
 export const metadata = {
+  metadataBase: new URL('https://housefloating.com'),
   title: 'Housefloating.com - Book Houseboats in Alleppey',
   description: "Housefloating.com is the #1 portal to book luxury Alleppey houseboats at best prices. Experience premium Kerala houseboats and unforgettable journeys online.",
   manifest: "/manifest.json",
@@ -61,6 +64,9 @@ export default async function RootLayout({ children, }: { children: React.ReactN
 
       <GoogleTagManager gtmId="GTM-PDC8KBVM" />
       <body className={inter.className}>
+        <Suspense fallback={null}>
+          <GTMTracker />
+        </Suspense>
 
         <Toaster
           position="top-center"
