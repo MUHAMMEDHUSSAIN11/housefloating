@@ -10,18 +10,37 @@ const SuccessContent = () => {
 
     if (!searchParams) return null;
 
-    const bookingId     = searchParams.get('bookingId');
-    const boatName      = searchParams.get('boatName');
-    const tripDate      = searchParams.get('tripDate');
-    const totalPrice    = searchParams.get('totalPrice');
+    const bookingId = searchParams.get('bookingId');
+    const boatName = searchParams.get('boatName');
+    const tripDate = searchParams.get('tripDate');
+    const totalPrice = searchParams.get('totalPrice');
     const advanceAmount = searchParams.get('advanceAmount');
-    const guestCount    = searchParams.get('guestCount');
+    const guestCount = searchParams.get('guestCount');
     const boardingPoint = searchParams.get('boardingPoint');
 
+    // fallback for direct access without booking data
+    if (!bookingId) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+                <div className="bg-blue-50 p-6 rounded-full mb-6">
+                    <Ship className="h-12 w-12 text-blue-600" />
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">No Booking Found</h1>
+                <p className="text-gray-500 mb-8 max-w-xs">It seems you've reached this page directly. Please complete a payment to see your booking details.</p>
+                <button
+                    onClick={() => router.push('/')}
+                    className="bg-gray-900 text-white px-8 py-3 rounded-2xl font-bold hover:bg-gray-800 transition-all shadow-md active:scale-95"
+                >
+                    Back to Selection
+                </button>
+            </div>
+        );
+    }
+
     const details = [
-        { icon: Ship,     label: 'Boat House',     value: boatName },
-        { icon: Calendar, label: 'Trip Date',       value: tripDate },
-        { icon: Users,    label: 'Guests',          value: `${guestCount} Guests` },
+        { icon: Ship, label: 'Boat House', value: boatName },
+        { icon: Calendar, label: 'Trip Date', value: tripDate },
+        { icon: Users, label: 'Guests', value: `${guestCount} Guests` },
         ...(boardingPoint
             ? [{ icon: MapPin, label: 'Boarding Point', value: boardingPoint }]
             : []),
@@ -68,7 +87,7 @@ const SuccessContent = () => {
                             onClick={() => router.push('/cart')}
                             className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
                         >
-                            Go to My Bookings
+                            Go to My Cart
                             <ArrowRight size={18} />
                         </button>
                         <button
@@ -134,7 +153,7 @@ const SuccessContent = () => {
                             onClick={() => router.push('/cart')}
                             className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 px-6 rounded-2xl transition-all shadow-lg active:scale-[0.98]"
                         >
-                            Go to My Bookings
+                            Go to My Cart
                             <ArrowRight size={18} />
                         </button>
                         <button
