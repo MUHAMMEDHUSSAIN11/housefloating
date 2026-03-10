@@ -27,6 +27,7 @@ import Input from '../Inputs/Input';
 import countries from 'world-countries';
 import { State } from 'country-state-city'
 import jsCookie from 'js-cookie';
+import useSuccessStore from '@/app/hooks/useSuccessStore';
 
 enum STEPS {
     PHONENUMBER = 0,
@@ -59,8 +60,20 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
     const router = useRouter();
     const remainingAmount = (Math.round(finalPrice - advanceAmount));
 
-    const handlePush = () => {
-        router.push('/cart');
+    const successStore = useSuccessStore();
+
+    const handleSuccessRedirect = (bookingId: number, boatName: string, tripDate: string, totalPrice: number, advanceAmount: number, adultCount: any, boardingPoint: any) => {
+        successStore.setBookingData({
+            bookingId: String(bookingId),
+            boatName: String(boatName),
+            tripDate: String(tripDate),
+            totalPrice: String(totalPrice),
+            advanceAmount: String(advanceAmount),
+            guestCount: String(adultCount),
+            boardingPoint: String(boardingPoint || ''),
+        });
+
+        router.push(`/success`);
         NProgress.start();
         NProgress.done();
     };
@@ -269,7 +282,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
                                 setStep(STEPS.PHONENUMBER);
-                                handlePush();
+                                handleSuccessRedirect(bookingId, boatName, tripDateLocal, finalPrice, advanceAmount, adultCount, boatDetails.boardingPoint);
                             },
                             onError: (err: any) => {
                                 setIsLoading(false);
