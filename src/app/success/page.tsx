@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Calendar, Users, Ship, MapPin, Mail, ArrowRight } from 'lucide-react';
 import useSuccessStore from '@/app/hooks/useSuccessStore';
