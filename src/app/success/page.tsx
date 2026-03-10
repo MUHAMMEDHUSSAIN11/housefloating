@@ -1,41 +1,47 @@
 'use client';
 
-import React, { Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { CheckCircle2, Calendar, Users, Ship, MapPin, Mail, ArrowRight } from 'lucide-react';
+import useSuccessStore from '@/app/hooks/useSuccessStore';
 
-const SuccessContent = () => {
-    const searchParams = useSearchParams();
+const SuccessPage = () => {
     const router = useRouter();
+    const { bookingData } = useSuccessStore();
 
-    if (!searchParams) return null;
-
-    const bookingId = searchParams.get('bookingId');
-    const boatName = searchParams.get('boatName');
-    const tripDate = searchParams.get('tripDate');
-    const totalPrice = searchParams.get('totalPrice');
-    const advanceAmount = searchParams.get('advanceAmount');
-    const guestCount = searchParams.get('guestCount');
-    const boardingPoint = searchParams.get('boardingPoint');
+    // Scroll to top on mount
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     // fallback for direct access without booking data
-    if (!bookingId) {
+    if (!bookingData) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
                 <div className="bg-blue-50 p-6 rounded-full mb-6">
                     <Ship className="h-12 w-12 text-blue-600" />
                 </div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">No Booking Found</h1>
-                <p className="text-gray-500 mb-8 max-w-xs">It seems you've reached this page directly. Please complete a payment to see your booking details.</p>
+                <p className="text-gray-500 mb-8 max-w-xs">It seems you&apos;ve reached this page directly or refreshed it. Please check your email or visit your cart for booking history.</p>
                 <button
                     onClick={() => router.push('/')}
                     className="bg-gray-900 text-white px-8 py-3 rounded-2xl font-bold hover:bg-gray-800 transition-all shadow-md active:scale-95"
                 >
-                    Back to Selection
+                    Back to Home
                 </button>
             </div>
         );
     }
+
+    const {
+        bookingId,
+        boatName,
+        tripDate,
+        totalPrice,
+        advanceAmount,
+        guestCount,
+        boardingPoint
+    } = bookingData;
 
     const details = [
         { icon: Ship, label: 'Boat House', value: boatName },
@@ -47,7 +53,7 @@ const SuccessContent = () => {
     ];
 
     return (
-        <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 pt-40 pb-20">
+        <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 pt-40 pb-20 bg-neutral-50">
 
             {/* Decorative background blobs */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -115,7 +121,7 @@ const SuccessContent = () => {
                     {/* Detail rows */}
                     <div className="py-5 space-y-4 flex-1">
                         {details.map((item) => (
-                            <div key={item.label} className="flex items-start gap-3.5">
+                            <div key={item.label} className="flex items-start gap-3.5 px-1 py-1">
                                 <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-50 shrink-0">
                                     <item.icon size={18} className="text-blue-600" />
                                 </div>
@@ -169,15 +175,5 @@ const SuccessContent = () => {
         </div>
     );
 };
-
-const SuccessPage = () => (
-    <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center bg-white">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
-        </div>
-    }>
-        <SuccessContent />
-    </Suspense>
-);
 
 export default SuccessPage;
