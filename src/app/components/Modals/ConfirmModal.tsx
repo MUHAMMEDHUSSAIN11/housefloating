@@ -59,8 +59,18 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
     const router = useRouter();
     const remainingAmount = (Math.round(finalPrice - advanceAmount));
 
-    const handlePush = () => {
-        router.push('/cart');
+    const handleSuccessRedirect = (bookingId: number, boatName: string, tripDate: string, totalPrice: number, advanceAmount: number, adultCount: any, boardingPoint: any) => {
+        const query = new URLSearchParams({
+            bookingId: String(bookingId),
+            boatName: String(boatName),
+            tripDate: String(tripDate),
+            totalPrice: String(totalPrice),
+            advanceAmount: String(advanceAmount),
+            guestCount: String(adultCount),
+            boardingPoint: String(boardingPoint || ''),
+        }).toString();
+
+        router.push(`/success?${query}`);
         NProgress.start();
         NProgress.done();
     };
@@ -269,7 +279,7 @@ const ConfirmModal: React.FC<confirmModalProps> = ({ boatDetails, modeOfTravel, 
                                 setIsLoading(false);
                                 BookingConfirmModal.onClose();
                                 setStep(STEPS.PHONENUMBER);
-                                handlePush();
+                                handleSuccessRedirect(bookingId, boatName, tripDateLocal, finalPrice, advanceAmount, adultCount, boatDetails.boardingPoint);
                             },
                             onError: (err: any) => {
                                 setIsLoading(false);
