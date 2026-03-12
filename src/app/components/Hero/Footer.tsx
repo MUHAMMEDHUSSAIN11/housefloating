@@ -1,7 +1,26 @@
+"use client"
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
+import useSuccessStore from '@/app/hooks/useSuccessStore'
 
 const Footer = () => {
+    const router = useRouter()
+    const { setBookingData } = useSuccessStore()
+
+    const handleTestSuccess = () => {
+        setBookingData({
+            bookingId: "TEST-GTM-999",
+            boatName: "Marketing Test Boat",
+            tripDate: "2026-12-25",
+            totalPrice: "5000",
+            advanceAmount: "750",
+            guestCount: "2",
+            boardingPoint: "Test Dock"
+        })
+        router.push('/success')
+    }
+
     return (
 
         <footer className='bg-slate-100 '>
@@ -41,11 +60,20 @@ const Footer = () => {
                 </div>
                 {/* <hr className="my-6 border-gray-200 sm:mx-auto lg:my-8" /> */}
                 <div className="sm:flex sm:items-center sm:justify-between py-12">
-                    <span className="text-sm text-gray-900 sm:text-center ">© 2026 <a href="" className="hover:underline">Housefloating™</a>. All Rights Reserved.
-                    </span>
+                    <div className="flex flex-col gap-2">
+                        <span className="text-sm text-gray-900 sm:text-center ">© 2026 <a href="" className="hover:underline">Housefloating™</a>. All Rights Reserved.
+                        </span>
+                        {/* GTM Test Button */}
+                        <button
+                            onClick={handleTestSuccess}
+                            className="text-[10px] bg-blue-100 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-200 transition-colors w-fit font-medium border border-blue-200"
+                        >
+                            CheckOut Success
+                        </button>
+                    </div>
                     <div className="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
                         <a href="https://www.facebook.com/share/16nwjgPQJh/?mibextid=wwXIfr" className="text-gray-900">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" /></svg>
                             <span className="sr-only">Facebook page</span>
                         </a>
                         <a href="https://www.instagram.com/housefloating_?igsh=dW5wdjIwa2VwcTJy" className="text-gray-900">
