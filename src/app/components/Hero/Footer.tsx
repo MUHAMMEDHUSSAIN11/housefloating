@@ -68,7 +68,7 @@ const Footer = () => {
                             onClick={handleTestSuccess}
                             className="text-[10px] bg-blue-100 text-blue-600 px-2 py-1 rounded-md hover:bg-blue-200 transition-colors w-fit font-medium border border-blue-200"
                         >
-                            DEBUG: Test Success Page (GTM)
+                            CheckOut Success
                         </button>
                     </div>
                     <div className="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
