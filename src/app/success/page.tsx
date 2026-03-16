@@ -14,6 +14,33 @@ const SuccessPage = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    // Conversion Tracking: Only fire if real booking data exists
+    useEffect(() => {
+        if (bookingData) {
+            // 1. Google Tag Manager Event (purchase_success)
+            const dataLayer = (window as any).dataLayer || [];
+            (window as any).dataLayer = dataLayer;
+            dataLayer.push({
+                event: 'purchase_success',
+                bookingId: bookingData.bookingId,
+                amount: bookingData.totalPrice,
+                advanceAmount: bookingData.advanceAmount,
+                boatName: bookingData.boatName,
+                currency: 'INR'
+            });
+
+            // 2. Google Ads Conversion Snippet
+            if (typeof (window as any).gtag === 'function') {
+                (window as any).gtag('event', 'conversion', {
+                    'send_to': 'AW-17980296798/1gB4CKPK84YcEN6clvlC',
+                    'value': Number(bookingData.advanceAmount) || 1.0,
+                    'currency': 'INR',
+                    'transaction_id': bookingData.bookingId
+                });
+            }
+        }
+    }, [bookingData]);
+
     // fallback for direct access without booking data
     if (!bookingData) {
         return (
