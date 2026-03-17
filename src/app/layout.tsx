@@ -82,6 +82,20 @@ export default async function RootLayout({ children, }: { children: React.ReactN
         }}
       />
 
+      <Script async src="https://www.googletagmanager.com/gtag/js?id=G-Q9PFNC58FH"></Script>
+      <Script
+        id="gtag-config"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Q9PFNC58FH');
+          `,
+        }}
+      />
+
       <body className={inter.className}>
         <Suspense fallback={null}>
           <GTMTracker />
