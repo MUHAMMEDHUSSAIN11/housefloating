@@ -30,7 +30,7 @@ export interface BoatDetails {
   prices: Prices;
   availableRoomCount?: number;
   ownerEmail: string;
-  ownerPhone: string;
+  ownerPhoneNumber: string;
 }
 
 interface Iparams {

@@ -10,7 +10,7 @@ export async function sendOwnerWhatsAppConfirmation(data: {
     totalAmount: number;
     advance: number;
     balance: number;
-    ownerPhone: string;
+    ownerPhoneNumber: string;
 }) {
     const apiKey = process.env.AISENSY_API_KEY;
     const campaignName = "Owner_Booking_Confirmation";
@@ -23,7 +23,7 @@ export async function sendOwnerWhatsAppConfirmation(data: {
     const formattedDate = `${day}/${month}/${year}`;
 
     // Clean phone number: remove any non-digit characters (like + or -)
-    const cleanPhone = data.ownerPhone.replace(/\D/g, '');
+    const cleanPhone = data.ownerPhoneNumber.replace(/\D/g, '');
 
     // Template params in order:
     // {{1}} boatName, {{2}} tripDate, {{3}} cruiseType, {{4}} bookingId,

@@ -113,7 +113,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             bookingDate: parsed.bd, bookingId: parsed.bid, adultCount: parsed.ac,
                             cruiseType: parsed.ct, tripDate: parsed.td, roomCount: parsed.rc,
                             guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
-                            guestEmail: parsed.ge, ownerEmail: parsed.oe, ownerPhone: parsed.op,
+                            guestEmail: parsed.ge, ownerEmail: parsed.oe, ownerPhoneNumber: parsed.op,
                             totalPrice: parsed.tp,
                             advanceAmount: parsed.aa, remainingAmount: parsed.ra,
                             boardingPoint: parsed.bp
@@ -138,8 +138,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             }).catch((err: any) => console.error('❌ WhatsApp Send Error:', err));
                         }
 
-                        if (bookingData.ownerPhone) {
-                            console.log(`📱 Sending WhatsApp owner alert to ${bookingData.ownerPhone}`);
+                        if (bookingData.ownerPhoneNumber) {
+                            console.log(`📱 Sending WhatsApp owner alert to ${bookingData.ownerPhoneNumber}`);
                             await sendOwnerWhatsAppConfirmation({
                                 boatName: bookingData.boatName,
                                 tripDate: bookingData.tripDate,
@@ -150,7 +150,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 totalAmount: bookingData.totalPrice,
                                 advance: bookingData.advanceAmount,
                                 balance: bookingData.remainingAmount,
-                                ownerPhone: bookingData.ownerPhone
+                                ownerPhoneNumber: bookingData.ownerPhoneNumber
                             }).catch((err: any) => console.error('❌ Owner WhatsApp Send Error:', err));
                         }
                     } else {
