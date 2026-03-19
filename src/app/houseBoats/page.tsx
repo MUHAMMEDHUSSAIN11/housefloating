@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Container from '../components/Misc/Container';
 import ListingCard from '../components/ListingCard/ListingCard';
@@ -9,6 +9,14 @@ import ListingCardSkeleton from '../components/ListingCard/ListingCardSkeleton';
 import GetAvailableHouseBoats from '../actions/GetAvailableHouseBoats/GetAvailableHouseBoats';
 import useSWR from 'swr';
 import { CheckCircle, Sparkles } from 'lucide-react';
+
+// WhatsApp SVG icon
+const WhatsAppIcon = () => (
+  <svg viewBox="0 0 32 32" fill="currentColor" className="w-6 h-6">
+    <path d="M16 0C7.164 0 0 7.163 0 16c0 2.82.736 5.46 2.02 7.746L0 32l8.494-2.227A15.94 15.94 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.784-1.854l-.487-.29-5.04 1.32 1.348-4.913-.318-.504A13.27 13.27 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.9c-.398-.2-2.355-1.163-2.72-1.295-.365-.133-.632-.2-.899.2-.266.398-1.03 1.295-1.264 1.562-.232.266-.465.3-.863.1-.398-.2-1.68-.619-3.2-1.975-1.182-1.055-1.98-2.358-2.213-2.756-.232-.398-.025-.613.175-.812.18-.178.398-.465.598-.698.2-.232.265-.398.398-.664.133-.266.066-.498-.033-.698-.1-.2-.9-2.165-1.233-2.963-.325-.779-.655-.673-.9-.686-.232-.012-.498-.015-.765-.015-.266 0-.698.1-1.064.498-.365.398-1.396 1.364-1.396 3.328s1.43 3.86 1.628 4.127c.2.266 2.813 4.295 6.815 6.026.952.411 1.695.657 2.274.84.955.305 1.824.262 2.51.159.766-.114 2.355-.963 2.688-1.893.332-.93.332-1.727.232-1.893-.1-.165-.365-.265-.763-.465z" />
+  </svg>
+);
+
 
 const HouseBoatsContent = () => {
   const searchParams = useSearchParams();
@@ -40,6 +48,25 @@ const HouseBoatsContent = () => {
   const isInitializedRef = useRef(false);
 
   const cacheKey = `boats-${categoryFromUrl}-${roomCountFromUrl}-${adultCountFromUrl}-${typeFromUrl}-${cruiseFromUrl}-${startDateFromUrl}-${endDateFromUrl}`;
+
+
+  const openWhatsApp = useCallback(() => {
+    // Build a friendly auto-filled message from search params
+    const cruiseLabel = cruiseFromUrl === 1 ? 'Day Cruise' : cruiseFromUrl === 2 ? 'Day & Night' : cruiseFromUrl === 3 ? 'Night Stay' : '';
+    const typeLabel = typeFromUrl === 1 ? 'Private' : typeFromUrl === 2 ? 'Sharing' : '';
+
+    const parts: string[] = ['Hi Housefloating Team!\n\nI am looking for a houseboat with the following preferences:'];
+    if (startDateFromUrl) parts.push(`* Check-in Date: ${new Date(startDateFromUrl).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}`);
+    if (endDateFromUrl)   parts.push(`* Check-out Date: ${new Date(endDateFromUrl).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}`);
+    if (cruiseLabel)      parts.push(`* Cruise Type: ${cruiseLabel}`);
+    if (typeLabel)        parts.push(`* Booking Type: ${typeLabel}`);
+    if (roomCountFromUrl) parts.push(`* Rooms: ${roomCountFromUrl}`);
+    if (adultCountFromUrl) parts.push(`* Guests: ${adultCountFromUrl}`);
+    parts.push('\nPlease help me find the best available option. Thank you!');
+
+    const message = encodeURIComponent(parts.join('\n'));
+    window.open(`https://wa.me/919207777911?text=${message}`, '_blank');
+  }, [startDateFromUrl, endDateFromUrl, cruiseFromUrl, typeFromUrl, roomCountFromUrl, adultCountFromUrl]);
 
   const fetchInitialBoats = async () => {
     const result = await GetAvailableHouseBoats({
@@ -194,49 +221,74 @@ const HouseBoatsContent = () => {
     };
   }, [isLoading, paginationLoading, hasMore, listing.exactMatch.length, listing.greaterThanMatch.length, take]);
 
+  // Floating WhatsApp Button//
+  const FloatingButtons = (
+    <div className="fixed bottom-42 md:bottom-16 right-4 z-50 flex flex-col items-center gap-3">
+      <button
+        onClick={openWhatsApp}
+        title="Chat with us on WhatsApp"
+        className="flex items-center justify-center w-13 h-13 rounded-full bg-[#25D366] text-white shadow-lg hover:bg-[#1ebe5d] transition-all duration-200 hover:scale-110 active:scale-95"
+        style={{ width: '46px', height: '46px' }}
+      >
+        <WhatsAppIcon />
+      </button>
+    </div>
+  );
+  // Floating WhatsApp Button//
+
   if (isLoading) {
     return (
-      <Container>
-        <div className="pb-20 pt-40 lg:pt-28">
-          <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <ListingCardSkeleton key={i} />
-            ))}
+      <>
+        <Container>
+          <div className="pb-20 pt-40 lg:pt-28">
+            <div className="pt-12 md:pt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <ListingCardSkeleton key={i} />
+              ))}
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+        {FloatingButtons}
+      </>
     );
   }
 
   if (error) {
     return (
-      <Container>
-        <div className="pb-20 pt-40 lg:pt-28">
-          <div className="pt-12 md:pt-8">
-            <div className="text-red-500 text-center py-8">
-              Failed to load boats. Please try again.
+      <>
+        <Container>
+          <div className="pb-20 pt-40 lg:pt-28">
+            <div className="pt-12 md:pt-8">
+              <div className="text-red-500 text-center py-8">
+                Failed to load boats. Please try again.
+              </div>
             </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+        {FloatingButtons}
+      </>
     );
   }
 
   if (!listing.exactMatch.length && !listing.greaterThanMatch.length) {
     return (
-      <Container>
-        <div className="w-full h-screen">
-          <div className="w-full h-full flex justify-center items-center">
-            <BoatsEmptyState showReset={true} />
+      <>
+        <Container>
+          <div className="w-full h-screen">
+            <div className="w-full h-full flex justify-center items-center">
+              <BoatsEmptyState showReset={true} />
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+        {FloatingButtons}
+      </>
     );
   }
 
   const totalListingsCount = listing.exactMatch.length + listing.greaterThanMatch.length;
 
   return (
+    <>
     <Container>
       <div className="pb-20 pt-40 lg:pt-36">
 
@@ -304,6 +356,8 @@ const HouseBoatsContent = () => {
         )}
       </div>
     </Container>
+    {FloatingButtons}
+    </>
   );
 };
 
