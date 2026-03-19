@@ -4,7 +4,7 @@ import HandleCreateOnlinePayment from '@/app/actions/OnlinePayments/HandleCreate
 import HandleDeleteOnlineBooking from '@/app/actions/OnlineBookings/HandleDeleteOnlineBooking';
 import { PaymentModes } from '@/app/enums/enums';
 import { sendAllEmails } from '@/app/actions/Emailsender/emailsender';
-import { sendWhatsAppConfirmation } from '@/app/actions/whatsapp/sendBookingConfirmation';
+import { sendWhatsAppConfirmation, sendOwnerWhatsAppConfirmation } from '@/app/actions/whatsapp/sendBookingConfirmation';
 
 export const config = {
     api: {
@@ -113,7 +113,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             bookingDate: parsed.bd, bookingId: parsed.bid, adultCount: parsed.ac,
                             cruiseType: parsed.ct, tripDate: parsed.td, roomCount: parsed.rc,
                             guestName: parsed.gn, guestPlace: parsed.gp, guestPhone: parsed.gph,
-                            guestEmail: parsed.ge, ownerEmail: parsed.oe, totalPrice: parsed.tp,
+                            guestEmail: parsed.ge, ownerEmail: parsed.oe, ownerPhone: parsed.op,
+                            totalPrice: parsed.tp,
                             advanceAmount: parsed.aa, remainingAmount: parsed.ra,
                             boardingPoint: parsed.bp
                         };
@@ -135,6 +136,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 balance: bookingData.remainingAmount,
                                 phoneNumber: bookingData.guestPhone
                             }).catch((err: any) => console.error('❌ WhatsApp Send Error:', err));
+                        }
+
+                        if (bookingData.ownerPhone) {
+                            console.log(`📱 Sending WhatsApp owner alert to ${bookingData.ownerPhone}`);
+                            await sendOwnerWhatsAppConfirmation({
+                                boatName: bookingData.boatName,
+                                tripDate: bookingData.tripDate,
+                                cruiseType: bookingData.cruiseType,
+                                bookingId: bookingData.bookingId.toString(),
+                                guestName: bookingData.guestName,
+                                guestPlace: bookingData.guestPlace,
+                                totalAmount: bookingData.totalPrice,
+                                advance: bookingData.advanceAmount,
+                                balance: bookingData.remainingAmount,
+                                ownerPhone: bookingData.ownerPhone
+                            }).catch((err: any) => console.error('❌ Owner WhatsApp Send Error:', err));
                         }
                     } else {
                         console.warn('⚠️ No valid booking data found in metadata chunks');
