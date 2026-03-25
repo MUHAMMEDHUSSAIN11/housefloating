@@ -5,7 +5,7 @@ export const metadata: Metadata = {
     title: 'Contact Us | Housefloating.com',
     description: 'Get in touch with Housefloating.com for best deals on Alleppey houseboat bookings. Call +91 9207777911 or email housefloatingonline@gmail.com.',
     alternates: {
-        canonical: '/contact',
+        canonical: 'https://www.housefloating.com/contact',
     },
 };
 import Aboutimage from '../components/Descriptions/AboutImage';

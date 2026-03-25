@@ -48,7 +48,7 @@ const GridSection: React.FC<GridSectionProps> = ({ title, items, onBoatClick }) 
         <div
           className="inline-flex items-center text-xl sm:text-2xl text-black font-medium transition-colors duration-300 group"
         >
-          <h2 className="mr-3">{title}</h2>
+          <h1 className="mr-3">{title}</h1>
         </div>
       </div>
 
@@ -197,7 +197,7 @@ const ListingHero: React.FC = () => {
       {/* Section Title */}
       <div className="px-4 sm:px-6 lg:px-8 mb-6">
         <div className="inline-flex items-center">
-          <h2 className="mr-3 text-xl sm:text-2xl text-black font-medium">{title}</h2>
+          <h1 className="mr-3 text-xl sm:text-2xl text-black font-medium">{title}</h1>
           <svg
             className="w-6 h-6"
             fill="none"
@@ -237,7 +237,7 @@ const ListingHero: React.FC = () => {
       <section className="bg-gray-50 min-h-screen">
         <div className="pt-56 md:pt-40 pb-12">
           {/* Skeleton Sections */}
-          <SkeletonSection title="Favourite Picks" />
+          <SkeletonSection title="Favourite Picks for Houseboat Alleppey" />
         </div>
       </section>
     );
@@ -252,7 +252,7 @@ const ListingHero: React.FC = () => {
     <section className="bg-gray-50 h-auto">
       <div className="pt-48 lg:pt-36 ">
         {/* Favourite Picks Section */}
-        <GridSection title="Favourite Picks" items={listings} onBoatClick={handleBoatClick} />
+        <GridSection title="Favourite Picks for Houseboat Alleppey" items={listings} onBoatClick={handleBoatClick} />
       </div>
     </section>
   );
