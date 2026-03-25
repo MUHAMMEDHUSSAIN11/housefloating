@@ -5,7 +5,7 @@ export const metadata: Metadata = {
     title: 'Cancellation Policy | Housefloating.com',
     description: 'Read the cancellation and refund policies for houseboat bookings at Housefloating.com.',
     alternates: {
-        canonical: '/Cancellationpolicy',
+        canonical: 'https://www.housefloating.com/Cancellationpolicy',
     },
 };
 import Updated from '../components/Hero/Updated';

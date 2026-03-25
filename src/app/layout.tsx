@@ -22,8 +22,11 @@ export const inter = Inter({
 
 export const metadata = {
   metadataBase: new URL('https://housefloating.com'),
-  title: 'Housefloating.com - Book Houseboats in Alleppey',
-  description: "Housefloating.com is the #1 portal to book luxury Alleppey houseboats at best prices. Experience premium Kerala houseboats and unforgettable journeys online.",
+  title: 'Luxury Houseboat Alleppey | Best Houseboat in Alleppey Booking',
+  description: "Book Luxury Houseboat Alleppey at best prices with Housefloating. Real-time availability, easy Alappuzha boat house booking, private & sharing options. Experience serene Kerala backwaters with cozy accommodation and meals.",
+  alternates: {
+    canonical: 'https://www.housefloating.com/',
+  },
   manifest: "/manifest.json",
   icons: {
     icon: [

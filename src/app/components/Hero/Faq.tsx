@@ -12,40 +12,39 @@ const Accordion = () => {
               <span className="mb-2 block text-lg font-semibold text-primary">
                 FAQ
               </span>
-              <h2 className="mb-4 text-3xl font-bold text-dark sm:text-4xl">
+              <h4 className="mb-4 text-3xl font-bold text-dark sm:text-4xl">
                 Any Questions? Look Here
-              </h2>
+              </h4>
             </div>
           </div>
         </div>
         <div className="-mx-4 flex flex-wrap">
           <div className="w-full px-4 lg:w-1/2">
             <AccordionItem
-              header=" What is the cost of renting a houseboat in Alleppey?"
-              text="The cost of renting a houseboat in Alleppey, also known as Alappuzha, can vary depending on several factors, including the type of houseboat, its size, the season, and the amenities it offers.
-              For a basic houseboat for a one-night stay, expect to pay around INR 8,000 to INR 15,000 (approximately USD 90 to USD 160) for two people. If you're interested in more luxurious options with extra amenities, they may cost more. Keep in mind that prices can be higher during peak seasons, weekends, holidays, and festivals. "
+              header="What is the cost of renting a houseboat in Alleppey?"
+              text="The cost of renting a houseboat in Alleppey, also known as Alappuzha, can vary depending on several factors, including the type of houseboat, its size, the season, and the amenities it offers. For a basic houseboat for a one-night stay, expect to pay around INR 8,000 to INR 15,000 for two people. If you're interested in more luxurious options with extra amenities, they may cost more. Keep in mind that prices can be higher during peak seasons, weekends, holidays, and festivals. Check live rates for our luxury houseboat Alleppey and premium Alappuzha boat house options before booking."
             />
             <AccordionItem
               header="What does the package offers?"
-              text="When you book a houseboat with us, you're not just reserving a place to stay; you're embarking on a memorable journey. Your package encompasses cozy accommodation, delectable meals, and the dedicated service of our skilled crew. You'll be treated to a delightful welcome drink upon boarding, followed by a mouthwatering spread that includes lunch, evening snacks, dinner, and a hearty breakfast. Our captain, cook, and attentive attendants ensure your comfort and safety throughout the trip."
+              text="When you book a houseboat with us, you're not just reserving a place to stay; you're embarking on a memorable journey. Your package encompasses cozy accommodation, delectable meals, and the dedicated service of our skilled crew. You'll be treated to a delightful welcome drink upon boarding, followed by a mouthwatering spread that includes lunch, evening snacks, dinner, and a hearty breakfast. Our captain, cook, and attentive attendants ensure your comfort and safety throughout the trip on our best houseboat in Alleppey."
             />
 
             <AccordionItem
               header="What are the specified check-in and check-out timings for the houseboat?"
-              text=" The timings can vary depending on the type of package you select. Typically, for Overnight stays, check-in is scheduled around 12:00 PM (noon), with check-out at 9:00 AM the following day. For Day Cruise packages, you'll usually check in at 11:00 AM and check out at 5:00 PM.It's important to note that late check-in doesn't come with an extension." />
+              text="The timings can vary depending on the type of package you select. Typically, for Overnight stays, check-in is scheduled around 12:00 PM (noon), with check-out at 9:00 AM the following day. For Day Cruise packages, you'll usually check in at 11:00 AM and check out at 5:00 PM. It's important to note that late check-in doesn't come with an extension. Confirm exact timings during your Alappuzha house boat booking." />
           </div>
           <div className="w-full px-4 lg:w-1/2">
             <AccordionItem
               header="Are houseboat trips safe for families and children?"
-              text="Yes, houseboat trips are safe for families and children. Our experienced crew ensures the safety and comfort of all passengers. Life jackets and other safety measures are provided onboard."
+              text="Yes, houseboat trips are safe for families and children. Our experienced crew ensures the safety and comfort of all passengers. Life jackets and other safety measures are provided onboard. Enjoy a worry-free experience on your luxury houseboat Alleppey journey through the Kerala backwaters."
             />
             <AccordionItem
               header="What are the most favorable seasons for experiencing houseboats in Alleppey?"
-              text="The best time to visit Alleppey for a houseboat experience is during the winter months, from October to March, when the weather is pleasant. Monsoon season (June to September) is also an option for those who enjoy the lush green landscape, but it can be quite rainy."
+              text="The best time to visit Alleppey for a houseboat experience is during the winter months, from October to March, when the weather is pleasant. Monsoon season (June to September) is also an option for those who enjoy the lush green landscape, but it can be quite rainy. Plan your Alappuzha boat house trip accordingly for the most memorable backwaters cruise."
             />
             <AccordionItem
               header="What is the cancellation policy for houseboat bookings?"
-              text="Our cancellation policy varies depending on the package and the time of cancellation. We recommend reviewing our cancellation policy on our website or contacting our team for specific details."
+              text="Our cancellation policy varies depending on the package and the time of cancellation. We recommend reviewing our cancellation policy on our website or contacting our team for specific details related to your luxury houseboat Alleppey or Alappuzha house boat booking."
             />
           </div>
         </div>
