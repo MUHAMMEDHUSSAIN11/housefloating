@@ -27,6 +27,18 @@ interface GridSectionProps {
   onBoatClick: () => void;
 }
 
+const altTexts = [
+  "Luxury houseboat Alleppey cruising through the serene Kerala backwaters on Vembanad Lake",
+  "Best houseboat in Alleppey with a spacious deck and traditional design",
+  "Premium luxury houseboat Alleppey interior showing cosy air-conditioned bedroom",
+  "Alappuzha houseboat offering scenic backwaters view from the upper sundeck",
+  "Private luxury houseboat in Alleppey with elegant wooden interiors and comfortable seating",
+  "Traditional Kerala houseboat Alleppey gliding past lush green palm-fringed canals",
+  "Best houseboat in Alleppey featuring a dining area with delicious Kerala cuisine onboard",
+  "Luxury houseboat Alleppey at sunset with beautiful backwaters reflection in Alappuzha",
+  "Spacious family houseboat in Alleppey with multiple bedrooms and a private deck",
+  "Alappuzha boat house booking experience showing happy guests enjoying a Kerala backwaters cruise"
+];
 
 const GridSection: React.FC<GridSectionProps> = ({ title, items, onBoatClick }) => {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
@@ -83,7 +95,7 @@ const GridSection: React.FC<GridSectionProps> = ({ title, items, onBoatClick }) 
             }
           `}</style>
           <div className="flex space-x-4 pb-4 min-w-max">
-            {items.map((item) => (
+            {items.map((item, index) => (
               <div
                 key={item.boatId}
                 onClick={onBoatClick}
@@ -93,7 +105,7 @@ const GridSection: React.FC<GridSectionProps> = ({ title, items, onBoatClick }) 
                 <div className="relative h-40 overflow-hidden">
                   <img
                     src={item.thumbnailImage}
-                    alt={item.boatName}
+                    alt={altTexts[index]}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
