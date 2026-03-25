@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Booking Policy | Housefloating.com',
   description: 'Read the booking policies, terms, and conditions for your Alleppey houseboat stay with Housefloating.com.',
   alternates: {
-    canonical: '/Bookingpolicy',
+    canonical: 'https://www.housefloating.com/Bookingpolicy',
   },
 };
 import Updated from '../components/Hero/Updated'
