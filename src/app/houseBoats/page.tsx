@@ -69,7 +69,7 @@ const HouseBoatsContent = () => {
   }, [startDateFromUrl, endDateFromUrl, cruiseFromUrl, typeFromUrl, roomCountFromUrl, adultCountFromUrl]);
 
   const fetchInitialBoats = async () => {
-    const result = await GetAvailableHouseBoats({
+    const result:any = await GetAvailableHouseBoats({
       TripModeId: typeFromUrl,
       CruiseTypeId: cruiseFromUrl,
       BoatCategoryId: categoryFromUrl,
