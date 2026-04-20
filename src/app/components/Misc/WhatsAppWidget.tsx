@@ -119,7 +119,7 @@ const WhatsAppWidget = () => {
 };
 
     return (
-        <div className="fixed bottom-32 md:bottom-10 right-4 z-9999 flex flex-col items-end pointer-events-none">
+        <div className="fixed bottom-42 md:bottom-15 right-4 z-9999 flex flex-col items-end pointer-events-none">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
