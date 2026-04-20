@@ -119,14 +119,14 @@ const WhatsAppWidget = () => {
 };
 
     return (
-        <div className="fixed bottom-42 md:bottom-15 right-4 z-9999 flex flex-col items-end pointer-events-none">
+        <div className="fixed top-12 bottom-42 md:bottom-15 right-4 z-9999 flex flex-col justify-end items-end pointer-events-none">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8, y: 50, transformOrigin: 'bottom right' }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.8, y: 50 }}
-                        className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-6 w-[90vw] max-w-95 border border-neutral-100 pointer-events-auto"
+                        className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-2 w-[90vw] max-w-95 border border-neutral-100 pointer-events-auto flex flex-col max-h-full"
                     >
                         {/* Header */}
                         <div className="bg-linear-to-r from-[#25D366] to-[#128C7E] p-5 flex items-center justify-between text-white">
@@ -153,7 +153,7 @@ const WhatsAppWidget = () => {
                         </div>
 
                         {/* Form */}
-                        <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar bg-white">
+                        <div className="p-6 flex-1 overflow-y-auto custom-scrollbar bg-white">
                            <div className="space-y-6">
                                 {/* Booking Type */}
                                 <CustomSelect 
