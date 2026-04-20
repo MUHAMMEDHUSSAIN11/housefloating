@@ -113,7 +113,7 @@ const WhatsAppWidget = () => {
             Thank you! `;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/917736230788?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/919207777911?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
     setIsOpen(false);
 };
