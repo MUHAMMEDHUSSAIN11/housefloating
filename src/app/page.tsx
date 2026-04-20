@@ -7,6 +7,7 @@ import Updated from './components/Hero/Updated';
 import Footer from './components/Hero/Footer';
 import Faq from './components/Hero/Faq';
 import ListingHero from './components/Hero/ListingHero';
+import WhatsAppWidget from './components/Misc/WhatsAppWidget';
 
 
 
@@ -18,6 +19,7 @@ export default async function Home() {
       <ExperienceSection/>
       <HowToBookSection/>
       {/* <Categories/> */}
+      <WhatsAppWidget />
       <Faq/>
       <Updated/>
       <Footer/>
