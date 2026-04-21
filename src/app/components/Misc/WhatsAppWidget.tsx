@@ -30,17 +30,20 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ label, value, options, onCh
 
     return (
         <div className="relative" ref={containerRef}>
-            <label className="text-[12px] absolute top-2 left-4 text-neutral-500 z-10 font-medium pointer-events-none">
-                {label}
-            </label>
             <div 
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full p-4 pt-6 bg-white border-2 rounded-xl outline-none transition cursor-pointer flex items-center justify-between
+                className={`w-full px-4 pb-1 bg-white border md:border-2 rounded-xl outline-none transition cursor-pointer items-center 
                     ${isOpen ? 'border-blue-500 ring-2 ring-blue-100' : 'border-neutral-200 hover:border-neutral-300'}
                 `}
             >
-                <span className="font-light text-neutral-800">{value}</span>
-                <FaChevronDown className={`text-neutral-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                <label className="text-[10px] md:text-[12px] text-neutral-500 font-medium pointer-events-none">
+                    {label}
+                </label>
+                <div className='flex items-center justify-between'>
+                    <span className="font-light text-neutral-800 text-xs md:text-base">{value}</span>
+                    <FaChevronDown className={`text-neutral-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                </div>
+                
             </div>
 
             <AnimatePresence>
@@ -58,7 +61,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ label, value, options, onCh
                                     onChange(option);
                                     setIsOpen(false);
                                 }}
-                                className={`p-4 hover:bg-blue-50 transition-colors cursor-pointer text-sm font-medium
+                                className={`p-4 hover:bg-blue-50 transition-colors cursor-pointer text-xs md:text-sm font-medium
                                     ${value === option ? 'text-blue-600 bg-blue-50/50' : 'text-neutral-700'}
                                 `}
                             >
@@ -89,28 +92,23 @@ const WhatsAppWidget = () => {
     } = useForm<FieldValues>();
 
     const onSubmit = () => {
-    const message = `HOUSEBOAT INQUIRY
+    const message = 
+    `HOUSEBOAT INQUIRY
 
-            Hello Housefloating Team!
+Hello Housefloating Team!
 
-            I'm interested in booking a houseboat and would like assistance with the following details:
-
-            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-             BOOKING DETAILS
-            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-            - Booking Type: ${bookingType}
-            - Boat Category: ${boatCategory}
-            - Cruise Type: ${cruiseType}
-            - Check-in Date: ${format(new Date(bookingDate), 'dd MMM yyyy')}
-            - Number of Rooms: ${roomCount}
-            - Number of Adults: ${adultCount}
-
-            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-            Please provide available options and pricing for the above specifications.
-
-            Thank you! `;
+I am looking for a houseboat with the following preferences:
+━━━━━━━━━━━━━━━
+BOOKING DETAILS
+━━━━━━━━━━━━━━━
+- Booking Type: ${bookingType}
+- Boat Category: ${boatCategory}
+- Cruise Type: ${cruiseType}
+- Check-in Date: ${format(new Date(bookingDate), 'dd MMM yyyy')}
+- Number of Rooms: ${roomCount}
+- Number of Adults: ${adultCount}
+━━━━━━━━━━━━━━━
+Please help me find the best available option. Thank you!`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/919207777911?text=${encodedMessage}`;
@@ -119,7 +117,7 @@ const WhatsAppWidget = () => {
 };
 
     return (
-        <div className="fixed top-12 bottom-42 md:bottom-15 right-4 z-9999 flex flex-col justify-end items-end pointer-events-none">
+        <div className="fixed top-1 bottom-40 md:bottom-15 right-4 z-9999 flex flex-col justify-end items-end pointer-events-none">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -129,32 +127,32 @@ const WhatsAppWidget = () => {
                         className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-2 w-[90vw] max-w-95 border border-neutral-100 pointer-events-auto flex flex-col max-h-full"
                     >
                         {/* Header */}
-                        <div className="bg-linear-to-r from-[#25D366] to-[#128C7E] p-5 flex items-center justify-between text-white">
+                        <div className="bg-linear-to-r from-[#25D366] to-[#128C7E] px-4 py-2 flex items-center justify-between text-white">
                             <div className="flex items-center gap-3">
                                 <div className="bg-white/20 p-2 rounded-full">
-                                    <FaWhatsapp size={24} />
+                                    <FaWhatsapp size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg leading-tight">Houseboat Booking</h3>
-                                    <p className="text-xs text-white/80">Typical reply in minutes</p>
+                                    <h3 className="font-bold text-sm md:text-base leading-tight">Houseboat Booking</h3>
+                                    <p className="text-[10px] md:text-xs text-white/80">Typical reply in minutes</p>
                                 </div>
                             </div>
                             <button 
                                 onClick={() => setIsOpen(false)}
-                                className="hover:bg-black/10 p-2 rounded-full transition-colors"
+                                className="hover:bg-black/10 p-2 rounded-full transition-colors cursor-pointer"
                             >
                                 <FaTimes size={20} />
                             </button>
                         </div>
 
                         {/* Welcome Message */}
-                        <div className="bg-neutral-50 p-4 border-b border-neutral-100 italic text-sm text-neutral-600">
+                        <div className="bg-neutral-50 p-2 border-b border-neutral-100 italic text-[10px] md:text-xs text-neutral-600">
                             "Hi there! Please select your preferences below for a quick WhatsApp quote."
                         </div>
 
                         {/* Form */}
-                        <div className="p-6 flex-1 overflow-y-auto custom-scrollbar bg-white">
-                           <div className="space-y-6">
+                        <div className="p-2 flex-1 overflow-y-auto custom-scrollbar bg-white">
+                           <div className="space-y-2">
                                 {/* Booking Type */}
                                 <CustomSelect 
                                     label="Booking Type"
@@ -173,26 +171,25 @@ const WhatsAppWidget = () => {
 
                                 {/* Booking Date */}
                                 <div className="relative">
-                                    <label className="text-[12px] absolute top-2 left-4 text-neutral-500 z-10 font-medium">
-                                        Booking Date
-                                    </label>
-                                    <div className="relative">
+                                    <div className="flex flex-col px-4 py-1 focus:border-blue-500 bg-white border md:border-2 border-neutral-200 rounded-xl">
+                                        <label className="text-[10px] md:text-[12px]  text-neutral-500 font-medium">
+                                            Booking Date
+                                        </label>
                                         <input 
                                             type="date"
                                             value={bookingDate}
                                             min={format(new Date(), 'yyyy-MM-dd')}
-                                            className="w-full p-4 pt-6 bg-white border-2 border-neutral-200 rounded-xl outline-none focus:border-blue-500 transition font-light"
+                                            className="w-full text-xs md:text-base  transition font-light outline-none"
                                             onChange={(e) => setBookingDate(e.target.value)}
                                         />
-                                        <FaCalendarAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
                                     </div>
                                 </div>
 
                                 {/* Guests and Rooms */}
-                                <div className="bg-neutral-50 p-4 rounded-xl space-y-4 border border-neutral-100">
+                                <div className="bg-neutral-50 px-4 text-xs md:text-base rounded-xl space-y-1 border border-neutral-100">
                                     <Counter
                                         title="Rooms"
-                                        subtitle="Total rooms required"
+                                        subtitle="Total rooms"
                                         value={roomCount}
                                         onChange={(value) => setRoomCount(value)}
                                         min={1}
@@ -200,7 +197,7 @@ const WhatsAppWidget = () => {
                                     <div className="h-px bg-neutral-200 w-full" />
                                     <Counter
                                         title="Adults"
-                                        subtitle="Total number of guests"
+                                        subtitle="Total guests"
                                         value={adultCount}
                                         onChange={(value) => setAdultCount(value)}
                                         min={1}
@@ -217,9 +214,9 @@ const WhatsAppWidget = () => {
                                 
                                 <button
                                     onClick={onSubmit}
-                                    className="w-full bg-[#25D366] text-white py-4 rounded-2xl font-bold hover:bg-[#128C7E] transition-all duration-300 flex items-center justify-center gap-3 mt-4 shadow-[0_10px_20px_rgba(37,211,102,0.3)] active:scale-[0.98]"
+                                    className="w-full bg-[#25D366] text-white py-2 md:py-3 rounded-xl font-bold hover:bg-[#128C7E] transition-all duration-300 flex items-center justify-center gap-3 mt-2 shadow-[0_10px_20px_rgba(37,211,102,0.3)] active:scale-[0.98]"
                                 >
-                                    <FaWhatsapp size={22} />
+                                    <FaWhatsapp size={20} />
                                     Send Booking Inquiry
                                 </button>
                                 
@@ -237,13 +234,13 @@ const WhatsAppWidget = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:shadow-[0_15px_30px_rgba(37,211,102,0.4)] transition-all duration-300 flex items-center justify-center pointer-events-auto relative group"
+                className="bg-[#25D366] text-white p-2 rounded-full shadow-2xl hover:shadow-[0_15px_30px_rgba(37,211,102,0.4)] transition-all duration-300 flex items-center justify-center pointer-events-auto relative group"
             >
                 {isOpen ? (
-                    <FaTimes size={24} />
+                    <FaTimes size={30} />
                 ) : (
                     <>
-                        <FaWhatsapp size={32} />
+                        <FaWhatsapp size={30} />
                         <span className="absolute right-full mr-4 bg-white text-neutral-800 px-4 py-2 rounded-xl text-sm font-semibold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none hidden md:block">
                             Book via WhatsApp
                         </span>
